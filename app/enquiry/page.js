@@ -12,6 +12,9 @@ import { CustomTooltip } from '@/components/custom-tooltip';
 import React, { useMemo } from 'react'
 import { Container } from '@/components/container';
 import { enquiryData } from '@/utils/data';
+import { DatePicker } from '@/components/date-picker';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
 
 const ActionsRenderer = (params) => {
 
@@ -56,12 +59,28 @@ const Enquiry = () => {
 
         <Container id={4}>
             
-            <div className='w-full flex my-3'>
+            <div className='w-full flex my-3 gap-3'>
                 <Link href={'enquiry/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
                     <CustomTooltip content='Add Enquiry' position='right'>
                         <AiOutlineFileAdd size={22} />
                     </CustomTooltip>
                 </Link>
+
+                <div>
+                    <DatePicker placeholder='Start Date' className='w-[200px]' />
+                </div>
+
+                <div>
+                    <DatePicker placeholder='End Date' className='w-[200px]' />
+                </div>
+
+                <div>
+                    <Button type='button'>
+                    <Search className="mr-2 h-4 w-4" />
+                        Search
+                    </Button>
+                </div>
+
             </div>
 
             <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>

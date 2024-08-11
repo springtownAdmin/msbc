@@ -85,8 +85,8 @@ export const DeliveryStatus = () => {
 
           <AreaChart accessibilityLayer data={AreachartData} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
-            <XAxis dataKey="elements" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} />
-            <YAxis tickLine={false} axisLine={false} tickMargin={8} tickCount={3} />
+            <XAxis dataKey="elements" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value = '') => value.slice(0, 3)} />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} tickCount={3} tickFormatter={(value = 0) => value} />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
@@ -170,9 +170,9 @@ export const Reminders = () => {
   
               <CardContent className='h-full overflow-auto'>
   
-                  {[1, 2].map((v) => (
+                  {[1, 2].map((v, i) => (
   
-                      <>
+                      <div key={`reminder-${i}`}>
                       
                           <div className='flex justify-between'>
   
@@ -200,7 +200,7 @@ export const Reminders = () => {
   
                           <hr className='border-gray-100 my-4' />
   
-                      </>
+                      </div>
   
                   ))}
   
@@ -271,8 +271,8 @@ export const PaymentOverdue = () => {
                   <BarChart accessibilityLayer data={BarchartData} layout="vertical" margin={{ right: 16 }}>
 
                       <CartesianGrid horizontal={false} />
-                      <YAxis dataKey="amount" type="category" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.slice(0, 3)} hide />
-                      <XAxis dataKey="overdue" type="number" hide />
+                      <YAxis dataKey="amount" type="category" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value = '') => value.slice(0, 3)} hide />
+                      <XAxis dataKey="overdue" type="number" tickFormatter={(value = 0) => value} hide />
   
                       <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
   

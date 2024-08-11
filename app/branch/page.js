@@ -4,9 +4,8 @@ import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import { breakData, getColumnHeader, getRowData, removeFieldsFromList } from '@/utils/constants';
+import { getColumnHeader, getRowData } from '@/utils/constants';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
 import { MdEdit } from "react-icons/md";
 import { CustomTooltip } from '@/components/custom-tooltip';
 import React, { useEffect, useMemo, useState } from 'react'
@@ -14,6 +13,9 @@ import { Container } from '@/components/container';
 import { branchData } from '@/utils/data';
 import useAPI from '@/hooks/useAPI';
 import useStorage from '@/hooks/useStorage';
+import { DatePicker } from '@/components/date-picker';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
 
 const ActionsRenderer = (params) => {
 
@@ -51,15 +53,9 @@ const Branch = () => {
 
   }, []);
 
-
-//   const branchList = data.branch;
-
   const rowData = useMemo(() => getRowData(branchList), [branchList]);
 
   const columnDefs = useMemo(() => getColumnHeader(branchData.filter((_, i) => i !== 0), ActionsRenderer), []);
-
-  // const sections = breakData(branchData, ['branch_name', 'Country'])
-  // console.log(sections);
 
   const defaultColDef = useMemo(() => {
     return {
@@ -78,12 +74,27 @@ const Branch = () => {
 
       <Container id={2}>
           
-          <div className='w-full flex my-3'>
+          <div className='w-full flex my-3 gap-3'>
               <Link href={'branch/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
                   <CustomTooltip content='Add Branch' position='right'>
                       <AiOutlineFileAdd size={22} />
                   </CustomTooltip>
               </Link>
+
+              <div>
+                <DatePicker placeholder='Start Date' className='w-[200px]' />
+              </div>
+
+              <div>
+                <DatePicker placeholder='End Date' className='w-[200px]' />
+              </div>
+
+              <div>
+                <Button type='button'>
+                  <Search className="mr-2 h-4 w-4" />
+                  Search
+                </Button>
+              </div>
           </div>
 
           <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>

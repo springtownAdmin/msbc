@@ -12,12 +12,11 @@ const useAPI = () => {
     const { setItem } = useStorage();
     const router = useRouter();
 
-    const authenticateUser = async (reqBody) => {
+    const authenticateUser = async (reqBody, company_name) => {
 
         try {
 
-            const company_name = 'HolBox001';
-            setItem('company_name', company_name);
+            // const company_name = 'HolBox001';
             
             const resp = await BACKEND_API.post(`/login?company_name=${company_name}`, reqBody);
             const result = resp.data;
@@ -25,6 +24,7 @@ const useAPI = () => {
             if (result.status_code >= 200 && result.status_code < 300) {
 
                 setItem('email', reqBody.username);
+                setItem('company_name', company_name);
                 setItem('role', result.role);
 
                 router.push('/');
@@ -283,9 +283,9 @@ const useAPI = () => {
         try {
 
             const company_name = getCompanyName();
-            const resp = await BACKEND_API.get(`/get_enquiry/${id}?company_name=${company_name}`, reqBody);
+            const resp = await BACKEND_API.get(`/get_enquiry/${id}?company_name=${company_name}`);
 
-            showToast(resp.data.status_code, resp.data.message);
+            return resp.data;
     
         } catch (e) {
 
@@ -295,12 +295,12 @@ const useAPI = () => {
 
     }
 
-    const updateEnquiry = async (reqBody) => {
+    const updateEnquiry = async (id, reqBody) => {
 
         try {
 
             const company_name = getCompanyName();
-            const resp = await BACKEND_API.post(`/update_enquiry?company_name=${company_name}`, reqBody);
+            const resp = await BACKEND_API.post(`/update_enquiry/${id}?company_name=${company_name}`, reqBody);
 
             showToast(resp.data.status_code, resp.data.message);
     
@@ -319,7 +319,7 @@ const useAPI = () => {
             const company_name = getCompanyName();
             const resp = await BACKEND_API.get(`/get_enquiry?company_name=${company_name}`);
 
-            showToast(resp.data.status_code, resp.data.message);
+            return resp.data;
     
         } catch (e) {
 
@@ -329,10 +329,27 @@ const useAPI = () => {
 
     }
 
+    const getStatuses = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/status?company_name=${company_name}`);
+
+            return resp.data;
+
+        } catch (e) {
+            
+            showToast(400, e.message);
+
+        }
+
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
-        createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry
+        createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses
     };
 
 }

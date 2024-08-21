@@ -4,22 +4,24 @@ import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import { getColumnHeader, getRowData } from '@/utils/constants';
+import { deleteFieldsFromArray, formatDateToYYYYMMDD, getColumnHeader, getRowData } from '@/utils/constants';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { MdEdit } from "react-icons/md";
 import { CustomTooltip } from '@/components/custom-tooltip';
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Container } from '@/components/container';
 import { enquiryData } from '@/utils/data';
 import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import useAPI from '@/hooks/useAPI';
+import useStorage from '@/hooks/useStorage';
 
 const ActionsRenderer = (params) => {
 
   const item = params.data
-  const editPath = `enquiry/edit/${item.enquiryNumber}`
+  const editPath = `enquiry/edit/${item.id}`
 
   return (
       <div className='flex items-center justify-center h-full'>
@@ -35,12 +37,45 @@ const ActionsRenderer = (params) => {
 
 const Enquiry = () => {
 
-  const { data } = useSelector((state) => state.list);
-  const enquiryList = data.enquiry
+//   const { data } = useSelector((state) => state.list);
+//   const enquiryList = data.enquiry
+  
+  const { getEnquiries } = useAPI();
+  const [ enquiryList, setEnquiryList ] = useState([]);
+  const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+  const { company_name } = useStorage();
+
+  const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
+
+  const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
+
+  useEffect(() => {
+
+    const getData = async () => {
+
+        const result = await getEnquiries();
+
+        const newResult = result.map((x) => {
+
+            return {
+                ...x,
+                enquiry_date: formatDateToYYYYMMDD(x.enquiry_date),
+                enquiry_by: x.enquiry_by === 1 ? "Phone" : x.enquiry_by === 2 ? "E-Mail" : x.enquiry_by === 3 ? "Marketing" : null
+            }
+
+        });
+
+        setEnquiryList(newResult);
+
+    }
+
+    company_name !== null && getData();
+
+  }, []);
 
   const rowData = useMemo(() => getRowData(enquiryList), [enquiryList]);
 
-  const columnDefs = useMemo(() => getColumnHeader(enquiryData, ActionsRenderer), []);
+  const columnDefs = useMemo(() => getColumnHeader(enquiryData, ActionsRenderer, ['By', 'Country', 'Pin Code']), []);
 
   const defaultColDef = useMemo(() => {
     return {
@@ -67,11 +102,11 @@ const Enquiry = () => {
                 </Link>
 
                 <div>
-                    <DatePicker placeholder='Start Date' className='w-[200px]' />
+                    <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
                 </div>
 
                 <div>
-                    <DatePicker placeholder='End Date' className='w-[200px]' />
+                    <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
                 </div>
 
                 <div>

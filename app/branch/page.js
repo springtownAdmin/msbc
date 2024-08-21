@@ -38,7 +38,12 @@ const Branch = () => {
 
   const { getBranches } = useAPI();
   const [ branchList, setBranchList ] = useState([]);
+  const [ dateRange, setDateRange ] = useState({ start: null, end: null });
   const { company_name } = useStorage();
+
+  const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
+
+  const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
   useEffect(() => {
 
@@ -82,11 +87,11 @@ const Branch = () => {
               </Link>
 
               <div>
-                <DatePicker placeholder='Start Date' className='w-[200px]' />
+                <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
               </div>
 
               <div>
-                <DatePicker placeholder='End Date' className='w-[200px]' />
+                <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
               </div>
 
               <div>

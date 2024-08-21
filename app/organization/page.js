@@ -39,6 +39,11 @@ const Organization = () => {
     const { getOrganizations } = useAPI();
     const [ organizationList, setOrganizationList ] = useState([]);
     const { company_name } = useStorage();
+    const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+
+    const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
+  
+    const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
     useEffect(() => {
 
@@ -80,11 +85,11 @@ const Organization = () => {
             </Link>
 
             <div>
-                <DatePicker placeholder='Start Date' className='w-[200px]' />
+                <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
             </div>
 
             <div>
-                <DatePicker placeholder='End Date' className='w-[200px]' />
+                <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
             </div>
 
             <div>

@@ -41,8 +41,9 @@ export const enquiryData = [
         label: 'Branch',
         name: 'Branch',
         type: 'select',
-        value: 'Head Office',
-        list: [ 'Head Office' ],
+        value: '',
+        // list: [ 'Head Office' ],
+        list: [],
         required: true,
         is_visible: true,
         read_only: false
@@ -53,8 +54,9 @@ export const enquiryData = [
         label: 'Status',
         name: 'Status',
         type: 'select',
-        value: 'Lead In',
-        list: [ 'Lead In', 'Quote In Progress', 'Waiting Information - Cost.', 'Lost', 'Quote Ready', 'Waiting Information - Supl.' ],
+        value: '',
+        // list: [ 'Lead In', 'Quote In Progress', 'Waiting Information - Cost.', 'Lost', 'Quote Ready', 'Waiting Information - Supl.' ],
+        list: [],
         required: true,
         is_visible: true,
         read_only: false
@@ -67,7 +69,7 @@ export const enquiryData = [
         type: 'select',
         value: 'User',
         list: [ 'Admin', 'User', 'Sales' ],
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -89,8 +91,8 @@ export const enquiryData = [
         label: 'Sales Representative',
         name: 'Sales Representative',
         type: 'select',
-        value: 'User',
-        list: [ 'Admin', 'User', 'Sales' ],
+        value: '',
+        list: [],
         required: true,
         is_visible: true,
         read_only: false
@@ -101,8 +103,12 @@ export const enquiryData = [
         label: 'Enquiry By',
         name: 'Enquiry By',
         type: 'multi-checkbox',
-        list: [ 'PHONE', 'E-MAIL', 'MARKETING' ],
-        value: ['phone'],
+        list: [ 
+            { id: '1', value: '1', label: 'PHONE' },
+            { id: '2', value: '2', label: 'E-MAIL' },
+            { id: '3', value: '3', label: 'MARKETING' },
+        ],
+        value: [],
         required: true,
         is_visible: true,
         read_only: false
@@ -261,7 +267,7 @@ export const enquiryData = [
         type: 'number',
         value: '',
         validation: { min: 1, max: 5 },
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -272,7 +278,7 @@ export const enquiryData = [
         name: 'Notes',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -436,6 +442,18 @@ export const userData = [
 
     {
         id: 6,
+        name: 'User Role',
+        label: 'User Role',
+        type: 'select',
+        list: [ 'Admin', 'Sales Representative', 'Accounts', 'User' ],
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 7,
         name: 'Address',
         label: 'Address',
         type: 'textarea',
@@ -587,6 +605,41 @@ export const fieldData = [
         list: [ 'Date', 'String', 'Number', 'Checkbox', 'Select', 'Multi-Select', 'Textarea' ],
         value: '',
         required: true
+    },
+
+]
+
+export const productData = [
+
+    {
+        id: 1,
+        name: 'Product Type',
+        label: 'Product Type',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+    {
+        id: 2,
+        name: 'Product Description',
+        label: 'Product Description',
+        type: 'textarea',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+    {
+        id: 3,
+        name: 'Quantity',
+        label: 'Quantity',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
     },
 
 ]

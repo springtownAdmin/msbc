@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Menus, Menus2 } from "@/utils/constants";
@@ -14,6 +14,11 @@ import Image from 'next/image';
 import dwerpLogo from '@/public/images/dwerp-full-logo.png'
 import ProtectedRoute from './protected-route';
 import { FaUserCog } from "react-icons/fa";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { Button } from './ui/button';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 
 export const Container = ({ children, id = 1 }) => {
 
@@ -22,9 +27,18 @@ export const Container = ({ children, id = 1 }) => {
 
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("");
+  const [openUserInfo, setOpenUserInfo] = useState(false);
   const inputRef = useRef(null);
+  const [userDetails, setUserDetails] = useState({ username: '', firstname: '', lastname: '', phone: '', mobile: '', email: '', address: '' })
   const { getItem, clearStorage } = useStorage();
   const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
+
+  useEffect(() => {
+
+    const email = typeof window !== 'undefined' ? window.localStorage.getItem('email') : null;
+    setUserDetails({ ...userDetails, email: email });
+
+  }, []);
 
   const handleMenu = (data) => {
     router.push(data.link);
@@ -37,10 +51,93 @@ export const Container = ({ children, id = 1 }) => {
 
   }
 
+  const handleUserDetails = (e) => {
+
+    setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+
+  }
+
+  const handleUserInfo = () => {
+
+    setOpenUserInfo(true);
+
+  }
+
+  const handleCloseUserInfo = () => {
+
+    setOpenUserInfo(false);
+
+  }
+
+  const handleSaveUserInfo = () => {
+
+    setOpenUserInfo(false);
+
+  }
+
   return (
 
     <ProtectedRoute>
       <div className="w-full h-screen relative flex">
+
+          <Dialog open={openUserInfo} onOpenChange={handleCloseUserInfo}>
+
+            <DialogContent className="sm:max-w-[425px]">
+
+                <DialogHeader>
+                    <DialogTitle>Add / Edit User Info</DialogTitle>
+                    <DialogDescription>
+                        Add / Edit necessary user details
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto">
+
+                    <div className='w-[98%]'>
+                        <Label>First Name</Label>
+                        <Input type='text' className='w-[97%] mt-1' name='firstname' value={userDetails.firstname} onChange={handleUserDetails}  />
+                    </div>
+
+                    <div className='w-[98%]'>
+                        <Label>Last Name</Label>
+                        <Input type='text' className='w-[97%] mt-1' name='lastname' value={userDetails.lastname} onChange={handleUserDetails}  />
+                    </div>
+
+                    <div className='w-[98%]'>
+                        <Label>Phone</Label>
+                        <Input type='text' className='w-[97%] mt-1' name='phone' value={userDetails.phone} onChange={handleUserDetails}  />
+                    </div>
+
+                    <div className='w-[98%]'>
+                        <Label>Email</Label>
+                        <Input type='email' className='w-[97%] mt-1' name='email' value={userDetails.email} onChange={handleUserDetails}  />
+                    </div>
+
+                    <div className='w-[98%]'>
+                        <Label>Address</Label>
+                        <Textarea rows={3} className='w-[97%] mt-1' value={userDetails.address} onChange={handleUserDetails}  />
+                    </div>
+
+                    {/* <div className='w-[98%]'>
+                        <Label>Product Description</Label>
+                        <Textarea rows={3} className='w-[97%] mt-1' name='description' value={addProduct.description} onChange={handleChange} />
+                    </div>
+
+                    <div className='w-[98%]'>
+                        <Label>Quantity</Label>
+                        <Input type='text' className='w-[97%] mt-1' name='quantity' value={addProduct.quantity} onChange={handleChange} />
+                    </div> */}
+
+                </div>
+
+                <DialogFooter>
+                    <Button type="button" variant='secondary' onClick={handleCloseUserInfo}>Cancel</Button>
+                    <Button type="button" onClick={handleSaveUserInfo}>Save</Button>
+                </DialogFooter>
+
+            </DialogContent>
+
+          </Dialog>
 
           <div className="border-r h-full w-[65px]">
 
@@ -114,14 +211,17 @@ export const Container = ({ children, id = 1 }) => {
           <div className='h-full w-full'>
 
               <div className='w-full flex items-center justify-between p-4'>
+
                 <div>
                   <Image src={dwerpLogo} alt='dwerp-logo' height={90} width={100} />
                 </div>
+
                 <CustomTooltip content='User Profile'>
-                  <div className='hover:bg-orange-100 text-orange-500 transition-all duration-200 cursor-pointer p-2 rounded-md'>
+                  <div onClick={handleUserInfo} className='hover:bg-orange-100 text-orange-500 transition-all duration-200 cursor-pointer p-2 rounded-md'>
                     <FaUserCog size={22} />
                   </div>
                 </CustomTooltip>
+
               </div>
 
               <hr />

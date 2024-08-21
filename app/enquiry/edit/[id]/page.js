@@ -8,228 +8,363 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { enquiryformSchema } from '@/helper/schema';
-import { dateFormatter } from '@/utils/constants';
+import { breakData, createZodValidation, dateFormatter } from '@/utils/constants';
 import { CustomFields } from '@/components/custom-fields';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import useAPI from '@/hooks/useAPI';
+import { enquiryData } from '@/utils/data';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CustomGrid } from '@/components/grid';
+import { DynamicFields } from '@/components/dynamic-fields';
+import { ProductDetails } from '@/components/product-details';
+import { FollowUpDetails } from '@/components/follow-ups';
+import useLoader from '@/hooks/useLoader';
 
 const Edit = ({ params }) => {
 
+  const router = useRouter();
+  const [ enquiry, setEnquiry ] = useState(null);
+  const { getEnquiry } = useAPI();
+  const { getOrganizations, updateEnquiry, getOrganization, getStatuses, getBranches, getUsers } = useAPI();
+  const sections = breakData(enquiryData, [ 'enquiry_by', 'billing_address', 'notes' ]);
+  const [ customerData, setCustomerData ] = useState(sections[1]);
+  const [ enquiryDetails, setEnquiryDetails ] = useState(sections[0]);
+
+  const [ sectionTab, setSectionTab ] = useState('enquiry-details');
+
+  const [ productData, setProductData ] = useState([]);
+
+  const { showLoader, hideLoader, Loader } = useLoader();
+
   const id = params.id;
 
-  const dispatch = useDispatch();
-  const { data } = useSelector((state) => state.list);
-  const enquiry_list = data.enquiry;
-  // const formList = useSelector((state) => state.enquiry_list);
-  const { toast } = useToast();
-  const router = useRouter();
+  const onSelectCustomer = async (customer_id) => {
+
+    const currentCustomer = await getOrganization(customer_id);
+    const keys = [ 'contact_name', 'email', 'mobile_no', 'phone_no', 'pin_code', 
+        'address', 'shipping_address', 'billing_address' ];
+
+    form.setValue('customer', `${currentCustomer.organization_id}`);
+
+    keys.forEach((x) => {
+
+        form.setValue(x, currentCustomer[x]);
+
+    })
+
+  }
 
   useEffect(() => {
 
-    if (enquiry_list.length === 0) {
+    const setData = async () => {
 
-      router.push('/enquiry');
-      return;
+      showLoader();
+      const result = await getEnquiry(id);
+      const listOrganization = await getOrganizations();
+      const listStatus = await getStatuses();
+      const listBranches = await getBranches();
+      const listUsers = await getUsers();
+
+      const selectedCustomer = listOrganization.map((x) => ({ id: x.organization_id, value: `${x.organization_id}`, label: x.name }));
+      const status_result = listStatus.map((x) => ({ id: x.id, value: `${x.id}`, label: x.status_name }));
+      const branch_result = listBranches.map((x) => ({ id: x.branch_id, value: `${x.branch_id}`, label: x.branch_name }));
+      const user_result = listUsers.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: x.first_name }));
+      const customerResult = customerData.map((x) => (x.name === 'Customer' ? { ...x , list: selectedCustomer } : x));
+
+      const newEnquiryResult = enquiryDetails.map((x) => {
+
+        if(x.name === 'Status') return { ...x, list: status_result };
+
+        if(x.name === 'Branch') return { ...x, list: branch_result };
+
+        if(x.name === 'Sales Representative' ) return { ...x, list: user_result }
+
+        return x;
+
+      })
+
+      setEnquiryDetails(newEnquiryResult);
+      setCustomerData(customerResult);
+
+      const newResult = { ...result, enquiry_by: [result.enquiry_by], type: [result.type] };
+      setEnquiry(newResult);
+      await onSelectCustomer(parseInt(result.customer))
+      setProductData(enquiry.products);
+      hideLoader();
+
 
     }
 
-  }, [params, router, enquiry_list]);
+    setData();
 
-  if (enquiry_list.length === 0) return null;
-
-  const formState = enquiry_list.find((item) => item.enquiry_no === id);
-  const formIndex = enquiry_list.findIndex((item) => item.enquiry_no === id);
-
-  const [showProductDetails, setShowProductDetails] = useState(false);
+  }, [params]);
 
   const form = useForm({
+    resolver: zodResolver(createZodValidation(enquiryData)),
+    defaultValues: enquiry
+  });
 
-    resolver: zodResolver(enquiryformSchema),
-    defaultValues: {
-      ...formState,
-      enquiry_date: dateFormatter(formState.enquiry_date),
+  useEffect(() => {
+    if (enquiry) {
+      form.reset(enquiry);
     }
+  }, [enquiry, form.reset]);
 
-  })
+  if (!params) return null;
 
   function onSubmit(values) {
 
     console.log(values);
+    updateEnquiry(id, { ...values, type: values.type[0], enquiry_by: values.enquiry_by[0] });
+    router.back();
 
-    toast({ title: "Enquiry updated successfully !", className: 'bg-green-100 border-green-300 text-green-600' });
-
-    const newValues = { ...values, enquiry_date: dateFormatter(values.enquiry_date) }
-
-    // dispatch(updateEnquiry({ index: formIndex, enquiry: newValues }));
-    // dispatch(clearForm());
-    router.push('/enquiry');
-
-    console.log(formList)
-
-  }
-
-  const handleProduct = () => {
-
-    setShowProductDetails(true);
 
   }
 
   const handleCancel = () => {
 
-    router.push('/enquiry');
+    router.back();
 
   }
 
-  const typeOptions = ['Trade', 'Contract', 'Phone Marketing', 'Retail', 'Villas', 'Projects'];
-  const branchOptions = ['Head Office'];
-  const statusOptions = ['Lead In', 'Quote In Progress', 'Waiting Information - Cost.', 'Lost', 'Quote Ready', 'Waiting Information - Supl.'];
-  const byOptions = ['Admin', 'User', 'Sales'];
-  const estimatorOptions = [...byOptions];
-  const salesRepresentativeOptions = [...byOptions];
-  const enquiryByOptions = ['PHONE', 'E-MAIL', 'MARKETING'];
-  const customerOptions = ['HolboxAI', 'MSBC'];
-  const countryOptions = ['India', 'US', 'UK'];
+  const onSelectStaus = async (status_id) => form.setValue('status', `${status_id}`);
+
+  const onSelectBranch = async (branch_id) => form.setValue('branch', `${branch_id}`);
+
+  const onSelectSalesRep = async (user_id) => form.setValue('sales_representative', `${user_id}`);
+
+  const controlsEnquiry = [
+    {
+        name: 'Status',
+        onSelect: onSelectStaus
+    },
+    {
+        name: 'Branch',
+        onSelect: onSelectBranch
+    },
+    {
+        name: 'Sales Representative',
+        onSelect: onSelectSalesRep
+    }
+  ]
+
+  const handlePrint = async () => {
+
+    try {
+
+        const reqBody = { filepath: 'images/msbc-logo.png' }
+        const res = await axios.post('/api/get-base64', reqBody);
+        const htmlContent = template01(res.data.response);
+
+        // console.log(htmlContent)
+
+        const response = await fetch('/api/print', {
+
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ htmlContent: htmlContent }),
+            
+        });
+    
+        if (response.ok) {
+        
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', 'customer-enquiry.pdf');
+            document.body.appendChild(a);
+            a.click();
+            a.parentNode.removeChild(a);
+            // setPdfUrl(url);
+            // a.download();
+            console.log(url)
+    
+        } else {
+    
+            toast.error('Error generating PDF');
+        
+        }
+
+
+    } catch (e) {
+
+        toast({ title: 'Something went wrong!', variant: 'destructive' });
+
+    }
+
+  }
+
+  const handleAddCustomer = () => {
+      router.push('/organization/add');
+  }
+
+  const handleTabChange = (value) => setSectionTab(value);
 
   return (
 
     <>
 
-      <Container id={4}>
+        <Container id={4}>
 
-        <Form {...form}>
+          <Loader>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-wrap gap-3 w-full'>
+            <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
+                
+                <TabsList>
+                    <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
+                    <TabsTrigger value="document-management" >Document Management</TabsTrigger>
+                    <TabsTrigger value="product-details" >Product Details</TabsTrigger>
+                    <TabsTrigger value="follow-up">Follow Up</TabsTrigger>
+                </TabsList>
 
-            <Card className="w-full">
+                <TabsContent value="enquiry-details" className="w-full">
 
-              <CardHeader>
-                <CardTitle>Enquiry Details</CardTitle>
-                <CardDescription>Fill out all necessary enquiry details</CardDescription>
-              </CardHeader>
+                    <Form {...form}>
 
-              <CardContent>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                <div className="flex gap-5 flex-wrap w-full">
+                            <div className='flex flex-wrap gap-3 w-full'>
 
-                  <CustomFields form={form} type='text' name="enquiry_no" label="Enquiry No" placeholder="New Enquiry" disabled={true} />
-                  <CustomFields form={form} type='date' name="enquiry_date" label="Enquiry Date" placeholder="Pick a date" />
-                  <CustomFields form={form} type='multi-select' name="type" label="Type" placeholder="Choose type" list={typeOptions} />
-                  <CustomFields form={form} type='select' name="branch" label="Branch" placeholder="Choose branch" list={branchOptions} />
-                  <CustomFields form={form} type='select' name="status" label="Status" placeholder="Choose status" list={statusOptions} />
-                  <CustomFields form={form} type='select' name="by" label="By" placeholder="Choose by" list={byOptions} />
-                  <CustomFields form={form} type='select' name="estimator" label="Estimator" placeholder="Choose estimator" disabled={true} list={estimatorOptions} />
-                  <CustomFields form={form} type='select' name="sales_representative" label="Sales Representative" placeholder="Choose sales representative" list={salesRepresentativeOptions} />
-                  <CustomFields form={form} type='checkbox' name="enquiry_by" label="Enquiry By" placeholder="Choose enquiry by" list={enquiryByOptions} />
+                                <Card className="w-full">
 
-                </div>
+                                    <CardHeader>
 
-              </CardContent>
+                                        <CardTitle>Enquiry Details</CardTitle>
+                                        <CardDescription>Fill out all necessary enquiry details</CardDescription>
 
-            </Card>
+                                    </CardHeader>
 
-            <Card className="w-full">
+                                    <CardContent>
 
-              <CardHeader className='flex flex-row justify-between'>
+                                        <CustomGrid row={3}>
+                                            <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controlsEnquiry} />
+                                        </CustomGrid>
 
-                <div className='flex flex-col gap-2'>
-                  <CardTitle>Customer Details</CardTitle>
-                  <CardDescription>Fill out all necessary customer details</CardDescription>
-                </div>
+                                    </CardContent>
 
-                {/* <div>
-                    <Button variant="outline" type='button' size="sm" className="w-fit ml-auto">Add Customer</Button>
-                  </div> */}
+                                </Card>
 
-              </CardHeader>
+                                <Card className="w-full">
 
-              <CardContent>
+                                    <CardHeader>
 
-                <div className="flex gap-5 flex-wrap w-full">
+                                        <div className='flex justify-between w-full'>
+                                            <div>
+                                                <CardTitle>Customer Details</CardTitle>
+                                                <CardDescription>Fill out all necessary customer details</CardDescription>
+                                            </div>
 
-                  {/* <CustomFields form={form} type='select' name="customer" label="Customer" placeholder="Choose customer" list={customerOptions} /> */}
-                  <CustomFields form={form} type='text' name="customer" label="Customer" placeholder="Enter customer name" />
-                  <CustomFields form={form} type='text' name="contact_name" label="Contact Name" placeholder="Enter contact person name" />
-                  <CustomFields form={form} type='text' name="customer_email" label="Customer Email" placeholder="Enter customer email" />
-                  <CustomFields form={form} type='number' name="mobile_no" label="Mobile No" placeholder="098 765 4321" />
-                  <CustomFields form={form} type='number' name="phone_no" label="Phone No" placeholder="098 765 4321" />
-                  <CustomFields form={form} type='select' name="country" label="Country" placeholder="Choose country" list={countryOptions} />
-                  <CustomFields form={form} type='number' name="post_code" label="Post Code" placeholder="Enter post code" />
-                  <CustomFields form={form} type='textarea' name="address" label="Address" placeholder="Type here..." />
-                  <CustomFields form={form} type='textarea' name="delivery_address" label="Delivery Address" placeholder="Type here..." />
-                  <CustomFields form={form} type='textarea' name="billing_address" label="Billing Address" placeholder="Type here..." />
+                                            <div>
+                                                <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
+                                            </div>
+                                        </div>
 
-                </div>
+                                    </CardHeader>
 
-              </CardContent>
+                                    <CardContent>
 
-            </Card>
+                                        <CustomGrid row={3}>
+                                            <DynamicFields data={customerData} form={form} module_name='customer-details' controls={[{ name: 'Customer', onSelect: onSelectCustomer }]} />
+                                        </CustomGrid>
 
-            <Card className="w-full">
+                                    </CardContent>
 
-              <CardHeader>
-                <CardTitle>Project Details</CardTitle>
-                <CardDescription>Fill out all necessary project details</CardDescription>
-              </CardHeader>
+                                </Card>
 
-              <CardContent>
+                                <Card className="w-full">
 
-                <div className="flex gap-5 flex-wrap w-full">
+                                    <CardHeader>
+                                        <CardTitle>Project Details</CardTitle>
+                                        <CardDescription>Fill out all necessary project details</CardDescription>
+                                    </CardHeader>
 
-                  <CustomFields form={form} type='text' name="project_name" label="Project Name" placeholder="Enter project name" />
-                  <CustomFields form={form} type='text' name="architect_name" label="Architect Name" placeholder="Enter architect name" disabled={true} />
-                  <CustomFields form={form} type='text' name="site_reference" label="Site Reference" placeholder="Enter site reference" />
-                  <CustomFields form={form} type='number' name="tentative_project_value" label="Tentative Project Value" placeholder="Enter tentative project value" />
-                  <CustomFields form={form} type='textarea' name="notes" label="Notes" placeholder="Type here..." />
+                                    <CardContent>
 
-                </div>
+                                        <CustomGrid row={3}>
+                                            <DynamicFields data={sections[2]} form={form} module_name='project-details' />
+                                        </CustomGrid>
 
-              </CardContent>
+                                    </CardContent>
 
-            </Card>
+                                </Card>
 
-            {/* <Card className="w-full">
-    
-                <CardHeader>
-                  <CardTitle>Document Management</CardTitle>
-                  <CardDescription>Attach necessary documents required</CardDescription>
-                </CardHeader>
-    
-                <CardContent>
-                  <CustomFields form={form} type='file' />
-                </CardContent>
-    
-              </Card>
+                                <div className='flex justify-end gap-3 w-full'>
+                                    <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
+                                    <Button variant="secondary" type='button' onClick={handlePrint}>Print</Button>
+                                    <Button type="submit">Save</Button>
+                                </div>
 
-              {showProductDetails && <Card className="w-full">
+                            </div>
 
-                <CardHeader>
-                  <CardTitle>Product Details</CardTitle>
-                  <CardDescription>Fill out all necessary product details</CardDescription>
-                </CardHeader>
+                        </form>
 
-                <CardContent>
+                    </Form>
 
-                  <div className="flex gap-5 flex-wrap w-full">
+                </TabsContent>
 
-                    <CustomFields form={form} type='text' name="project_name" label="Project Name" placeholder="Enter project name" />
+                <TabsContent value="document-management" className="w-full">
 
-                  </div>
-                    
-                </CardContent>
+                    <Card className="w-full">
+        
+                        <CardHeader>
+                            <CardTitle>Document Management</CardTitle>
+                            <CardDescription>Attach necessary documents required</CardDescription>
+                        </CardHeader>
 
-              </Card>} */}
+                        <CardContent>
+                            <CustomFields form={form} type='file' />
+                        </CardContent>
 
-            <div className='flex justify-end gap-3 w-full'>
-              <Button type="button" variant="secondary" onClick={handleCancel}>Cancel</Button>
-              <Button type="submit">Update</Button>
-            </div>
+                    </Card>
 
-          </form>
+                </TabsContent>
 
-        </Form>
+                <TabsContent value="product-details" className="w-full">
 
-      </Container>
+                    <Card className="w-full">
+                        
+                        <CardHeader>
+                            <CardTitle>Product Details</CardTitle>
+                            <CardDescription>Fill out all necessary product details</CardDescription>
+                        </CardHeader>
+
+                        <CardContent>
+                            
+                            <ProductDetails productData={productData} setProductData={setProductData} />
+
+                        </CardContent>
+
+                    </Card>
+
+                </TabsContent>
+
+                <TabsContent value="follow-up" className="w-full">
+
+                    <Card className="w-full">
+
+                        <CardHeader>
+                            <CardTitle>Follow Up</CardTitle>
+                            <CardDescription>List of all the follow up</CardDescription>
+                        </CardHeader>
+
+                        <CardContent>
+
+                            <FollowUpDetails />
+
+                        </CardContent>
+
+                    </Card>
+
+                </TabsContent>
+            
+            </Tabs>
+
+          </Loader>
+
+        </Container>
 
     </>
 

@@ -4,9 +4,8 @@ import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import { BACKEND_API, getColumnHeader, getRowData } from '@/utils/constants';
+import { getColumnHeader, getRowData } from '@/utils/constants';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
 import { MdEdit } from "react-icons/md";
 import { CustomTooltip } from '@/components/custom-tooltip';
 import React, { useEffect, useMemo, useState } from 'react'
@@ -17,6 +16,7 @@ import useStorage from '@/hooks/useStorage';
 import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ActionsRenderer = (params) => {
 
@@ -24,7 +24,7 @@ const ActionsRenderer = (params) => {
   const editPath = `user-management/edit/${item.user_id}`
 
   return (
-      <div className='flex items-center justify-center h-full'>
+      <div className='flex h-full'>
           <CustomTooltip content='Edit'>
               <Link href={editPath}>
                   <MdEdit size={20}/>
@@ -35,6 +35,7 @@ const ActionsRenderer = (params) => {
 
 };
 
+
 const UserManagement = () => {
 
 //   const { data } = useSelector((state) => state.list);
@@ -43,6 +44,11 @@ const UserManagement = () => {
   const [usersList, setUsersList] = useState([]);
   const { getUsers } = useAPI();
   const { getItem } = useStorage();
+  const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+
+  const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
+
+  const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
   useEffect(() => {
 
@@ -59,9 +65,54 @@ const UserManagement = () => {
 
   },[])
 
+  const ActionsRendererRoles = (params) => {
+
+    const item = params.data
+    console.log(item)
+    const editPath = `user-management/roles/edit`
+
+    return (
+        <div className='flex h-full'>
+            <CustomTooltip content='Edit'>
+                <Link href={editPath}>
+                    <MdEdit size={20}/>
+                </Link>
+            </CustomTooltip>
+        </div>
+    );
+
+  };
+
   const rowData = useMemo(() => getRowData(usersList), [usersList]);
 
   const columnDefs = useMemo(() => getColumnHeader(userData.filter((x) => x.name !== 'Password'), ActionsRenderer), []);
+
+  const rowDataRoles = [
+    {
+      role: 'Admin',
+      createdAt: new Date(),
+      createdBy: 'Super Admin',
+    },
+    {
+      role: 'Sales Representative',
+      createdAt: new Date(),
+      createdBy: 'Super Admin',
+    },
+    {
+      role: 'Accounts',
+      createdAt: new Date(),
+      createdBy: 'Super Admin',
+    },
+  ];
+
+  const columnRole = useMemo(() => [
+        
+    { field: 'role', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
+    { field: 'createdAt', headerName: 'Created At', filter: 'agDateColumnFilter' },
+    { field: 'createdBy', headerName: 'Created By', filter: 'agTextColumnFilter' },
+    { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRendererRoles }
+    
+], []);
 
   const defaultColDef = useMemo(() => {
     return {
@@ -75,39 +126,78 @@ const UserManagement = () => {
     params.api.sizeColumnsToFit();
   };
 
+
   return (
     <>
 
       <Container id={3}>
-          
-          <div className='w-full flex my-3 gap-3'>
-              <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                  <CustomTooltip content='Add User' position='right'>
+
+        <Tabs defaultValue="users" className="w-full">
+
+          <TabsList>
+            <TabsTrigger value='users'>Users</TabsTrigger>
+            <TabsTrigger value='roles'>Roles</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value='users'>
+
+            <div className='w-full flex my-3 gap-3'>
+
+                <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                    <CustomTooltip content='Add User' position='right'>
+                        <AiOutlineFileAdd size={22} />
+                    </CustomTooltip>
+                </Link>
+
+                <div>
+                  <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                </div>
+
+                <div>
+                  <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                </div>
+
+                <div>
+                  <Button type='button'>
+                    <Search className="mr-2 h-4 w-4" />
+                    Search
+                  </Button>
+                </div>
+
+            </div>
+
+            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    onGridReady={onGridReady}
+                    defaultColDef={defaultColDef}
+                    rowSelection="multiple"
+                    suppressRowClickSelection={true}
+                    pagination={true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 25, 50]}
+                />
+            </div>
+
+          </TabsContent>
+
+          <TabsContent value='roles'>
+
+            <div className='w-full flex my-3 gap-3'>
+
+              <Link href={'user-management/roles/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                  <CustomTooltip content='Add Role' position='right'>
                       <AiOutlineFileAdd size={22} />
                   </CustomTooltip>
               </Link>
 
-              <div>
-                <DatePicker placeholder='Start Date' className='w-[200px]' />
-              </div>
+            </div>
 
-              <div>
-                <DatePicker placeholder='End Date' className='w-[200px]' />
-              </div>
-
-              <div>
-                <Button type='button'>
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
-                </Button>
-              </div>
-
-          </div>
-
-          <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
               <AgGridReact
-                  rowData={rowData}
-                  columnDefs={columnDefs}
+                  rowData={rowDataRoles}
+                  columnDefs={columnRole}
                   onGridReady={onGridReady}
                   defaultColDef={defaultColDef}
                   rowSelection="multiple"
@@ -116,8 +206,12 @@ const UserManagement = () => {
                   paginationPageSize={10}
                   paginationPageSizeSelector={[10, 25, 50]}
               />
-          </div>
+            </div>
 
+          </TabsContent>
+
+        </Tabs>
+          
       </Container>
 
     </>

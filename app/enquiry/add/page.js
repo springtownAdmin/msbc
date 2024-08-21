@@ -20,30 +20,34 @@ import { ProductDetails } from '@/components/product-details';
 import axios from 'axios';
 import { template01 } from '@/helper/templates';
 import useAPI from '@/hooks/useAPI';
+import { FollowUpDetails } from '@/components/follow-ups';
 
 
 const Add = () => {
 
     const { toast } = useToast();
     const router = useRouter();
-    const { getOrganizations, createEnquiry, getOrganization } = useAPI();
+    const { getOrganizations, createEnquiry, getOrganization, getStatuses, getBranches, getUsers } = useAPI();
 
     const sections = breakData(enquiryData, [ 'enquiry_by', 'billing_address', 'notes' ])
 
     const [ customerData, setCustomerData ] = useState(sections[1]);
+    const [ enquiryDetails, setEnquiryDetails ] = useState(sections[0]);
+    const [ sectionTab, setSectionTab ] = useState('enquiry-details');
+    const [ productData, setProductData ] = useState([]);
 
     const form = useForm({
         resolver: zodResolver(createZodValidation(enquiryData)),
         defaultValues: putValues(enquiryData, 'no-default')
     });
 
-    const onSelect = async (customer_id) => {
+    const onSelectCustomer = async (customer_id) => {
 
         const currentCustomer = await getOrganization(customer_id);
         const keys = [ 'contact_name', 'email', 'mobile_no', 'phone_no', 'pin_code', 
             'address', 'shipping_address', 'billing_address' ];
 
-        form.setValue('customer', currentCustomer.organization_id);
+        form.setValue('customer', `${currentCustomer.organization_id}`);
 
         keys.forEach((x) => {
 
@@ -54,18 +58,69 @@ const Add = () => {
 
     }
 
+    const onSelectStaus = async (status_id) => form.setValue('status', `${status_id}`);
+
+    const onSelectBranch = async (branch_id) => form.setValue('branch', `${branch_id}`);
+
+    const onSelectSalesRep = async (user_id) => form.setValue('sales_representative', `${user_id}`);
+
+
+    // const controls = [
+    //     {
+    //         name: 'Customer',
+    //         onSelect: onSelect
+    //     },
+    //     {
+    //         name: 'Status',
+    //         onSelect: onSelect2
+    //     }
+    // ]
+
+    const controlsEnquiry = [
+        {
+            name: 'Status',
+            onSelect: onSelectStaus
+        },
+        {
+            name: 'Branch',
+            onSelect: onSelectBranch
+        },
+        {
+            name: 'Sales Representative',
+            onSelect: onSelectSalesRep
+        }
+    ]
+
     useEffect(() => {
 
         const fillData = async () => {
 
             const listOrganization = await getOrganizations();
+            const listStatus = await getStatuses();
+            const listBranches = await getBranches();
+            const listUsers = await getUsers();
 
             if (listOrganization.length) {
 
-                const selectedCustomer = listOrganization.map((x) => ({ id: x.organization_id, value: x.organization_id, label: x.name }));
-                const result = customerData.map((x) => (x.name === 'Customer' ? { ...x , list: selectedCustomer } : x))
+                const selectedCustomer = listOrganization.map((x) => ({ id: x.organization_id, value: `${x.organization_id}`, label: x.name }));
+                const status_result = listStatus.map((x) => ({ id: x.id, value: `${x.id}`, label: x.status_name }));
+                const branch_result = listBranches.map((x) => ({ id: x.branch_id, value: `${x.branch_id}`, label: x.branch_name }));
+                const user_result = listUsers.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: x.first_name }));
+                const result = customerData.map((x) => (x.name === 'Customer' ? { ...x , list: selectedCustomer } : x));
+                const result2 = enquiryDetails.map((x) => {
 
-                setCustomerData(result);                
+                    if(x.name === 'Status') return { ...x, list: status_result };
+
+                    if(x.name === 'Branch') return { ...x, list: branch_result };
+
+                    if(x.name === 'Sales Representative' ) return { ...x, list: user_result }
+
+                    return x;
+
+                })
+                
+                setCustomerData(result);       
+                setEnquiryDetails(result2);         
 
             }
 
@@ -77,18 +132,25 @@ const Add = () => {
 
     const onSubmit = async (values) => {
 
-        console.log(values);
+        // console.log(values);
         await createEnquiry({
             ...values,
+            customer: parseInt(values.customer),
             type: values.type[0],
-            enquiry_by: values.enquiry_by[0]
+            enquiry_by: values.enquiry_by[0],
+            status: parseInt(values.status),
+            branch: parseInt(values.branch),
+            enquiry_by: parseInt(values.enquiry_by[0]),
+            sales_representative: parseInt(values.sales_representative)
         });
+
+        router.back();
         
     }
 
     const handleCancel = () => {
 
-        router.push('/enquiry');
+        router.back();
 
     }
 
@@ -143,13 +205,15 @@ const Add = () => {
         router.push('/organization/add');
     }
 
+    const handleTabChange = (value) => setSectionTab(value);
+
     return (
 
         <>
 
             <Container id={4}>
 
-                <Tabs defaultValue="enquiry-details" className='w-full'>
+                <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
                     
                     <TabsList>
                         <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
@@ -178,7 +242,7 @@ const Add = () => {
                                         <CardContent>
 
                                             <CustomGrid row={3}>
-                                                <DynamicFields data={sections[0]} form={form} module_name='enquiry-details' />
+                                                <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controlsEnquiry} />
                                             </CustomGrid>
 
                                         </CardContent>
@@ -205,7 +269,7 @@ const Add = () => {
                                         <CardContent>
 
                                             <CustomGrid row={3}>
-                                                <DynamicFields data={customerData} form={form} module_name='customer-details' controls={[{ name: 'Customer', onSelect }]} />
+                                                <DynamicFields data={customerData} form={form} module_name='customer-details' controls={[{ name: 'Customer', onSelect: onSelectCustomer }]} />
                                             </CustomGrid>
 
                                         </CardContent>
@@ -271,7 +335,26 @@ const Add = () => {
 
                             <CardContent>
                                 
-                                <ProductDetails />
+                                <ProductDetails productData={productData} setProductData={setProductData} />
+
+                            </CardContent>
+
+                        </Card>
+
+                    </TabsContent>
+
+                    <TabsContent value="follow-up" className="w-full">
+
+                        <Card className="w-full">
+
+                            <CardHeader>
+                                <CardTitle>Follow Up</CardTitle>
+                                <CardDescription>List of all the follow up</CardDescription>
+                            </CardHeader>
+
+                            <CardContent>
+
+                                <FollowUpDetails />
 
                             </CardContent>
 

@@ -29,14 +29,15 @@ export const Container = ({ children, id = 1 }) => {
   const [value, setValue] = useState("");
   const [openUserInfo, setOpenUserInfo] = useState(false);
   const inputRef = useRef(null);
-  const [userDetails, setUserDetails] = useState({ username: '', firstname: '', lastname: '', phone: '', mobile: '', email: '', address: '' })
-  const { getItem, clearStorage } = useStorage();
+  const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
+  const { getItems, getItem, clearStorage } = useStorage();
   const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
 
   useEffect(() => {
 
-    const email = typeof window !== 'undefined' ? window.localStorage.getItem('email') : null;
-    setUserDetails({ ...userDetails, email: email });
+    const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+    console.log(data);
+    setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
   }, []);
 

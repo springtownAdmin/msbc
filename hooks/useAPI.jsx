@@ -9,30 +9,24 @@ const useAPI = () => {
   
 
     const { showToast } = useCustomToast();
-    const { setItem } = useStorage();
+    const { setItems, setItem } = useStorage();
     const router = useRouter();
 
     const authenticateUser = async (reqBody, company_name) => {
 
         try {
-
-            // const company_name = 'HolBox001';
             
             const resp = await BACKEND_API.post(`/login?company_name=${company_name}`, reqBody);
             const result = resp.data;
 
-            if (result.status_code >= 200 && result.status_code < 300) {
-
-                setItem('email', reqBody.username);
-                setItem('company_name', company_name);
-                setItem('role', result.role);
-
-                router.push('/');
-
+            if (result.message !== undefined) {
+                showToast(result.status_code, result.message);
+                return;
             }
 
-            showToast(result.status_code, result.message);
-            
+            setItems(result);
+            setItem("company_name", company_name);  
+            router.push('/dashboard');          
 
         } catch (e) {
 

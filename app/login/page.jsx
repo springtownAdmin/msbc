@@ -34,7 +34,6 @@ const Login = () => {
   const [loaderSignIn, setShowLoaderSignIn] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [hasFilled, setFilled] = useState(false);
-  const dispatch = useDispatch();
   const { toast } = useToast();
   const { authenticateUser } = useAPI();
   const { setItem } = useStorage();

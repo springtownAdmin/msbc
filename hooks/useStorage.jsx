@@ -21,7 +21,7 @@ const useStorage = () => {
 
             keys.forEach((x) => {
 
-                storage === 'local' ? window.localStorage.setItem(x, data[x]) : window.sessionStorage.setItem(x, data[x]);
+                storage === 'local' ? window.localStorage.setItem(x, JSON.stringify(data[x])) : window.sessionStorage.setItem(x, JSON.stringify(data[x]));
 
             })
 
@@ -89,17 +89,16 @@ const useStorage = () => {
 
     }
 
-    const getItems = (data = [], storage = 'local') => {
+    const getItems = (keys = [], storage = 'local') => {
 
 
         if (typeof window !== 'undefined' || data.length !== 0) {
 
-            const keys = Object.keys(data);
             const values = [];
 
             keys.forEach((x) => {
 
-                const value = storage === 'local' ? window.localStorage.getItem(x) : window.sessionStorage.getItem(x);
+                const value = storage === 'local' ? JSON.parse(window.localStorage.getItem(x)) : JSON.parse(window.sessionStorage.getItem(x));
                 values.push(value);
 
             })

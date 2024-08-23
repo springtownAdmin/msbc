@@ -219,26 +219,6 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
                                     <DynamicFields form={form} data={followUps} module_name='follow-up-details' controls={controls} />
 
                                 </CustomGrid>
-                                
-                                {/* <div className='w-[98%]'>
-                                    <Label>Enquiry No.</Label>
-                                    <Input type='text' className='w-[97%] mt-1' value="ENQ-AHMD-0001" disabled />
-                                </div>
-
-                                <div className='w-[98%]'>
-                                    <Label>By</Label>
-                                    <Input type='select' rows={3} className='w-[97%] mt-1' value="" onChange={(e) =>  {}} />
-                                </div>
-
-                                <div className='w-[98%]'>
-                                    <Label>Date</Label>
-                                    <Input type='date' className='w-[97%] mt-1' value="" onChange={(e) =>  {}} />
-                                </div>
-
-                                <div className='w-[98%]'>
-                                    <Label>Type</Label>
-                                    <Input type='text' className='w-[97%] mt-1' value="" placeholder='Phone, Email, Marketing' onChange={(e) =>  {}} />
-                                </div> */}
 
                             </div>
 

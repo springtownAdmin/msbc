@@ -2,7 +2,7 @@
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
-export const CustomTooltip = ({ content='', children, position='default' }) => {
+export const CustomTooltip = ({ content='', children, position='default', type='button' }) => {
 
   let newStyle = {};
 
@@ -19,8 +19,8 @@ export const CustomTooltip = ({ content='', children, position='default' }) => {
 
   return (
     <TooltipProvider>
-        <Tooltip >
-            <TooltipTrigger>{children}</TooltipTrigger>
+        <Tooltip>
+            <TooltipTrigger type={type}>{children}</TooltipTrigger>
             <TooltipContent style={newStyle}>
                 <p>{content}</p>
             </TooltipContent>

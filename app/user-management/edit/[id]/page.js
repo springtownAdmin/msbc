@@ -25,7 +25,6 @@ const Edit = ({ params }) => {
   const { getUser, updateUser, getGroups } = useAPI();
   const [usersData, setUsersData] = useState(userData);
   const id = params.id;
-  const { showLoader, hideLoader, Loader } = useLoader();
 
   const [user, setUser] = useState(null);
 
@@ -33,7 +32,6 @@ const Edit = ({ params }) => {
 
     const getData = async () => {
 
-      showLoader();
       const result = await getUser(id);
       const groups = await getGroups();
       const roleList = groups.map((x) => ({ id: x.group_id, value: `${x.group_id}`, label: x.group_name }));
@@ -42,7 +40,6 @@ const Edit = ({ params }) => {
       setUsersData(updatedUsersData);
 
       setUser({ ...result, user_role: `${result.user_role}` });
-      hideLoader();
 
     }
 
@@ -65,9 +62,7 @@ const Edit = ({ params }) => {
 
   const onSubmit = async (values) => {
 
-    showLoader();
     await updateUser(id, values);
-    hideLoader();
     router.back();
     
   }
@@ -84,63 +79,59 @@ const Edit = ({ params }) => {
 
       <Container id={3}>
 
-          <Loader>
+          <Tabs defaultValue="user-details" className='w-full'>
+              
+              <TabsList>
+                <TabsTrigger value="user-details">User Details</TabsTrigger>
+              </TabsList>
 
-            <Tabs defaultValue="user-details" className='w-full'>
-                
-                <TabsList>
-                  <TabsTrigger value="user-details">User Details</TabsTrigger>
-                </TabsList>
+              <TabsContent value="user-details" className="w-full">
+              
+              <div className='w-full'>
 
-                <TabsContent value="user-details" className="w-full">
-                
-                <div className='w-full'>
+                  <Form {...form}>
 
-                    <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                      <Card className="w-full mb-3">
 
-                        <Card className="w-full mb-3">
+                          <CardHeader>
 
-                            <CardHeader>
+                              <CardTitle>User Details</CardTitle>
+                              <CardDescription>Fill out all the necessary user details</CardDescription>
 
-                                <CardTitle>User Details</CardTitle>
-                                <CardDescription>Fill out all the necessary user details</CardDescription>
+                          </CardHeader>
 
-                            </CardHeader>
+                          <CardContent>
 
-                            <CardContent>
+                          <div className='w-full'>
 
-                            <div className='w-full'>
+                              <CustomGrid row={3} className='w-full'>
+                                  
+                                  <DynamicFields form={form} data={usersData} module_name='user-management-details' />    
 
-                                <CustomGrid row={3} className='w-full'>
-                                    
-                                    <DynamicFields form={form} data={usersData} module_name='user-management-details' />    
+                              </CustomGrid>
 
-                                </CustomGrid>
+                          </div>
 
-                            </div>
+                          </CardContent>
 
-                            </CardContent>
+                      </Card>
 
-                        </Card>
+                      <div className='flex gap-3 justify-end'>
+                          <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
+                          <Button>Save</Button>
+                      </div>
 
-                        <div className='flex gap-3 justify-end'>
-                            <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
-                            <Button>Save</Button>
-                        </div>
+                  </form>
 
-                    </form>
+                  </Form>
 
-                    </Form>
+              </div>
 
-                </div>
-
-                </TabsContent>
-            
-            </Tabs>
-
-          </Loader>
+              </TabsContent>
+          
+          </Tabs>
 
       </Container>
       

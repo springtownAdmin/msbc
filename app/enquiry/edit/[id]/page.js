@@ -40,7 +40,6 @@ const Edit = ({ params }) => {
 
   const [ productData, setProductData ] = useState([]);
 
-  const { showLoader, hideLoader, Loader } = useLoader();
   const { toast } = useToast();
   const { showToast } = useCustomToast();
 
@@ -68,8 +67,6 @@ const Edit = ({ params }) => {
 
 
       try {
-
-        showLoader();
 
         const result = await getEnquiry(id);
         const listOrganization = await getOrganizations();
@@ -108,10 +105,6 @@ const Edit = ({ params }) => {
 
         showToast(500, e.message);
 
-      } finally {
-
-        hideLoader();
-
       }
 
     }
@@ -146,9 +139,7 @@ const Edit = ({ params }) => {
         products: productData
     }
 
-    showLoader();
     await updateEnquiry(id, updatedData);
-    hideLoader();
     router.back();
 
 
@@ -193,7 +184,6 @@ const Edit = ({ params }) => {
 
     try {
 
-        showLoader();
         const reqBody = { filepath: 'images/msbc-logo.png' }
         const res = await axios.post('/api/get-base64', reqBody);
 
@@ -252,10 +242,6 @@ const Edit = ({ params }) => {
 
         toast({ title: 'Something went wrong!', variant: 'destructive' });
 
-    } finally {
-
-        hideLoader();
-
     }
 
   }
@@ -272,7 +258,7 @@ const Edit = ({ params }) => {
 
         <Container id={4}>
 
-          <Loader>
+          {/* <Loader> */}
 
             <Form {...form}>
 
@@ -448,7 +434,7 @@ const Edit = ({ params }) => {
             </Form>
 
 
-          </Loader>
+          {/* </Loader> */}
 
         </Container>
 

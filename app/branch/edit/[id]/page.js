@@ -21,17 +21,14 @@ const Edit = ({ params }) => {
   const router = useRouter();
   const [ branch, setBranch ] = useState(null);
   const { getBranch, updateBranch } = useAPI();
-  const { showLoader, hideLoader, Loader } = useLoader();
   const id = params.id;
 
   useEffect(() => {
 
     const setData = async () => {
 
-      showLoader();
       const result = await getBranch(id);
       setBranch(result[0]);
-      hideLoader();
 
     }
 
@@ -70,8 +67,6 @@ const Edit = ({ params }) => {
     <>
 
       <Container id={2}>
-
-        <Loader>
 
           <Tabs defaultValue="branch-details" className='w-full'>
             
@@ -185,8 +180,6 @@ const Edit = ({ params }) => {
             </TabsContent>
           
           </Tabs>
-
-        </Loader>
 
       </Container>
       

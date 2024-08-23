@@ -36,7 +36,6 @@ const Add = () => {
     const [ enquiryDetails, setEnquiryDetails ] = useState(sections[0]);
     const [ sectionTab, setSectionTab ] = useState('enquiry-details');
     const [ productData, setProductData ] = useState([]);
-    const { showLoader, Loader, hideLoader } = useLoader();
 
     const form = useForm({
         resolver: zodResolver(createZodValidation(enquiryData)),
@@ -95,7 +94,6 @@ const Add = () => {
 
         const fillData = async () => {
 
-            showLoader();
             const listOrganization = await getOrganizations();
             const listStatus = await getStatuses();
             const listBranches = await getBranches();
@@ -121,7 +119,6 @@ const Add = () => {
             
             setCustomerData(result);       
             setEnquiryDetails(result2);
-            hideLoader();
 
             // if (listOrganization.length) {
 
@@ -157,7 +154,6 @@ const Add = () => {
     const onSubmit = async (values) => {
 
         // console.log(values);
-        showLoader();
         await createEnquiry({
             ...values,
             customer: parseInt(values.customer),
@@ -169,7 +165,6 @@ const Add = () => {
             sales_representative: parseInt(values.sales_representative),
             products: productData
         });
-        hideLoader();
 
         router.back();
         
@@ -185,7 +180,6 @@ const Add = () => {
 
         try {
 
-            showLoader();
             const reqBody = { filepath: 'images/msbc-logo.png' }
             const res = await axios.post('/api/get-base64', reqBody);
             const htmlContent = template01(res.data.response);
@@ -224,10 +218,6 @@ const Add = () => {
 
             toast({ title: 'Something went wrong!', variant: 'destructive' });
 
-        } finally {
-
-            hideLoader();
-
         }
 
     }
@@ -244,160 +234,156 @@ const Add = () => {
 
             <Container id={4}>
 
-                <Loader>
+                <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
+                    
+                    <TabsList>
+                        <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
+                        <TabsTrigger value="document-management" >Document Management</TabsTrigger>
+                        <TabsTrigger value="product-details" >Product Details</TabsTrigger>
+                        <TabsTrigger value="follow-up" disabled>Follow Up</TabsTrigger>
+                    </TabsList>
 
-                    <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
-                        
-                        <TabsList>
-                            <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
-                            <TabsTrigger value="document-management" >Document Management</TabsTrigger>
-                            <TabsTrigger value="product-details" >Product Details</TabsTrigger>
-                            <TabsTrigger value="follow-up" disabled>Follow Up</TabsTrigger>
-                        </TabsList>
+                    <TabsContent value="enquiry-details" className="w-full">
 
-                        <TabsContent value="enquiry-details" className="w-full">
+                        <Form {...form}>
 
-                            <Form {...form}>
+                            <form  onSubmit={form.handleSubmit(onSubmit)}>
 
-                                <form onSubmit={form.handleSubmit(onSubmit)}>
+                                <div className='flex flex-wrap gap-3 w-full'>
 
-                                    <div className='flex flex-wrap gap-3 w-full'>
+                                    <Card className="w-full">
 
-                                        <Card className="w-full">
+                                        <CardHeader>
 
-                                            <CardHeader>
+                                            <CardTitle>Enquiry Details</CardTitle>
+                                            <CardDescription>Fill out all necessary enquiry details</CardDescription>
 
-                                                <CardTitle>Enquiry Details</CardTitle>
-                                                <CardDescription>Fill out all necessary enquiry details</CardDescription>
+                                        </CardHeader>
 
-                                            </CardHeader>
+                                        <CardContent>
 
-                                            <CardContent>
+                                            <CustomGrid row={3}>
+                                                <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controls.enquiry} />
+                                            </CustomGrid>
 
-                                                <CustomGrid row={3}>
-                                                    <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controls.enquiry} />
-                                                </CustomGrid>
+                                        </CardContent>
 
-                                            </CardContent>
+                                    </Card>
 
-                                        </Card>
+                                    <Card className="w-full">
 
-                                        <Card className="w-full">
+                                        <CardHeader>
 
-                                            <CardHeader>
-
-                                                <div className='flex justify-between w-full'>
-                                                    <div>
-                                                        <CardTitle>Customer Details</CardTitle>
-                                                        <CardDescription>Fill out all necessary customer details</CardDescription>
-                                                    </div>
-
-                                                    <div>
-                                                        <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
-                                                    </div>
+                                            <div className='flex justify-between w-full'>
+                                                <div>
+                                                    <CardTitle>Customer Details</CardTitle>
+                                                    <CardDescription>Fill out all necessary customer details</CardDescription>
                                                 </div>
 
-                                            </CardHeader>
+                                                <div>
+                                                    <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
+                                                </div>
+                                            </div>
 
-                                            <CardContent>
+                                        </CardHeader>
 
-                                                <CustomGrid row={3}>
-                                                    <DynamicFields data={customerData} form={form} module_name='customer-details' controls={controls.customer} />
-                                                </CustomGrid>
+                                        <CardContent>
 
-                                            </CardContent>
+                                            <CustomGrid row={3}>
+                                                <DynamicFields data={customerData} form={form} module_name='customer-details' controls={controls.customer} />
+                                            </CustomGrid>
 
-                                        </Card>
+                                        </CardContent>
 
-                                        <Card className="w-full">
+                                    </Card>
 
-                                            <CardHeader>
-                                                <CardTitle>Project Details</CardTitle>
-                                                <CardDescription>Fill out all necessary project details</CardDescription>
-                                            </CardHeader>
+                                    <Card className="w-full">
 
-                                            <CardContent>
+                                        <CardHeader>
+                                            <CardTitle>Project Details</CardTitle>
+                                            <CardDescription>Fill out all necessary project details</CardDescription>
+                                        </CardHeader>
 
-                                                <CustomGrid row={3}>
-                                                    <DynamicFields data={sections[2]} form={form} module_name='project-details' />
-                                                </CustomGrid>
+                                        <CardContent>
 
-                                            </CardContent>
+                                            <CustomGrid row={3}>
+                                                <DynamicFields data={sections[2]} form={form} module_name='project-details' />
+                                            </CustomGrid>
 
-                                        </Card>
+                                        </CardContent>
 
-                                        <div className='flex justify-end gap-3 w-full'>
-                                            <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                                            <Button variant="secondary" type='button' onClick={handlePrint}>Print</Button>
-                                            <Button type="submit">Save</Button>
-                                        </div>
+                                    </Card>
 
+                                    <div className='flex justify-end gap-3 w-full'>
+                                        <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
+                                        <Button variant="secondary" type='button' onClick={handlePrint}>Print</Button>
+                                        <Button>Save</Button>
                                     </div>
 
-                                </form>
+                                </div>
 
-                            </Form>
+                            </form>
 
-                        </TabsContent>
+                        </Form>
 
-                        <TabsContent value="document-management" className="w-full">
+                    </TabsContent>
 
-                            <Card className="w-full">
-                
-                                <CardHeader>
-                                    <CardTitle>Document Management</CardTitle>
-                                    <CardDescription>Attach necessary documents required</CardDescription>
-                                </CardHeader>
+                    <TabsContent value="document-management" className="w-full">
 
-                                <CardContent>
-                                    <CustomFields form={form} type='file' />
-                                </CardContent>
+                        <Card className="w-full">
+            
+                            <CardHeader>
+                                <CardTitle>Document Management</CardTitle>
+                                <CardDescription>Attach necessary documents required</CardDescription>
+                            </CardHeader>
 
-                            </Card>
+                            <CardContent>
+                                <CustomFields form={form} type='file' />
+                            </CardContent>
 
-                        </TabsContent>
+                        </Card>
 
-                        <TabsContent value="product-details" className="w-full">
+                    </TabsContent>
 
-                            <Card className="w-full">
+                    <TabsContent value="product-details" className="w-full">
+
+                        <Card className="w-full">
+                            
+                            <CardHeader>
+                                <CardTitle>Product Details</CardTitle>
+                                <CardDescription>Fill out all necessary product details</CardDescription>
+                            </CardHeader>
+
+                            <CardContent>
                                 
-                                <CardHeader>
-                                    <CardTitle>Product Details</CardTitle>
-                                    <CardDescription>Fill out all necessary product details</CardDescription>
-                                </CardHeader>
+                                <ProductDetails productData={productData} setProductData={setProductData} />
 
-                                <CardContent>
-                                    
-                                    <ProductDetails productData={productData} setProductData={setProductData} />
+                            </CardContent>
 
-                                </CardContent>
+                        </Card>
 
-                            </Card>
+                    </TabsContent>
 
-                        </TabsContent>
+                    <TabsContent value="follow-up" className="w-full">
 
-                        <TabsContent value="follow-up" className="w-full">
+                        <Card className="w-full">
 
-                            <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle>Follow Up</CardTitle>
+                                <CardDescription>List of all the follow up</CardDescription>
+                            </CardHeader>
 
-                                <CardHeader>
-                                    <CardTitle>Follow Up</CardTitle>
-                                    <CardDescription>List of all the follow up</CardDescription>
-                                </CardHeader>
+                            <CardContent>
 
-                                <CardContent>
+                                <FollowUpDetails />
 
-                                    <FollowUpDetails />
+                            </CardContent>
 
-                                </CardContent>
+                        </Card>
 
-                            </Card>
-
-                        </TabsContent>
-                    
-                    </Tabs>
-
-                </Loader>
+                    </TabsContent>
+                
+                </Tabs>
 
             </Container>
 

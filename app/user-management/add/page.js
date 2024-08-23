@@ -22,7 +22,6 @@ const Add = () => {
 
     const { createUser, getGroups } = useAPI();
     const [ usersData, setUsersData ] = useState(userData);
-    const { showLoader, hideLoader, Loader } = useLoader();
 
     const form = useForm({
       resolver: zodResolver(createZodValidation(usersData)),
@@ -42,13 +41,11 @@ const Add = () => {
 
       const fetchAllData = async () => {
 
-        showLoader();
         const groups = await getGroups();
         const roleList = groups.map((x) => ({ id: x.group_id, value: `${x.group_id}`, label: x.group_name }));
         const updatedUsersData = usersData.map((v) => (v.name === 'User Role' ? { ...v, list: roleList } : v));
 
         setUsersData(updatedUsersData);
-        hideLoader();
 
       }
 
@@ -59,10 +56,7 @@ const Add = () => {
     
     const onSubmit = async (values) => {
 
-      showLoader();
       await createUser({ ...values, user_role: parseInt(values.user_role) });
-      hideLoader();
-
       router.back();
     
     }
@@ -78,8 +72,6 @@ const Add = () => {
 
         <Container id={3}>
     
-          <Loader>
-
             <Tabs defaultValue="user-details" className='w-full'>
               
               <TabsList>
@@ -134,8 +126,6 @@ const Add = () => {
             
             </Tabs>
             
-          </Loader>
-    
         </Container>
         
       </>

@@ -111,7 +111,7 @@ const useAPI = () => {
         try {
 
             const company_name = getCompanyName();
-            const resp = await BACKEND_API.post(`/users`, { ...reqBody, company_name });
+            const resp = await BACKEND_API.post(`/users?company_name=${company_name}`, { ...reqBody, company_name });
 
             showToast(resp.data.status_code, resp.data.message);
     
@@ -346,10 +346,83 @@ const useAPI = () => {
 
     }
 
+    const getGroups = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/groups?company_name=${company_name}`);
+
+            return resp.data.groups;
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const addFollowUp = async (reqBody) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/add_follow_up?company_name=${company_name}`, reqBody);
+
+            showToast(resp.data.status_code, resp.data.message);
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getEnquiryFollowUps = async (id) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/follow_ups/${id}?company_name=${company_name}`);
+
+            return resp.data;
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getAllFollowUps = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/followups?company_name=${company_name}`);
+
+            return resp.data;
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
-        createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses
+        createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
+        addFollowUp, getEnquiryFollowUps, getAllFollowUps
     };
 
 }

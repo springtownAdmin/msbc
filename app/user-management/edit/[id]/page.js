@@ -17,12 +17,15 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import useAPI from '@/hooks/useAPI';
+import useLoader from '@/hooks/useLoader';
 
 const Edit = ({ params }) => {
 
   const router = useRouter();
-  const { getUser, updateUser } = useAPI()
+  const { getUser, updateUser, getGroups } = useAPI();
+  const [usersData, setUsersData] = useState(userData);
   const id = params.id;
+  const { showLoader, hideLoader, Loader } = useLoader();
 
   const [user, setUser] = useState(null);
 
@@ -30,8 +33,16 @@ const Edit = ({ params }) => {
 
     const getData = async () => {
 
+      showLoader();
       const result = await getUser(id);
-      setUser(result);
+      const groups = await getGroups();
+      const roleList = groups.map((x) => ({ id: x.group_id, value: `${x.group_id}`, label: x.group_name }));
+      const updatedUsersData = usersData.map((v) => (v.name === 'User Role' ? { ...v, list: roleList } : v));
+
+      setUsersData(updatedUsersData);
+
+      setUser({ ...result, user_role: `${result.user_role}` });
+      hideLoader();
 
     }
 
@@ -40,7 +51,7 @@ const Edit = ({ params }) => {
   }, [params]);
 
   const form = useForm({
-    resolver: zodResolver(createZodValidation(userData)),
+    resolver: zodResolver(createZodValidation(usersData)),
     defaultValues: user
   });
 
@@ -54,7 +65,9 @@ const Edit = ({ params }) => {
 
   const onSubmit = async (values) => {
 
-    updateUser(id, values);
+    showLoader();
+    await updateUser(id, values);
+    hideLoader();
     router.back();
     
   }
@@ -71,59 +84,63 @@ const Edit = ({ params }) => {
 
       <Container id={3}>
 
-          <Tabs defaultValue="user-details" className='w-full'>
-              
-              <TabsList>
-                <TabsTrigger value="user-details">User Details</TabsTrigger>
-              </TabsList>
+          <Loader>
 
-              <TabsContent value="user-details" className="w-full">
-              
-              <div className='w-full'>
+            <Tabs defaultValue="user-details" className='w-full'>
+                
+                <TabsList>
+                  <TabsTrigger value="user-details">User Details</TabsTrigger>
+                </TabsList>
 
-                  <Form {...form}>
+                <TabsContent value="user-details" className="w-full">
+                
+                <div className='w-full'>
 
-                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <Form {...form}>
 
-                      <Card className="w-full mb-3">
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                          <CardHeader>
+                        <Card className="w-full mb-3">
 
-                              <CardTitle>User Details</CardTitle>
-                              <CardDescription>Fill out all the necessary user details</CardDescription>
+                            <CardHeader>
 
-                          </CardHeader>
+                                <CardTitle>User Details</CardTitle>
+                                <CardDescription>Fill out all the necessary user details</CardDescription>
 
-                          <CardContent>
+                            </CardHeader>
 
-                          <div className='w-full'>
+                            <CardContent>
 
-                              <CustomGrid row={3} className='w-full'>
-                                  
-                                  <DynamicFields form={form} data={userData} module_name='user-management-details' />    
+                            <div className='w-full'>
 
-                              </CustomGrid>
+                                <CustomGrid row={3} className='w-full'>
+                                    
+                                    <DynamicFields form={form} data={usersData} module_name='user-management-details' />    
 
-                          </div>
+                                </CustomGrid>
 
-                          </CardContent>
+                            </div>
 
-                      </Card>
+                            </CardContent>
 
-                      <div className='flex gap-3 justify-end'>
-                          <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
-                          <Button>Save</Button>
-                      </div>
+                        </Card>
 
-                  </form>
+                        <div className='flex gap-3 justify-end'>
+                            <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
+                            <Button>Save</Button>
+                        </div>
 
-                  </Form>
+                    </form>
 
-              </div>
+                    </Form>
 
-              </TabsContent>
-          
-          </Tabs>
+                </div>
+
+                </TabsContent>
+            
+            </Tabs>
+
+          </Loader>
 
       </Container>
       

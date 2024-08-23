@@ -29,16 +29,13 @@ const Add = () => {
   });
 
   function onSubmit(values) {
-
-    // const itemData = { key: 'branch', data: values }
-    // dispatch(addItem(itemData));
-    // toast({ title: "Branch added successfully !", className: 'bg-green-100 border-green-300 text-green-600' });
     
 
     if (typeof window !== undefined || typeof window !== null) {
 
       let company_name = window.localStorage.getItem('company_name');
-      values.company_name = company_name;
+      form.setValue('company_name', company_name);
+      // values.company_name = company_name;
       createBranch(values);
       router.push('/branch');
 

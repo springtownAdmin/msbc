@@ -17,6 +17,7 @@ import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import useLoader from '@/hooks/useLoader';
 
 const ActionsRenderer = (params) => {
 
@@ -45,6 +46,7 @@ const UserManagement = () => {
   const { getUsers } = useAPI();
   const { getItem } = useStorage();
   const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+  const { showLoader, hideLoader, Loader } = useLoader();
 
   const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
 
@@ -54,9 +56,10 @@ const UserManagement = () => {
 
     const getAllUsers = async () => {
 
-
+        showLoader();
         const result = await getUsers();
         setUsersList(result);
+        hideLoader();
 
 
     }
@@ -132,44 +135,74 @@ const UserManagement = () => {
 
       <Container id={3}>
 
-        <Tabs defaultValue="users" className="w-full">
+        <Loader>
 
-          <TabsList>
-            <TabsTrigger value='users'>Users</TabsTrigger>
-            <TabsTrigger value='roles'>Roles</TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue="users" className="w-full">
 
-          <TabsContent value='users'>
+            <TabsList>
+              <TabsTrigger value='users'>Users</TabsTrigger>
+              <TabsTrigger value='roles'>Roles</TabsTrigger>
+            </TabsList>
 
-            <div className='w-full flex my-3 gap-3'>
+            <TabsContent value='users'>
 
-                <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                    <CustomTooltip content='Add User' position='right'>
+              <div className='w-full flex my-3 gap-3'>
+
+                  <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                      <CustomTooltip content='Add User' position='right'>
+                          <AiOutlineFileAdd size={22} />
+                      </CustomTooltip>
+                  </Link>
+
+                  <div>
+                    <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                  </div>
+
+                  <div>
+                    <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                  </div>
+
+                  <div>
+                    <Button type='button'>
+                      <Search className="mr-2 h-4 w-4" />
+                      Search
+                    </Button>
+                  </div>
+
+              </div>
+
+              <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+                  <AgGridReact
+                      rowData={rowData}
+                      columnDefs={columnDefs}
+                      onGridReady={onGridReady}
+                      defaultColDef={defaultColDef}
+                      rowSelection="multiple"
+                      suppressRowClickSelection={true}
+                      pagination={true}
+                      paginationPageSize={10}
+                      paginationPageSizeSelector={[10, 25, 50]}
+                  />
+              </div>
+
+            </TabsContent>
+
+            <TabsContent value='roles'>
+
+              <div className='w-full flex my-3 gap-3'>
+
+                <Link href={'user-management/roles/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                    <CustomTooltip content='Add Role' position='right'>
                         <AiOutlineFileAdd size={22} />
                     </CustomTooltip>
                 </Link>
 
-                <div>
-                  <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
-                </div>
+              </div>
 
-                <div>
-                  <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
-                </div>
-
-                <div>
-                  <Button type='button'>
-                    <Search className="mr-2 h-4 w-4" />
-                    Search
-                  </Button>
-                </div>
-
-            </div>
-
-            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+              <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
                 <AgGridReact
-                    rowData={rowData}
-                    columnDefs={columnDefs}
+                    rowData={rowDataRoles}
+                    columnDefs={columnRole}
                     onGridReady={onGridReady}
                     defaultColDef={defaultColDef}
                     rowSelection="multiple"
@@ -178,39 +211,13 @@ const UserManagement = () => {
                     paginationPageSize={10}
                     paginationPageSizeSelector={[10, 25, 50]}
                 />
-            </div>
+              </div>
 
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value='roles'>
+          </Tabs>
 
-            <div className='w-full flex my-3 gap-3'>
-
-              <Link href={'user-management/roles/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                  <CustomTooltip content='Add Role' position='right'>
-                      <AiOutlineFileAdd size={22} />
-                  </CustomTooltip>
-              </Link>
-
-            </div>
-
-            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-              <AgGridReact
-                  rowData={rowDataRoles}
-                  columnDefs={columnRole}
-                  onGridReady={onGridReady}
-                  defaultColDef={defaultColDef}
-                  rowSelection="multiple"
-                  suppressRowClickSelection={true}
-                  pagination={true}
-                  paginationPageSize={10}
-                  paginationPageSizeSelector={[10, 25, 50]}
-              />
-            </div>
-
-          </TabsContent>
-
-        </Tabs>
+        </Loader>
           
       </Container>
 

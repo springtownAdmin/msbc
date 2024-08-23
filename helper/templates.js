@@ -1,4 +1,4 @@
-export const template01 = (base64) => {
+export const template01 = (base64, data) => {
 
 return `
 <html lang="en">
@@ -148,9 +148,9 @@ return `
             </div>
 
             <div class="invoice-information">
-                <p><b>Enquiry No. </b>: E-12345</p>
-                <p><b>Date </b>: 15-05-2024</p>
-                <p><b>Site Reference </b>: holbox.ai</p>
+                <p><b>Enquiry No. </b>: ${data.enquiry_no}</p>
+                <p><b>Date </b>: ${data.date}</p>
+                <p><b>Site Reference </b>: ${data.site_reference}</p>
             </div>
 
             <div class="invoice-logo-brand">
@@ -162,10 +162,10 @@ return `
             <div class="invoice-head" style="margin: 2em 0;">
 
                 <div class="head client-info">
-                  <p><strong>Enquiry By</strong>: Kamran C</p>
-                  <p><strong>T</strong>: +91 5242900123</p>
-                  <p><strong>M</strong>: +91 5242900123</p>
-                  <p><strong>E</strong>: ABC@msbc.in</p>
+                  <p><strong>Enquiry By</strong>: ${data.enquiry_by}</p>
+                  <p><strong>T</strong>: +91 ${data.t}</p>
+                  <p><strong>M</strong>: +91 ${data.m}</p>
+                  <p><strong>E</strong>: ${data.e}</p>
                 </div>
 
                 <div class="head client-data">
@@ -174,31 +174,31 @@ return `
                     <tr>
                       <td><strong>Customer Name</strong></td>
                       <td>:</td>
-                      <td>ABC Developer</td>
+                      <td>${data.customer_name}</td>
                     </tr>
 
                     <tr>
                       <td><strong>Contact Name</strong></td>
                       <td>:</td>
-                      <td>Kamran</td>
+                      <td>${data.contact_name}</td>
                     </tr>
 
                     <tr>
                       <td><strong>Address</strong></td>
                       <td>:</td>
-                      <td>21-A SATELLITE AREA S.G HIGHWAY<br>Ahmedabad<br>Gujarat - 380001</td>
+                      <td>${data.address}</td>
                     </tr>
 
                     <tr>
                       <td><strong>Billing Address</strong></td>
                       <td>:</td>
-                      <td>21-A SATELLITE AREA S.G HIGHWAY<br>Ahmedabad<br>Gujarat - 380001</td>
+                      <td>${data.billing_address}</td>
                     </tr>
 
                     <tr>
                       <td><strong>Delivery Address</strong></td>
                       <td>:</td>
-                      <td>21-A SATELLITE AREA S.G HIGHWAY<br>Ahmedabad<br>Gujarat - 380001</td>
+                      <td>${data.delivery_address}</td>
                     </tr>
                   </table>
 
@@ -222,12 +222,20 @@ return `
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>-</td>
-                    </tr>
+                  
+                    ${data.product_details.map((x, i) => {
+
+                      return `
+                        <tr>
+                          <td>${i+1}</td>
+                          <td>${x.description}</td>
+                          <td>${x.product_name}</td>
+                          <td>${x.quantity}</td>
+                        </tr>
+                      `
+
+                    })}
+   
                   </tbody>
                 </table>
 

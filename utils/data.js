@@ -424,7 +424,7 @@ export const userData = [
         label: 'Password',
         type: 'text',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -445,9 +445,9 @@ export const userData = [
         name: 'User Role',
         label: 'User Role',
         type: 'select',
-        list: [ 'Admin', 'Sales Representative', 'Accounts', 'User' ],
+        list: [],
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -462,6 +462,90 @@ export const userData = [
         is_visible: true,
         read_only: false
     },
+
+]
+
+export const followUpData = [
+
+    {
+        id: 1,
+        name: 'Enquiry No',
+        label: 'Enquiry No',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: true
+    },
+
+    {
+        id: 2,
+        name: 'Chased By',
+        label: 'Chased By',
+        type: 'select',
+        list: [],
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 3,
+        name: 'Chase On',
+        label: 'Chase On',
+        type: 'date',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 4,
+        name: 'Type',
+        label: 'Type',
+        type: 'select',
+        list: [ 'Phone', 'Email', 'Marketing' ],
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 5,
+        name: 'Description',
+        label: 'Description',
+        type: 'textarea',
+        value: '',
+        required: false,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 6,
+        name: 'Reminder to',
+        label: 'Reminder to',
+        type: 'select',
+        list: [],
+        value: '',
+        required: false,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 7,
+        name: 'Completed',
+        label: 'Completed',
+        type: 'checkbox',
+        value: false,
+        required: false,
+        is_visible: true,
+        read_only: false
+    }
 
 ]
 

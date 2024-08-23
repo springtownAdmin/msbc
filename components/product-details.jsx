@@ -23,7 +23,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
 
     const rowData = useMemo(() => productData.map((v) => 
         ({ productNo: v.product_id, productName: v.product_name, productDescription: v.description, quantity: v.quantity }))
-    , []);
+    , [productData]);
 
     const ActionsRenderer = (params) => {
 
@@ -50,13 +50,9 @@ export const ProductDetails = ({ productData, setProductData }) => {
         }
     
         return (
-            <div className='flex items-center justify-center gap-8 h-full'>
+            <div className='flex items-center h-full'>
                 <div className='cursor-pointer' onClick={handleEdit}>
                     <MdEdit size={20}  />
-                </div>
-    
-                <div className='cursor-pointer' onClick={handleDelete}>
-                    <Trash2 size={20}  />
                 </div>
             </div>
         );
@@ -93,13 +89,36 @@ export const ProductDetails = ({ productData, setProductData }) => {
 
     }
 
-    const handleSave = async () => {
+    const handleSave = () => {
 
-        // const newArr = [ ...productData ];
-        // newArr.push({ ...addProduct, product_id: newArr.length+1 });
-        // setProductData(newArr);
+        const newProduct = {
+            product_id: addProduct.product_id + 1,
+            product_name: addProduct.product_name, 
+            description: addProduct.description,
+            quantity: addProduct.quantity
+        }
+
+        setProductData([ ...productData, newProduct ]);
         setAddProduct({ product_id: 0, product_name: '', description: '', quantity: 0 });
         handleClose();
+
+    }
+
+    const handleEdit = () => {
+
+        const updatedProduct = productData.map((x) => {
+
+            if (x.product_id === addProduct.product_id) {
+
+                return addProduct;
+
+            }
+
+            return x;
+
+        })
+
+        setProductData(updatedProduct);
 
     }
 
@@ -113,7 +132,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
                     <DialogHeader>
                         <DialogTitle>{edit ? 'Edit Product' : 'Add Product'}</DialogTitle>
                         <DialogDescription>
-                            {edit ? 'Add' : 'Edit'} necessary product details
+                            {edit ? 'Edit' : 'Add'} necessary product details
                         </DialogDescription>
                     </DialogHeader>
 
@@ -121,7 +140,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
                         
                         <div className='w-[98%]'>
                             <Label>Product Name</Label>
-                            <Input type='text' className='w-[97%] mt-1' name='type' value={addProduct.type} onChange={handleChange} />
+                            <Input type='text' className='w-[97%] mt-1' name='product_name' value={addProduct.product_name} onChange={handleChange} />
                         </div>
 
                         <div className='w-[98%]'>
@@ -138,7 +157,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
 
                     <DialogFooter>
                         <Button type="button" variant='secondary' onClick={handleClose}>Cancel</Button>
-                        <Button type="button" onClick={handleSave}>Save</Button>
+                        <Button type="button" onClick={edit ? handleEdit : handleSave}>Save</Button>
                     </DialogFooter>
 
                 </DialogContent>

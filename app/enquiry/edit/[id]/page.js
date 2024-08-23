@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { enquiryformSchema } from '@/helper/schema';
-import { breakData, createZodValidation, dateFormatter } from '@/utils/constants';
+import { breakData, createZodValidation, dateFormatter, formatDateToYYYYMMDD } from '@/utils/constants';
 import { CustomFields } from '@/components/custom-fields';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
@@ -21,6 +21,10 @@ import { DynamicFields } from '@/components/dynamic-fields';
 import { ProductDetails } from '@/components/product-details';
 import { FollowUpDetails } from '@/components/follow-ups';
 import useLoader from '@/hooks/useLoader';
+import { Printer } from 'lucide-react';
+import axios from 'axios';
+import { template01 } from '@/helper/templates';
+import useCustomToast from '@/hooks/useCustomToast';
 
 const Edit = ({ params }) => {
 
@@ -37,6 +41,8 @@ const Edit = ({ params }) => {
   const [ productData, setProductData ] = useState([]);
 
   const { showLoader, hideLoader, Loader } = useLoader();
+  const { toast } = useToast();
+  const { showToast } = useCustomToast();
 
   const id = params.id;
 
@@ -60,40 +66,53 @@ const Edit = ({ params }) => {
 
     const setData = async () => {
 
-      showLoader();
-      const result = await getEnquiry(id);
-      const listOrganization = await getOrganizations();
-      const listStatus = await getStatuses();
-      const listBranches = await getBranches();
-      const listUsers = await getUsers();
 
-      const selectedCustomer = listOrganization.map((x) => ({ id: x.organization_id, value: `${x.organization_id}`, label: x.name }));
-      const status_result = listStatus.map((x) => ({ id: x.id, value: `${x.id}`, label: x.status_name }));
-      const branch_result = listBranches.map((x) => ({ id: x.branch_id, value: `${x.branch_id}`, label: x.branch_name }));
-      const user_result = listUsers.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: x.first_name }));
-      const customerResult = customerData.map((x) => (x.name === 'Customer' ? { ...x , list: selectedCustomer } : x));
+      try {
 
-      const newEnquiryResult = enquiryDetails.map((x) => {
+        showLoader();
 
-        if(x.name === 'Status') return { ...x, list: status_result };
+        const result = await getEnquiry(id);
+        const listOrganization = await getOrganizations();
+        const listStatus = await getStatuses();
+        const listBranches = await getBranches();
+        const listUsers = await getUsers();
 
-        if(x.name === 'Branch') return { ...x, list: branch_result };
+        const selectedCustomer = listOrganization.map((x) => ({ id: x.organization_id, value: `${x.organization_id}`, label: x.name }));
+        const status_result = listStatus.map((x) => ({ id: x.id, value: `${x.id}`, label: x.status_name }));
+        const branch_result = listBranches.map((x) => ({ id: x.branch_id, value: `${x.branch_id}`, label: x.branch_name }));
+        const user_result = listUsers.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: x.first_name }));
+        const customerResult = customerData.map((x) => (x.name === 'Customer' ? { ...x , list: selectedCustomer } : x));
 
-        if(x.name === 'Sales Representative' ) return { ...x, list: user_result }
+        const newEnquiryResult = enquiryDetails.map((x) => {
 
-        return x;
+            if(x.name === 'Status') return { ...x, list: status_result };
 
-      })
+            if(x.name === 'Branch') return { ...x, list: branch_result };
 
-      setEnquiryDetails(newEnquiryResult);
-      setCustomerData(customerResult);
+            if(x.name === 'Sales Representative' ) return { ...x, list: user_result }
 
-      const newResult = { ...result, enquiry_by: [result.enquiry_by], type: [result.type] };
-      setEnquiry(newResult);
-      await onSelectCustomer(parseInt(result.customer))
-      setProductData(enquiry.products);
-      hideLoader();
+            return x;
 
+        })
+
+        setEnquiryDetails(newEnquiryResult);
+        setCustomerData(customerResult);
+
+        const newResult = { ...result, enquiry_by: [result.enquiry_by], type: [result.type], tentative_project_value: `${result.tentative_project_value}` };
+        setEnquiry(newResult);
+        await onSelectCustomer(parseInt(result.customer))
+        setProductData(result.products);
+
+
+      } catch (e) {
+
+        showToast(500, e.message);
+
+      } finally {
+
+        hideLoader();
+
+      }
 
     }
 
@@ -114,10 +133,22 @@ const Edit = ({ params }) => {
 
   if (!params) return null;
 
-  function onSubmit(values) {
+  const onSubmit = async (values) => {
 
-    console.log(values);
-    updateEnquiry(id, { ...values, type: values.type[0], enquiry_by: values.enquiry_by[0] });
+    const updatedData = {
+        ...values,
+        type: values.type[0],
+        enquiry_by: values.enquiry_by[0],
+        estimator: '',
+        country: '',
+        by: '',
+        notes: '',
+        products: productData
+    }
+
+    showLoader();
+    await updateEnquiry(id, updatedData);
+    hideLoader();
     router.back();
 
 
@@ -129,36 +160,64 @@ const Edit = ({ params }) => {
 
   }
 
-  const onSelectStaus = async (status_id) => form.setValue('status', `${status_id}`);
+  const onSelectStatus = (status_id) => form.setValue('status', `${status_id}`);
 
-  const onSelectBranch = async (branch_id) => form.setValue('branch', `${branch_id}`);
+  const onSelectBranch = (branch_id) => form.setValue('branch', `${branch_id}`);
 
-  const onSelectSalesRep = async (user_id) => form.setValue('sales_representative', `${user_id}`);
+  const onSelectSalesRep = (user_id) => form.setValue('sales_representative', `${user_id}`);
 
-  const controlsEnquiry = [
-    {
-        name: 'Status',
-        onSelect: onSelectStaus
-    },
-    {
-        name: 'Branch',
-        onSelect: onSelectBranch
-    },
-    {
-        name: 'Sales Representative',
-        onSelect: onSelectSalesRep
-    }
-  ]
+  const controls = {
+    enquiry: [
+        {
+            name: 'Status',
+            onSelect: onSelectStatus
+        },
+        {
+            name: 'Branch',
+            onSelect: onSelectBranch
+        },
+        {
+            name: 'Sales Representative',
+            onSelect: onSelectSalesRep
+        }
+    ],
+    customer: [
+        {
+            name: 'Customer',
+            onSelect: onSelectCustomer
+        }
+    ]
+  }
 
   const handlePrint = async () => {
 
     try {
 
+        showLoader();
         const reqBody = { filepath: 'images/msbc-logo.png' }
         const res = await axios.post('/api/get-base64', reqBody);
-        const htmlContent = template01(res.data.response);
 
-        // console.log(htmlContent)
+        const formDetails = form.getValues();
+
+        const printData = {
+            enquiry_no: formDetails.enquiry_no,
+            date: formatDateToYYYYMMDD(formDetails.enquiry_date),
+            site_reference: formDetails.site_reference,
+            enquiry_by: enquiryDetails[5].value,
+            t: formDetails.phone,
+            m: formDetails.mobile,
+            e: formDetails.email,
+            customer_name: customerData[0].list.filter(x => x.value === formDetails.customer)[0].label,
+            contact_name: formDetails.contact_name,
+            address: formDetails.address,
+            billing_address: formDetails.billing_address,
+            delivery_address: formDetails.shipping_address,
+            product_details: formDetails.products,
+        }
+
+        const htmlContent = template01(res.data.response, printData);
+
+        console.log(htmlContent)
 
         const response = await fetch('/api/print', {
 
@@ -193,6 +252,10 @@ const Edit = ({ params }) => {
 
         toast({ title: 'Something went wrong!', variant: 'destructive' });
 
+    } finally {
+
+        hideLoader();
+
     }
 
   }
@@ -211,156 +274,179 @@ const Edit = ({ params }) => {
 
           <Loader>
 
-            <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
-                
-                <TabsList>
-                    <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
-                    <TabsTrigger value="document-management" >Document Management</TabsTrigger>
-                    <TabsTrigger value="product-details" >Product Details</TabsTrigger>
-                    <TabsTrigger value="follow-up">Follow Up</TabsTrigger>
-                </TabsList>
+            <Form {...form}>
 
-                <TabsContent value="enquiry-details" className="w-full">
+                <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                    <Form {...form}>
-
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-
-                            <div className='flex flex-wrap gap-3 w-full'>
-
-                                <Card className="w-full">
-
-                                    <CardHeader>
-
-                                        <CardTitle>Enquiry Details</CardTitle>
-                                        <CardDescription>Fill out all necessary enquiry details</CardDescription>
-
-                                    </CardHeader>
-
-                                    <CardContent>
-
-                                        <CustomGrid row={3}>
-                                            <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controlsEnquiry} />
-                                        </CustomGrid>
-
-                                    </CardContent>
-
-                                </Card>
-
-                                <Card className="w-full">
-
-                                    <CardHeader>
-
-                                        <div className='flex justify-between w-full'>
-                                            <div>
-                                                <CardTitle>Customer Details</CardTitle>
-                                                <CardDescription>Fill out all necessary customer details</CardDescription>
-                                            </div>
-
-                                            <div>
-                                                <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
-                                            </div>
-                                        </div>
-
-                                    </CardHeader>
-
-                                    <CardContent>
-
-                                        <CustomGrid row={3}>
-                                            <DynamicFields data={customerData} form={form} module_name='customer-details' controls={[{ name: 'Customer', onSelect: onSelectCustomer }]} />
-                                        </CustomGrid>
-
-                                    </CardContent>
-
-                                </Card>
-
-                                <Card className="w-full">
-
-                                    <CardHeader>
-                                        <CardTitle>Project Details</CardTitle>
-                                        <CardDescription>Fill out all necessary project details</CardDescription>
-                                    </CardHeader>
-
-                                    <CardContent>
-
-                                        <CustomGrid row={3}>
-                                            <DynamicFields data={sections[2]} form={form} module_name='project-details' />
-                                        </CustomGrid>
-
-                                    </CardContent>
-
-                                </Card>
-
-                                <div className='flex justify-end gap-3 w-full'>
-                                    <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                                    <Button variant="secondary" type='button' onClick={handlePrint}>Print</Button>
-                                    <Button type="submit">Save</Button>
-                                </div>
-
-                            </div>
-
-                        </form>
-
-                    </Form>
-
-                </TabsContent>
-
-                <TabsContent value="document-management" className="w-full">
-
-                    <Card className="w-full">
-        
-                        <CardHeader>
-                            <CardTitle>Document Management</CardTitle>
-                            <CardDescription>Attach necessary documents required</CardDescription>
-                        </CardHeader>
-
-                        <CardContent>
-                            <CustomFields form={form} type='file' />
-                        </CardContent>
-
-                    </Card>
-
-                </TabsContent>
-
-                <TabsContent value="product-details" className="w-full">
-
-                    <Card className="w-full">
+                    <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
                         
-                        <CardHeader>
-                            <CardTitle>Product Details</CardTitle>
-                            <CardDescription>Fill out all necessary product details</CardDescription>
-                        </CardHeader>
+                        <TabsList>
+                            <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
+                            <TabsTrigger value="document-management" >Document Management</TabsTrigger>
+                            <TabsTrigger value="product-details" >Product Details</TabsTrigger>
+                            <TabsTrigger value="follow-up">Follow Up</TabsTrigger>
+                        </TabsList>
 
-                        <CardContent>
-                            
-                            <ProductDetails productData={productData} setProductData={setProductData} />
+                        <TabsContent value="enquiry-details" className="w-full">
 
-                        </CardContent>
+                            {/* <Form {...form}>
 
-                    </Card>
+                                <form onSubmit={form.handleSubmit(onSubmit)}> */}
 
-                </TabsContent>
+                                    <div className='flex flex-wrap gap-3 w-full'>
 
-                <TabsContent value="follow-up" className="w-full">
+                                        <Card className="w-full">
 
-                    <Card className="w-full">
+                                            <CardHeader>
 
-                        <CardHeader>
-                            <CardTitle>Follow Up</CardTitle>
-                            <CardDescription>List of all the follow up</CardDescription>
-                        </CardHeader>
+                                                <CardTitle>Enquiry Details</CardTitle>
+                                                <CardDescription>Fill out all necessary enquiry details</CardDescription>
 
-                        <CardContent>
+                                            </CardHeader>
 
-                            <FollowUpDetails />
+                                            <CardContent>
 
-                        </CardContent>
+                                                <CustomGrid row={3}>
+                                                    <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controls.enquiry} />
+                                                </CustomGrid>
 
-                    </Card>
+                                            </CardContent>
 
-                </TabsContent>
+                                        </Card>
+
+                                        <Card className="w-full">
+
+                                            <CardHeader>
+
+                                                <div className='flex justify-between w-full'>
+                                                    <div>
+                                                        <CardTitle>Customer Details</CardTitle>
+                                                        <CardDescription>Fill out all necessary customer details</CardDescription>
+                                                    </div>
+
+                                                    <div>
+                                                        <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
+                                                    </div>
+                                                </div>
+
+                                            </CardHeader>
+
+                                            <CardContent>
+
+                                                <CustomGrid row={3}>
+                                                    <DynamicFields data={customerData} form={form} module_name='customer-details' controls={controls.customer} />
+                                                </CustomGrid>
+
+                                            </CardContent>
+
+                                        </Card>
+
+                                        <Card className="w-full">
+
+                                            <CardHeader>
+                                                <CardTitle>Project Details</CardTitle>
+                                                <CardDescription>Fill out all necessary project details</CardDescription>
+                                            </CardHeader>
+
+                                            <CardContent>
+
+                                                <CustomGrid row={3}>
+                                                    <DynamicFields data={sections[2]} form={form} module_name='project-details' />
+                                                </CustomGrid>
+
+                                            </CardContent>
+
+                                        </Card>
+
+                                        {/* <div className='flex justify-end gap-3 w-full'>
+                                            <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
+                                            <Button variant="secondary" type='button' onClick={handlePrint}>
+                                                <Printer size={18} className="mr-2 h-4 w-4" />
+                                                Print
+                                            </Button>
+                                            <Button type="submit">Save</Button>
+                                        </div> */}
+
+                                    </div>
+
+                                {/* </form>
+
+                            </Form> */}
+
+                        </TabsContent>
+
+                        <TabsContent value="document-management" className="w-full">
+
+                            <Card className="w-full">
+                
+                                <CardHeader>
+                                    <CardTitle>Document Management</CardTitle>
+                                    <CardDescription>Attach necessary documents required</CardDescription>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <CustomFields form={form} type='file' />
+                                </CardContent>
+
+                            </Card>
+
+                        </TabsContent>
+
+                        <TabsContent value="product-details" className="w-full">
+
+                            <Card className="w-full">
+                                
+                                <CardHeader>
+
+                                    <CardTitle>Product Details</CardTitle>
+                                    <CardDescription>Fill out all necessary product details</CardDescription>
             
-            </Tabs>
+                                </CardHeader>
+
+                                <CardContent>
+                                    
+                                    <ProductDetails productData={productData} setProductData={setProductData} />
+
+                                </CardContent>
+
+                            </Card>
+
+                        </TabsContent>
+
+                        <TabsContent value="follow-up" className="w-full">
+
+                            <Card className="w-full">
+
+                                <CardHeader>
+                                    <CardTitle>Follow Up</CardTitle>
+                                    <CardDescription>List of all the follow ups for enquiry - {enquiry?.enquiry_no}</CardDescription>
+                                </CardHeader>
+
+                                <CardContent>
+
+                                    <FollowUpDetails enquiryNo={enquiry?.enquiry_no} enquiry_id={id} />
+
+                                </CardContent>
+
+                            </Card>
+
+                        </TabsContent>
+
+                        <div className='flex justify-end gap-3 w-full mt-4'>
+                            <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
+                            <Button variant="secondary" type='button' onClick={handlePrint}>
+                                <Printer size={18} className="mr-2 h-4 w-4" />
+                                Print
+                            </Button>
+                            <Button type="submit">Save</Button>
+                        </div>
+                    
+                    </Tabs>
+
+                </form>
+
+            </Form>
+
 
           </Loader>
 

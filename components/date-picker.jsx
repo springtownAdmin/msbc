@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
-export const DatePicker = ({ placeholder = 'Pick a date', className = 'w-[280px]' }) => {
-
-  const [date, setDate] = React.useState(null);
+export const DatePicker = ({ placeholder = 'Pick a date', className = 'w-[280px]', date = null, onSelect = null }) => {
 
   return (
     <Popover>
@@ -23,7 +21,7 @@ export const DatePicker = ({ placeholder = 'Pick a date', className = 'w-[280px]
       </PopoverTrigger>
 
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+        <Calendar mode="single" selected={date} onSelect={onSelect} initialFocus />
       </PopoverContent>
 
     </Popover>

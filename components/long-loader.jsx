@@ -20,5 +20,5 @@ export const LongLoader = () => {
             <span className="font-medium italic text-center text-lg">Just a moment, <br /> we're getting things ready for you !</span>
         </div>
     );
-
+ 
 }

@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import useAPI from '@/hooks/useAPI';
+import useLoader from '@/hooks/useLoader';
 import { createZodValidation } from '@/utils/constants';
 import { branchData } from '@/utils/data';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,14 +21,17 @@ const Edit = ({ params }) => {
   const router = useRouter();
   const [ branch, setBranch ] = useState(null);
   const { getBranch, updateBranch } = useAPI();
+  const { showLoader, hideLoader, Loader } = useLoader();
   const id = params.id;
 
   useEffect(() => {
 
     const setData = async () => {
 
+      showLoader();
       const result = await getBranch(id);
       setBranch(result[0]);
+      hideLoader();
 
     }
 
@@ -67,56 +71,86 @@ const Edit = ({ params }) => {
 
       <Container id={2}>
 
-        <Tabs defaultValue="branch-details" className='w-full'>
-          
-          <TabsList>
-            <TabsTrigger value="branch-details">Branch Details</TabsTrigger>
-            <TabsTrigger value="images" disabled>Images</TabsTrigger>
-            <TabsTrigger value="bank-details" disabled>Bank Details</TabsTrigger>
-            <TabsTrigger value="advance-payment-details" disabled>Advance Payment Details</TabsTrigger>
-          </TabsList>
+        <Loader>
 
-          <TabsContent value="branch-details" className="w-full">
+          <Tabs defaultValue="branch-details" className='w-full'>
             
-            <div className='w-full'>
+            <TabsList>
+              <TabsTrigger value="branch-details">Branch Details</TabsTrigger>
+              <TabsTrigger value="images" disabled>Images</TabsTrigger>
+              <TabsTrigger value="bank-details" disabled>Bank Details</TabsTrigger>
+              <TabsTrigger value="advance-payment-details" disabled>Advance Payment Details</TabsTrigger>
+            </TabsList>
 
-              <Form {...form}>
+            <TabsContent value="branch-details" className="w-full">
+              
+              <div className='w-full'>
 
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Form {...form}>
 
-                  <Card className="w-full mb-3">
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                      <CardHeader>
+                    <Card className="w-full mb-3">
 
-                            <CardTitle>Branch Details</CardTitle>
-                            <CardDescription>Fill out all the necessary branch details</CardDescription>
+                        <CardHeader>
 
-                      </CardHeader>
+                              <CardTitle>Branch Details</CardTitle>
+                              <CardDescription>Fill out all the necessary branch details</CardDescription>
 
-                      <CardContent>
+                        </CardHeader>
 
-                        <div className='w-full'>
+                        <CardContent>
 
-                          <CustomGrid row={3} className='w-full'>
-                              
-                              <DynamicFields form={form} module_name='branch-details' data={branchData.filter((_,i) => i !== 0).map(((x, j) => { if(j === 0) return { ...x, read_only: true }; return x; }))} />    
+                          <div className='w-full'>
 
-                          </CustomGrid>
+                            <CustomGrid row={3} className='w-full'>
+                                
+                                <DynamicFields form={form} module_name='branch-details' data={branchData.filter((_,i) => i !== 0).map(((x, j) => { if(j === 0) return { ...x, read_only: true }; return x; }))} />    
 
-                        </div>
+                            </CustomGrid>
 
-                      </CardContent>
+                          </div>
 
-                  </Card>
+                        </CardContent>
 
-                  {/* <Card className="w-full mb-3">
+                    </Card>
+
+                    {/* <Card className="w-full mb-3">
+
+                        <CardHeader>
+
+                            <div className='flex justify-between w-full'>
+                                <div>
+                                    <CardTitle>Billing Details</CardTitle>
+                                    <CardDescription>Fill out all the necessary billing details</CardDescription>
+                                </div>
+                            </div>
+
+                        </CardHeader>
+
+                        <CardContent>
+
+                            <CustomGrid row={3} className='w-full'>
+
+                                <CustomFields type='textarea' label='Address' name='billing_address' form={form} />    
+                                <CustomFields type='text' label='State' name='billing_state' form={form} />    
+                                <CustomFields type='text' label='Country' name='billing_country' form={form} />    
+                                <CustomFields type='text' label='Pincode' name='billing_pincode' form={form} />    
+
+                            </CustomGrid>
+
+                        </CardContent>
+
+                    </Card>
+
+                    <Card className="w-full mb-3">
 
                       <CardHeader>
 
                           <div className='flex justify-between w-full'>
                               <div>
-                                  <CardTitle>Billing Details</CardTitle>
-                                  <CardDescription>Fill out all the necessary billing details</CardDescription>
+                                  <CardTitle>Delivery Details</CardTitle>
+                                  <CardDescription>Fill out all the necessary delivery details</CardDescription>
                               </div>
                           </div>
 
@@ -124,61 +158,35 @@ const Edit = ({ params }) => {
 
                       <CardContent>
 
-                          <CustomGrid row={3} className='w-full'>
+                            <CustomGrid row={3} className='w-full'>
 
-                              <CustomFields type='textarea' label='Address' name='billing_address' form={form} />    
-                              <CustomFields type='text' label='State' name='billing_state' form={form} />    
-                              <CustomFields type='text' label='Country' name='billing_country' form={form} />    
-                              <CustomFields type='text' label='Pincode' name='billing_pincode' form={form} />    
+                                <CustomFields type='textarea' label='Address' name='delivery_address' form={form} />    
+                                <CustomFields type='text' label='State' name='delivery_state' form={form} />    
+                                <CustomFields type='text' label='Country' name='delivery_country' form={form} />    
+                                <CustomFields type='text' label='Pincode' name='delivery_pincode' form={form} />
 
-                          </CustomGrid>
+                            </CustomGrid>
 
                       </CardContent>
 
-                  </Card>
+                    </Card> */}
 
-                  <Card className="w-full mb-3">
+                    <div className='flex gap-3 justify-end'>
+                        <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
+                        <Button>Save</Button>
+                    </div>
 
-                    <CardHeader>
+                  </form>
 
-                        <div className='flex justify-between w-full'>
-                            <div>
-                                <CardTitle>Delivery Details</CardTitle>
-                                <CardDescription>Fill out all the necessary delivery details</CardDescription>
-                            </div>
-                        </div>
+                </Form>
 
-                    </CardHeader>
+              </div>
 
-                    <CardContent>
+            </TabsContent>
+          
+          </Tabs>
 
-                          <CustomGrid row={3} className='w-full'>
-
-                              <CustomFields type='textarea' label='Address' name='delivery_address' form={form} />    
-                              <CustomFields type='text' label='State' name='delivery_state' form={form} />    
-                              <CustomFields type='text' label='Country' name='delivery_country' form={form} />    
-                              <CustomFields type='text' label='Pincode' name='delivery_pincode' form={form} />
-
-                          </CustomGrid>
-
-                    </CardContent>
-
-                  </Card> */}
-
-                  <div className='flex gap-3 justify-end'>
-                      <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
-                      <Button>Save</Button>
-                  </div>
-
-                </form>
-
-              </Form>
-
-            </div>
-
-          </TabsContent>
-        
-        </Tabs>
+        </Loader>
 
       </Container>
       

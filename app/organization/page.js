@@ -16,6 +16,7 @@ import { MdEdit } from 'react-icons/md';
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import useLoader from "@/hooks/useLoader";
 
 const ActionsRenderer = (params) => {
 
@@ -39,13 +40,21 @@ const Organization = () => {
     const { getOrganizations } = useAPI();
     const [ organizationList, setOrganizationList ] = useState([]);
     const { company_name } = useStorage();
+    const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+    const { showLoader, hideLoader, Loader } = useLoader();
+
+    const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
+  
+    const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
     useEffect(() => {
 
         const getData = async () => {
 
+            showLoader();
             const result = await getOrganizations();
             setOrganizationList(result);
+            hideLoader();
 
         }
 
@@ -72,43 +81,47 @@ const Organization = () => {
   return (
     <Container id={5}>
 
-        <div className='w-full flex my-3 gap-3'>
-            <Link href={'organization/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                <CustomTooltip content='Add Organization' position='right'>
-                    <AiOutlineFileAdd size={22} />
-                </CustomTooltip>
-            </Link>
+        <Loader>
 
-            <div>
-                <DatePicker placeholder='Start Date' className='w-[200px]' />
+            <div className='w-full flex my-3 gap-3'>
+                <Link href={'organization/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                    <CustomTooltip content='Add Organization' position='right'>
+                        <AiOutlineFileAdd size={22} />
+                    </CustomTooltip>
+                </Link>
+
+                <div>
+                    <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                </div>
+
+                <div>
+                    <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                </div>
+
+                <div>
+                    <Button type='button'>
+                        <Search className="mr-2 h-4 w-4" />
+                        Search
+                    </Button>
+                </div>
+
             </div>
 
-            <div>
-                <DatePicker placeholder='End Date' className='w-[200px]' />
+            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+                <AgGridReact
+                    rowData={rowData}
+                    // onGridReady={onGridReady}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    rowSelection="multiple"
+                    suppressRowClickSelection={true}
+                    pagination={true}
+                    paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 25, 50]}
+                />
             </div>
-
-            <div>
-                <Button type='button'>
-                    <Search className="mr-2 h-4 w-4" />
-                    Search
-                </Button>
-            </div>
-
-        </div>
-
-        <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-            <AgGridReact
-                rowData={rowData}
-                // onGridReady={onGridReady}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                rowSelection="multiple"
-                suppressRowClickSelection={true}
-                pagination={true}
-                paginationPageSize={10}
-                paginationPageSizeSelector={[10, 25, 50]}
-            />
-        </div>
+            
+        </Loader>
 
     </Container>
   );

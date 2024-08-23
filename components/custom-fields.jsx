@@ -219,15 +219,20 @@ export const CustomFields = (props) => {
     if (type === 'multi-checkbox') {
 
         const { list, alignment = 'horizontal' } = props;
-        const newList = list.map((item, i) => ({ id: toSnakeCase(item), label: item }));
+        const newList = list.length ? typeof list[0] === 'string' ?  list.map((item, i) => ({ id: toSnakeCase(item), label: item })) : list : [];
+        // list.map((item, i) => ({ id: toSnakeCase(item), label: item }));
 
 
         const defaultValue = (field, item, checked) => {
+
+            // console.log({ field, item, checked })
+            // console.log(field.value)
 
             return checked
                     ? field.onChange(field.value !== undefined ? [ ...field.value, item?.id] : ['', item?.id])
                     : field.onChange(field.value?.filter((value) => value !== item?.id))
         }
+
 
         return (
             <FormField

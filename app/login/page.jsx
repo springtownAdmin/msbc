@@ -27,6 +27,7 @@ const Login = () => {
   const [data, setData] = useState({
     email: "",
     password: "",
+    company: ""
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -73,7 +74,7 @@ const Login = () => {
 
     setShowLoaderSignIn(true);
 
-    const result = await authenticateUser({ username: data.email, password: data.password });
+    const result = await authenticateUser({ username: data.email, password: data.password }, data.company);
     
     setShowLoaderSignIn(false);
 
@@ -157,6 +158,11 @@ const Login = () => {
                         </span>
                     </div>
                     {passwordError && (<ErrorComponent>{passwordError}</ErrorComponent>)}
+                </div>
+
+                <div className="space-y-1">
+                    <Label htmlFor="company">Company Name</Label>
+                    <Input id="company" type="company" name="company" placeholder={"xyz"} value={data.company} onChange={handleChange} required />
                 </div>
 
             </CardContent>

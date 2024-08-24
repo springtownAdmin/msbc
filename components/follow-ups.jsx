@@ -41,17 +41,17 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
     const [getAllFollowUps, setAllFollowUps] = useState([]);
 
     const { getUsers, addFollowUp, getEnquiryFollowUps } = useAPI();
+    const followValues = putValues(followUps);
+    const newFollowUps = { ...followValues, enquiry_no: enquiryNo };
 
     const form = useForm({
         resolver: zodResolver(createZodValidation(followUps)),
-        defaultValues: putValues(followUps)
+        defaultValues: newFollowUps
     })
 
     useEffect(() => {
 
         const fillData = async () => {
-
-            form.setValue('enquiry_no', enquiryNo);
 
             const data = await getUsers();
             const enquiryFollowUps = await getEnquiryFollowUps(enquiry_id);
@@ -182,10 +182,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
             description: values.description,
             completed: values.completed,
             reminder: values.reminder_to === "" ? false : true,
-            reminder_to: values.reminder_to
+            reminder_to: parseInt(values.reminder_to)
         }
 
         await addFollowUp(updatedData);
+        handleClose();
 
         // console.log(form.getValues());
 

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import useAPI from '@/hooks/useAPI';
-import useLoader from '@/hooks/useLoader';
+import useLoader, { Loader } from '@/hooks/useLoader';
 import { createZodValidation } from '@/utils/constants';
 import { branchData } from '@/utils/data';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,14 +21,17 @@ const Edit = ({ params }) => {
   const router = useRouter();
   const [ branch, setBranch ] = useState(null);
   const { getBranch, updateBranch } = useAPI();
+  const { show, showLoader, hideLoader } = useLoader();
   const id = params.id;
 
   useEffect(() => {
 
     const setData = async () => {
 
+      showLoader();
       const result = await getBranch(id);
       setBranch(result[0]);
+      hideLoader();
 
     }
 
@@ -67,6 +70,8 @@ const Edit = ({ params }) => {
     <>
 
       <Container id={2}>
+
+        <Loader show={show}>
 
           <Tabs defaultValue="branch-details" className='w-full'>
             
@@ -180,6 +185,8 @@ const Edit = ({ params }) => {
             </TabsContent>
           
           </Tabs>
+
+        </Loader>
 
       </Container>
       

@@ -17,7 +17,7 @@ import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import useLoader from '@/hooks/useLoader';
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 const ActionsRenderer = (params) => {
 
@@ -36,17 +36,20 @@ const ActionsRenderer = (params) => {
 
 };
 
-
 const UserManagement = () => {
 
 //   const { data } = useSelector((state) => state.list);
 //   const usersList = data.users;
 
   const [usersList, setUsersList] = useState([]);
-  const { getUsers } = useAPI();
+  const { getUsers, getGroups } = useAPI();
   const { getItem } = useStorage();
   const [ dateRange, setDateRange ] = useState({ start: null, end: null });
-  const { showLoader, hideLoader, Loader } = useLoader();
+  const [ rolesList, setRolesList ] = useState([]);
+  const { showLoader, hideLoader, show } = useLoader();
+  const [currentTab, setCurrentTab] = useState('users');
+
+  const handleTab = (value) => setCurrentTab(value);
 
   const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
 
@@ -58,9 +61,10 @@ const UserManagement = () => {
 
         showLoader();
         const result = await getUsers();
+        const resultGroups = await getGroups();
         setUsersList(result);
+        setRolesList(resultGroups.map((x) => ({ id: x.group_id, role: x.group_name, description: x.description })));
         hideLoader();
-
 
     }
 
@@ -71,8 +75,7 @@ const UserManagement = () => {
   const ActionsRendererRoles = (params) => {
 
     const item = params.data
-    console.log(item)
-    const editPath = `user-management/roles/edit`
+    const editPath = `user-management/roles/edit/${item.id}`
 
     return (
         <div className='flex h-full'>
@@ -90,29 +93,12 @@ const UserManagement = () => {
 
   const columnDefs = useMemo(() => getColumnHeader(userData.filter((x) => x.name !== 'Password'), ActionsRenderer), []);
 
-  const rowDataRoles = [
-    {
-      role: 'Admin',
-      createdAt: new Date(),
-      createdBy: 'Super Admin',
-    },
-    {
-      role: 'Sales Representative',
-      createdAt: new Date(),
-      createdBy: 'Super Admin',
-    },
-    {
-      role: 'Accounts',
-      createdAt: new Date(),
-      createdBy: 'Super Admin',
-    },
-  ];
+  const rowDataRoles = useMemo(() => getRowData(rolesList), [rolesList]);
 
   const columnRole = useMemo(() => [
         
     { field: 'role', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
-    { field: 'createdAt', headerName: 'Created At', filter: 'agDateColumnFilter' },
-    { field: 'createdBy', headerName: 'Created By', filter: 'agTextColumnFilter' },
+    { field: 'description', headerName: 'Description', filter: 'agTextColumnFilter' },
     { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRendererRoles }
     
 ], []);
@@ -129,15 +115,14 @@ const UserManagement = () => {
     params.api.sizeColumnsToFit();
   };
 
-
   return (
     <>
 
       <Container id={3}>
 
-        <Loader>
+        <Loader show={show}>
 
-          <Tabs defaultValue="users" className="w-full">
+          <Tabs value={currentTab} onValueChange={handleTab} className="w-full">
 
             <TabsList>
               <TabsTrigger value='users'>Users</TabsTrigger>

@@ -12,7 +12,7 @@ import { Container } from "@/components/container";
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import useAPI from "@/hooks/useAPI";
-import useLoader from "@/hooks/useLoader";
+import useLoader, { Loader } from "@/hooks/useLoader";
 
 const ActionsRenderer = (params) => {
 
@@ -32,7 +32,7 @@ const FollowUp = () => {
     const [ dateRange, setDateRange ] = useState({ start: null, end: null });
     const { getAllFollowUps } = useAPI();
     const [ followUpList, setFollowUpList ] = useState([]);
-    const { showLoader, hideLoader, Loader } = useLoader();
+    const { showLoader, hideLoader, show } = useLoader();
 
     const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
 
@@ -134,7 +134,7 @@ const FollowUp = () => {
   return (
     <Container id={6}>
 
-        <Loader>
+        <Loader show={show}>
 
             <div className='w-full flex my-3 gap-3'>
                 <div>

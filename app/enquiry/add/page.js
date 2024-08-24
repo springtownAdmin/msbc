@@ -21,7 +21,7 @@ import axios from 'axios';
 import { template01 } from '@/helper/templates';
 import useAPI from '@/hooks/useAPI';
 import { FollowUpDetails } from '@/components/follow-ups';
-import useLoader from '@/hooks/useLoader';
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 
 const Add = () => {
@@ -36,6 +36,7 @@ const Add = () => {
     const [ enquiryDetails, setEnquiryDetails ] = useState(sections[0]);
     const [ sectionTab, setSectionTab ] = useState('enquiry-details');
     const [ productData, setProductData ] = useState([]);
+    const { show, showLoader, hideLoader } = useLoader();
 
     const form = useForm({
         resolver: zodResolver(createZodValidation(enquiryData)),
@@ -94,6 +95,7 @@ const Add = () => {
 
         const fillData = async () => {
 
+            showLoader();
             const listOrganization = await getOrganizations();
             const listStatus = await getStatuses();
             const listBranches = await getBranches();
@@ -119,6 +121,7 @@ const Add = () => {
             
             setCustomerData(result);       
             setEnquiryDetails(result2);
+            hideLoader();
 
             // if (listOrganization.length) {
 
@@ -234,156 +237,160 @@ const Add = () => {
 
             <Container id={4}>
 
-                <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
-                    
-                    <TabsList>
-                        <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
-                        <TabsTrigger value="document-management" >Document Management</TabsTrigger>
-                        <TabsTrigger value="product-details" >Product Details</TabsTrigger>
-                        <TabsTrigger value="follow-up" disabled>Follow Up</TabsTrigger>
-                    </TabsList>
+                <Loader show={show}>
 
-                    <TabsContent value="enquiry-details" className="w-full">
+                    <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
+                        
+                        <TabsList>
+                            <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
+                            <TabsTrigger value="document-management" >Document Management</TabsTrigger>
+                            <TabsTrigger value="product-details" >Product Details</TabsTrigger>
+                            <TabsTrigger value="follow-up" disabled>Follow Up</TabsTrigger>
+                        </TabsList>
 
-                        <Form {...form}>
+                        <TabsContent value="enquiry-details" className="w-full">
 
-                            <form  onSubmit={form.handleSubmit(onSubmit)}>
+                            <Form {...form}>
 
-                                <div className='flex flex-wrap gap-3 w-full'>
+                                <form  onSubmit={form.handleSubmit(onSubmit)}>
 
-                                    <Card className="w-full">
+                                    <div className='flex flex-wrap gap-3 w-full'>
 
-                                        <CardHeader>
+                                        <Card className="w-full">
 
-                                            <CardTitle>Enquiry Details</CardTitle>
-                                            <CardDescription>Fill out all necessary enquiry details</CardDescription>
+                                            <CardHeader>
 
-                                        </CardHeader>
+                                                <CardTitle>Enquiry Details</CardTitle>
+                                                <CardDescription>Fill out all necessary enquiry details</CardDescription>
 
-                                        <CardContent>
+                                            </CardHeader>
 
-                                            <CustomGrid row={3}>
-                                                <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controls.enquiry} />
-                                            </CustomGrid>
+                                            <CardContent>
 
-                                        </CardContent>
+                                                <CustomGrid row={3}>
+                                                    <DynamicFields data={enquiryDetails} form={form} module_name='enquiry-details' controls={controls.enquiry} />
+                                                </CustomGrid>
 
-                                    </Card>
+                                            </CardContent>
 
-                                    <Card className="w-full">
+                                        </Card>
 
-                                        <CardHeader>
+                                        <Card className="w-full">
 
-                                            <div className='flex justify-between w-full'>
-                                                <div>
-                                                    <CardTitle>Customer Details</CardTitle>
-                                                    <CardDescription>Fill out all necessary customer details</CardDescription>
+                                            <CardHeader>
+
+                                                <div className='flex justify-between w-full'>
+                                                    <div>
+                                                        <CardTitle>Customer Details</CardTitle>
+                                                        <CardDescription>Fill out all necessary customer details</CardDescription>
+                                                    </div>
+
+                                                    <div>
+                                                        <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
+                                                    </div>
                                                 </div>
 
-                                                <div>
-                                                    <Button type='button' variant='secondary' onClick={handleAddCustomer}>Add Customer</Button>
-                                                </div>
-                                            </div>
+                                            </CardHeader>
 
-                                        </CardHeader>
+                                            <CardContent>
 
-                                        <CardContent>
+                                                <CustomGrid row={3}>
+                                                    <DynamicFields data={customerData} form={form} module_name='customer-details' controls={controls.customer} />
+                                                </CustomGrid>
 
-                                            <CustomGrid row={3}>
-                                                <DynamicFields data={customerData} form={form} module_name='customer-details' controls={controls.customer} />
-                                            </CustomGrid>
+                                            </CardContent>
 
-                                        </CardContent>
+                                        </Card>
 
-                                    </Card>
+                                        <Card className="w-full">
 
-                                    <Card className="w-full">
+                                            <CardHeader>
+                                                <CardTitle>Project Details</CardTitle>
+                                                <CardDescription>Fill out all necessary project details</CardDescription>
+                                            </CardHeader>
 
-                                        <CardHeader>
-                                            <CardTitle>Project Details</CardTitle>
-                                            <CardDescription>Fill out all necessary project details</CardDescription>
-                                        </CardHeader>
+                                            <CardContent>
 
-                                        <CardContent>
+                                                <CustomGrid row={3}>
+                                                    <DynamicFields data={sections[2]} form={form} module_name='project-details' />
+                                                </CustomGrid>
 
-                                            <CustomGrid row={3}>
-                                                <DynamicFields data={sections[2]} form={form} module_name='project-details' />
-                                            </CustomGrid>
+                                            </CardContent>
 
-                                        </CardContent>
+                                        </Card>
 
-                                    </Card>
+                                        <div className='flex justify-end gap-3 w-full'>
+                                            <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
+                                            <Button variant="secondary" type='button' onClick={handlePrint}>Print</Button>
+                                            <Button>Save</Button>
+                                        </div>
 
-                                    <div className='flex justify-end gap-3 w-full'>
-                                        <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                                        <Button variant="secondary" type='button' onClick={handlePrint}>Print</Button>
-                                        <Button>Save</Button>
                                     </div>
 
-                                </div>
+                                </form>
 
-                            </form>
+                            </Form>
 
-                        </Form>
+                        </TabsContent>
 
-                    </TabsContent>
+                        <TabsContent value="document-management" className="w-full">
 
-                    <TabsContent value="document-management" className="w-full">
-
-                        <Card className="w-full">
-            
-                            <CardHeader>
-                                <CardTitle>Document Management</CardTitle>
-                                <CardDescription>Attach necessary documents required</CardDescription>
-                            </CardHeader>
-
-                            <CardContent>
-                                <CustomFields form={form} type='file' />
-                            </CardContent>
-
-                        </Card>
-
-                    </TabsContent>
-
-                    <TabsContent value="product-details" className="w-full">
-
-                        <Card className="w-full">
-                            
-                            <CardHeader>
-                                <CardTitle>Product Details</CardTitle>
-                                <CardDescription>Fill out all necessary product details</CardDescription>
-                            </CardHeader>
-
-                            <CardContent>
-                                
-                                <ProductDetails productData={productData} setProductData={setProductData} />
-
-                            </CardContent>
-
-                        </Card>
-
-                    </TabsContent>
-
-                    <TabsContent value="follow-up" className="w-full">
-
-                        <Card className="w-full">
-
-                            <CardHeader>
-                                <CardTitle>Follow Up</CardTitle>
-                                <CardDescription>List of all the follow up</CardDescription>
-                            </CardHeader>
-
-                            <CardContent>
-
-                                <FollowUpDetails />
-
-                            </CardContent>
-
-                        </Card>
-
-                    </TabsContent>
+                            <Card className="w-full">
                 
-                </Tabs>
+                                <CardHeader>
+                                    <CardTitle>Document Management</CardTitle>
+                                    <CardDescription>Attach necessary documents required</CardDescription>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <CustomFields form={form} type='file' />
+                                </CardContent>
+
+                            </Card>
+
+                        </TabsContent>
+
+                        <TabsContent value="product-details" className="w-full">
+
+                            <Card className="w-full">
+                                
+                                <CardHeader>
+                                    <CardTitle>Product Details</CardTitle>
+                                    <CardDescription>Fill out all necessary product details</CardDescription>
+                                </CardHeader>
+
+                                <CardContent>
+                                    
+                                    <ProductDetails productData={productData} setProductData={setProductData} />
+
+                                </CardContent>
+
+                            </Card>
+
+                        </TabsContent>
+
+                        <TabsContent value="follow-up" className="w-full">
+
+                            <Card className="w-full">
+
+                                <CardHeader>
+                                    <CardTitle>Follow Up</CardTitle>
+                                    <CardDescription>List of all the follow up</CardDescription>
+                                </CardHeader>
+
+                                <CardContent>
+
+                                    <FollowUpDetails />
+
+                                </CardContent>
+
+                            </Card>
+
+                        </TabsContent>
+                    
+                    </Tabs>
+
+                </Loader>
 
             </Container>
 

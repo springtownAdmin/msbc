@@ -17,13 +17,14 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import useAPI from '@/hooks/useAPI';
-import useLoader from '@/hooks/useLoader';
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 const Edit = ({ params }) => {
 
   const router = useRouter();
   const { getUser, updateUser, getGroups } = useAPI();
   const [usersData, setUsersData] = useState(userData);
+  const { show, hideLoader, showLoader } = useLoader();
   const id = params.id;
 
   const [user, setUser] = useState(null);
@@ -32,6 +33,7 @@ const Edit = ({ params }) => {
 
     const getData = async () => {
 
+      showLoader();
       const result = await getUser(id);
       const groups = await getGroups();
       const roleList = groups.map((x) => ({ id: x.group_id, value: `${x.group_id}`, label: x.group_name }));
@@ -40,6 +42,7 @@ const Edit = ({ params }) => {
       setUsersData(updatedUsersData);
 
       setUser({ ...result, user_role: `${result.user_role}` });
+      hideLoader();
 
     }
 
@@ -78,6 +81,8 @@ const Edit = ({ params }) => {
     <>
 
       <Container id={3}>
+
+        <Loader show={show}>
 
           <Tabs defaultValue="user-details" className='w-full'>
               
@@ -132,6 +137,8 @@ const Edit = ({ params }) => {
               </TabsContent>
           
           </Tabs>
+
+        </Loader>
 
       </Container>
       

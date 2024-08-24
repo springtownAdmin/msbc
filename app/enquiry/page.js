@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import useAPI from '@/hooks/useAPI';
 import useStorage from '@/hooks/useStorage';
-import useLoader from '@/hooks/useLoader';
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 const ActionsRenderer = (params) => {
 
@@ -45,7 +45,7 @@ const Enquiry = () => {
   const [ enquiryList, setEnquiryList ] = useState([]);
   const [ dateRange, setDateRange ] = useState({ start: null, end: null });
   const { company_name } = useStorage();
-  const { showLoader, hideLoader, Loader } = useLoader();
+  const { showLoader, hideLoader, show } = useLoader();
 
   const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
 
@@ -98,7 +98,7 @@ const Enquiry = () => {
 
         <Container id={4}>
 
-            <Loader>
+            <Loader show={show}>
 
                 <div className='w-full flex my-3 gap-3'>
                     <Link href={'enquiry/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>

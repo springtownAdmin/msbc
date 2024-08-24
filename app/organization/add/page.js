@@ -1,7 +1,6 @@
 "use client";
 
 import { Container } from '@/components/container';
-import { CustomFields } from '@/components/custom-fields';
 import { DynamicFields } from '@/components/dynamic-fields';
 import { CustomGrid } from '@/components/grid';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useAPI from '@/hooks/useAPI';
-import useLoader from '@/hooks/useLoader';
 import { createZodValidation, putValues } from '@/utils/constants';
 import { organizationData } from '@/utils/data';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +17,6 @@ import { useForm } from 'react-hook-form';
 
 const Add = () => {
 
-    // const { toast } = useToast();
     const router = useRouter();
     const { createOrganization } = useAPI();
 
@@ -30,7 +27,6 @@ const Add = () => {
 
     const onSubmit = async (values) => {
 
-        // console.log(values);
         await createOrganization(values);
         router.back();
 
@@ -73,7 +69,6 @@ const Add = () => {
 
                                             <CustomGrid row={3}>
                                                 <DynamicFields data={organizationData} form={form} module_name='organization-details' />
-                                                {/* <CustomFields form={form} type='text' name='email' label='Email' placeholder={`Enter email`} /> */}
                                             </CustomGrid>
 
                                         </CardContent>

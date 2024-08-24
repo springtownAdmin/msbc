@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Menus, Menus2 } from "@/utils/constants";
+import { MenuData, Menus, Menus2 } from "@/utils/constants";
 import { Check } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,8 @@ import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from '@/lib/slices/list';
 
 export const Container = ({ children, id = 1 }) => {
 
@@ -31,12 +33,24 @@ export const Container = ({ children, id = 1 }) => {
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
   const { getItems, getItem, clearStorage } = useStorage();
+  // const permissions = JSON.parse(getItem('permissions'));
+
+  // console.log(permissions)
+  // const MenuItems = permissions.filter((x) => x.can_view === true).map((y, i) => ({
+  //   id: i+1,
+  //   name: y.module,
+  //   Icon: MenuData[y.module].Icon,
+  //   link: MenuData[y.module].link
+  // }))
   const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
+  const currentState = useSelector((state) => state.list);
+  const dispatch = useDispatch();
+
+  console.log(currentState)
 
   useEffect(() => {
 
     const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-    console.log(data);
     setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
   }, []);

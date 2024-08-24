@@ -728,3 +728,29 @@ export const productData = [
 
 ]
 
+export const rolesData = [
+
+    {
+        id: 1,
+        name: 'Role Name',
+        label: 'Role Name',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 2,
+        name: 'Description',
+        label: 'Description',
+        type: 'textarea',
+        value: '',
+        required: false,
+        is_visible: true,
+        read_only: false
+    },
+
+]
+

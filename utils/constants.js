@@ -9,6 +9,30 @@ import axios from "axios";
 
 let counter = 0;
 
+export const MenuData = {
+
+  'User Management': {
+    Icon: FaUsers,
+    link: '/user-management'
+  },
+
+  'Enquiry Management': {
+    Icon: LuInfo,
+    link: '/enquiry'
+  },
+
+  'Organization Management': {
+    Icon: FaBuildingUser,
+    link: '/organization'
+  },
+
+  'Branch Management': {
+    Icon: BsFillBuildingsFill,
+    link: '/branch'
+  },
+
+}
+
 export const Menus = [
 
     {

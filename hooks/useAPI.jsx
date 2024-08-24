@@ -4,6 +4,8 @@ import { BACKEND_API } from '@/utils/constants';
 import useCustomToast from './useCustomToast';
 import useStorage from './useStorage';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { addItem } from '@/lib/slices/list';
 
 const useAPI = () => {
   
@@ -11,6 +13,7 @@ const useAPI = () => {
     const { showToast } = useCustomToast();
     const { setItems, setItem } = useStorage();
     const router = useRouter();
+    const dispatch = useDispatch();
 
     const authenticateUser = async (reqBody, company_name) => {
 
@@ -26,6 +29,7 @@ const useAPI = () => {
 
             setItems(result);
             setItem("company_name", company_name);  
+            dispatch(addItem({ key: "Menus", data: result.permissions }))
             router.push('/dashboard');          
 
         } catch (e) {
@@ -358,6 +362,83 @@ const useAPI = () => {
 
     }
 
+    const createGroup = async (reqBody) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/groups?company_name=${company_name}`, reqBody);
+
+            // return resp.data.groups;
+            showToast(resp.data.status_code, resp.data.message);
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getModules = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/modules?company_name=${company_name}`);
+
+            return resp.data.modules;
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getGroup = async (id) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/groups/${id}/permissions?company_name=${company_name}`);
+
+            if (resp.data.status_code > 300 && resp.data.status_code <= 500) {
+
+                return 
+
+            }
+            return resp.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const updateGroup = async (id, reqBody) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/groups/${id}/permissions?company_name=${company_name}`, reqBody);
+
+            showToast(resp.data.status_code, resp.data.message);
+
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
     const addFollowUp = async (reqBody) => {
 
         try {
@@ -412,11 +493,10 @@ const useAPI = () => {
 
     }
 
-
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
-        addFollowUp, getEnquiryFollowUps, getAllFollowUps
+        addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup
     };
 
 }

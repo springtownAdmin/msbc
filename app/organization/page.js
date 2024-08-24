@@ -16,7 +16,7 @@ import { MdEdit } from 'react-icons/md';
 import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import useLoader from "@/hooks/useLoader";
+import useLoader, { Loader } from "@/hooks/useLoader";
 
 const ActionsRenderer = (params) => {
 
@@ -41,7 +41,7 @@ const Organization = () => {
     const [ organizationList, setOrganizationList ] = useState([]);
     const { company_name } = useStorage();
     const [ dateRange, setDateRange ] = useState({ start: null, end: null });
-    const { showLoader, hideLoader, Loader } = useLoader();
+    const { showLoader, hideLoader, show } = useLoader();
 
     const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
   
@@ -81,7 +81,7 @@ const Organization = () => {
   return (
     <Container id={5}>
 
-        <Loader>
+        <Loader show={show}>
 
             <div className='w-full flex my-3 gap-3'>
                 <Link href={'organization/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>

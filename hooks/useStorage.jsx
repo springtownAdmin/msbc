@@ -94,6 +94,7 @@ const useStorage = () => {
 
         if (typeof window !== 'undefined' || data.length !== 0) {
 
+            // const keys = Object.keys(data);
             const values = [];
 
             keys.forEach((x) => {

@@ -20,7 +20,7 @@ import { CustomGrid } from '@/components/grid';
 import { DynamicFields } from '@/components/dynamic-fields';
 import { ProductDetails } from '@/components/product-details';
 import { FollowUpDetails } from '@/components/follow-ups';
-import useLoader from '@/hooks/useLoader';
+import useLoader, { Loader } from '@/hooks/useLoader';
 import { Printer } from 'lucide-react';
 import axios from 'axios';
 import { template01 } from '@/helper/templates';
@@ -37,6 +37,7 @@ const Edit = ({ params }) => {
   const [ enquiryDetails, setEnquiryDetails ] = useState(sections[0]);
 
   const [ sectionTab, setSectionTab ] = useState('enquiry-details');
+  const { show, showLoader, hideLoader } = useLoader();
 
   const [ productData, setProductData ] = useState([]);
 
@@ -65,9 +66,9 @@ const Edit = ({ params }) => {
 
     const setData = async () => {
 
-
       try {
 
+        showLoader();
         const result = await getEnquiry(id);
         const listOrganization = await getOrganizations();
         const listStatus = await getStatuses();
@@ -105,6 +106,8 @@ const Edit = ({ params }) => {
 
         showToast(500, e.message);
 
+      } finally {
+        hideLoader();
       }
 
     }
@@ -258,7 +261,7 @@ const Edit = ({ params }) => {
 
         <Container id={4}>
 
-          {/* <Loader> */}
+          <Loader show={show}>
 
             <Form {...form}>
 
@@ -433,8 +436,7 @@ const Edit = ({ params }) => {
 
             </Form>
 
-
-          {/* </Loader> */}
+          </Loader>
 
         </Container>
 

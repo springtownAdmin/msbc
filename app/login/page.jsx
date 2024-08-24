@@ -7,7 +7,7 @@ import { FaRegEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loading from "@/components/Loading";
 import { useToast } from "@/components/ui/use-toast";
 import { motion } from 'framer-motion';
@@ -37,6 +37,8 @@ const Login = () => {
   const { toast } = useToast();
   const { authenticateUser } = useAPI();
   const { setItem } = useStorage();
+
+  const currentState = useSelector((state) => state.list);
 
   const router = useRouter();
 
@@ -78,6 +80,8 @@ const Login = () => {
     setShowLoaderSignIn(false);
 
     console.log(result);
+
+    console.log(currentState);
 
     // try {
 

@@ -11,7 +11,7 @@ const useAPI = () => {
   
 
     const { showToast } = useCustomToast();
-    const { setItems, setItem } = useStorage();
+    const { setItems, setItem, getItem } = useStorage();
     const router = useRouter();
     const dispatch = useDispatch();
 
@@ -43,13 +43,7 @@ const useAPI = () => {
 
     const getCompanyName = () => {
 
-        if (typeof window !== undefined || typeof window !== null) {
-
-            return window.localStorage.getItem('company_name');
-
-        }
-
-        return ''
+        return getItem('company_name');
 
     }
 

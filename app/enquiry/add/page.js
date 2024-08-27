@@ -22,6 +22,7 @@ import { template01 } from '@/helper/templates';
 import useAPI from '@/hooks/useAPI';
 import { FollowUpDetails } from '@/components/follow-ups';
 import useLoader, { Loader } from '@/hooks/useLoader';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 
 const Add = () => {
@@ -400,4 +401,4 @@ const Add = () => {
 
 }
 
-export default Add
+export default wrapPermissionCheck(Add, 'can_add', '/enquiry');

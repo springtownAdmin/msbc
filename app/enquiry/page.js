@@ -68,6 +68,7 @@ const Enquiry = () => {
 
         });
 
+
         setEnquiryList(newResult);
         hideLoader();
 

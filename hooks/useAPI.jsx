@@ -5,7 +5,7 @@ import useCustomToast from './useCustomToast';
 import useStorage from './useStorage';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import { addItem } from '@/lib/slices/list';
+import { addItems } from '@/lib/slices/list';
 
 const useAPI = () => {
   
@@ -29,7 +29,7 @@ const useAPI = () => {
 
             setItems(result);
             setItem("company_name", company_name);  
-            dispatch(addItem({ key: "Menus", data: result.permissions }))
+            dispatch(addItems({ key: "Menus", data: result.permissions }))
             router.push('/dashboard');          
 
         } catch (e) {
@@ -439,6 +439,22 @@ const useAPI = () => {
 
     }
 
+    const deleteGroup = async (id) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/groups/${id}?company_name=${company_name}`);
+            showToast(resp.data.status_code, resp.data.message);
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
     const addFollowUp = async (reqBody) => {
 
         try {
@@ -493,10 +509,45 @@ const useAPI = () => {
 
     }
 
+    const getOneFollowUp = async (id) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.get(`/follow_up_by_id/${id}?company_name=${company_name}`);
+
+            return resp.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const updateOneFollowUp = async (reqBody, id) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/edit_follow_up/${id}?company_name=${company_name}`, reqBody);
+
+            showToast(resp.data.status_code, resp.data.message);
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
-        addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup
+        addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
+        deleteGroup, getOneFollowUp, updateOneFollowUp
     };
 
 }

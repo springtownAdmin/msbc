@@ -2,7 +2,7 @@
 
 import { Container } from '@/components/container';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from "@/components/ui/switch"
 import { Input } from '@/components/ui/input';
@@ -17,48 +17,88 @@ import { createZodValidation, putValues } from '@/utils/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import useAPI from '@/hooks/useAPI';
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 const Add = () => {
 
-    // const [permissions, setPermissions] = useState({
-    //     branch: { add: false, edit: false, view: false },
-    //     userManagement: { add: false, edit: false, view: false },
-    //     enquiry: { add: false, edit: false, view: false },
-    //     organization: { add: false, edit: false, view: false },
-    //     followUp: { add: false, edit: false, view: false },
-    // });
+    const [permissions, setPermissions] = useState(null);
+    const [editPerimssions, setEditPermissions] = useState([]);
 
     const form = useForm({
         resolver: zodResolver(createZodValidation(rolesData)),
         defaultValues: putValues(rolesData)
     })
 
-    const { createGroup } = useAPI();
+    const { createGroup, getModules } = useAPI();
+    const { show, showLoader, hideLoader } = useLoader();
 
     const router = useRouter();
+
+    useEffect(() => {
+
+        const fillData = async () => {
+
+            showLoader();
+
+            const getAllModules = await getModules();
+            let obj = {};
+            let arr = [];
+            getAllModules.forEach((x) => {
+
+                obj[x[1]] = { add: false, edit: false, view: false, id: x[0] };
+                const currentPermission = { menu_id: x[0], add: false, edit: false, view: false, delete: false };
+                arr.push(currentPermission);
+
+            })
+
+            setPermissions(obj);
+            setEditPermissions(arr);
+
+            hideLoader();
+
+        }
+
+        fillData();
+
+    }, []);
 
     const handleSwitchChange = (module, permission) => {
 
 
         const allPermission = { ...permissions };
+        const allEditPermissions = [ ...editPerimssions ];
+        let currentModule = allPermission[module];
         const value = !allPermission[module][permission]
-
 
         if (permission === 'view') {
 
 
-            allPermission[module][permission] = value;
-            allPermission[module].add = value ? allPermission[module].add : false;
-            allPermission[module].edit = value ? allPermission[module].edit : false;
+            currentModule[permission] = value;
+            currentModule.add = value ? currentModule.add : false;
+            currentModule.edit = value ? currentModule.edit : false;
 
+            const { add, edit, view, id } = currentModule;
+
+            const permissionIndex = allEditPermissions.findIndex((x) => x.menu_id === id);
+
+            allEditPermissions[permissionIndex].add = add;
+            allEditPermissions[permissionIndex].edit = edit;
+            allEditPermissions[permissionIndex].view = view;
 
         } else {
 
-            allPermission[module][permission] = value;
+            currentModule[permission] = value;
+            const { add, edit, view, id } = currentModule;
+
+            const permissionIndex = editPerimssions.findIndex((x) => x.menu_id === id);
+            allEditPermissions[permissionIndex].add = add;
+            allEditPermissions[permissionIndex].edit = edit;
+            allEditPermissions[permissionIndex].view = view;
 
         }
 
         setPermissions(allPermission);
+        setEditPermissions(allEditPermissions);
 
     };
 
@@ -73,7 +113,8 @@ const Add = () => {
         // console.log(values);
         const reqBody = {
             group_name: values.role_name,
-            group_desc: values.description
+            group_desc: values.description,
+            permissions: editPerimssions 
         }
 
         await createGroup(reqBody);
@@ -85,94 +126,98 @@ const Add = () => {
   return (
     <Container id={3}>
 
-        <Form {...form}>
+        <Loader show={show}>
 
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Form {...form}>
 
-                <Card className="w-full mb-4">
-                    
-                    <CardHeader>
-                        <CardTitle>User Roles Details</CardTitle>
-                        <CardDescription>Fill necessary details for user roles</CardDescription>
-                    </CardHeader>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                    <CardContent>
+                    <Card className="w-full mb-4">
+                        
+                        <CardHeader>
+                            <CardTitle>User Roles Details</CardTitle>
+                            <CardDescription>Fill necessary details for user roles</CardDescription>
+                        </CardHeader>
 
-                        <CustomGrid row={2}>
-                            <DynamicFields form={form} data={rolesData} module_name='user_roles_data' />
-                        </CustomGrid>
+                        <CardContent>
 
-                    </CardContent>
+                            <CustomGrid row={2}>
+                                <DynamicFields form={form} data={rolesData} module_name='user_roles_data' />
+                            </CustomGrid>
 
-                </Card>
+                        </CardContent>
 
-                {/* <Card className="w-full">
+                    </Card>
 
-                    <CardHeader>
+                    <Card className="w-full">
 
-                        <CardTitle>User Permission Details</CardTitle>
-                        <CardDescription>Give necessary permissions to user</CardDescription>
+                        <CardHeader>
 
-                    </CardHeader>
+                            <CardTitle>User Permission Details</CardTitle>
+                            <CardDescription>Give necessary permissions to user</CardDescription>
 
-                    <CardContent>
+                        </CardHeader>
 
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[70%]">Module</TableHead>
-                                    <TableHead>Add</TableHead>
-                                    <TableHead>Edit</TableHead>
-                                    <TableHead>View</TableHead>
-                                </TableRow>
-                            </TableHeader>
+                        <CardContent>
 
+                            <Table>
 
-                            <TableBody>
-                                {Object.keys(permissions).map((module) => (
-                                    <TableRow key={module}>
-                                        <TableCell className="font-medium">
-                                            {module.charAt(0).toUpperCase() + module.slice(1)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={permissions[module].add}
-                                                onCheckedChange={() => handleSwitchChange(module, 'add')}
-                                                disabled={!permissions[module].view}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={permissions[module].edit}
-                                                onCheckedChange={() => handleSwitchChange(module, 'edit')}
-                                                disabled={!permissions[module].view}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Switch
-                                                checked={permissions[module].view}
-                                                onCheckedChange={() => handleSwitchChange(module, 'view')}
-                                            />
-                                        </TableCell>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[70%]">Module</TableHead>
+                                        <TableHead>Add</TableHead>
+                                        <TableHead>Edit</TableHead>
+                                        <TableHead>View</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
+                                </TableHeader>
 
-                        </Table>
+                                <TableBody>
+                                    {permissions !== null && Object.keys(permissions).map((module) => (
+                                        <TableRow key={module}>
+                                            <TableCell className="font-medium">
+                                                {/* {module.charAt(0).toUpperCase() + module.slice(1)} */}
+                                                {module}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Switch
+                                                    checked={permissions[module].add}
+                                                    onCheckedChange={() => handleSwitchChange(module, 'add')}
+                                                    disabled={!permissions[module].view}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Switch
+                                                    checked={permissions[module].edit}
+                                                    onCheckedChange={() => handleSwitchChange(module, 'edit')}
+                                                    disabled={!permissions[module].view}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Switch
+                                                    checked={permissions[module].view}
+                                                    onCheckedChange={() => handleSwitchChange(module, 'view')}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
 
-                    </CardContent>
+                            </Table>
 
-                </Card> */}
+                        </CardContent>
 
-                <CardFooter className='flex gap-3 justify-end mt-4'>
-                    <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
-                    <Button>Save</Button>
-                </CardFooter>
+                    </Card>
 
-            </form>
+                    <CardFooter className='flex gap-3 justify-end mt-4'>
+                        <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
+                        <Button>Save</Button>
+                    </CardFooter>
 
-        </Form>
+                </form>
 
+            </Form>
+
+        </Loader>
 
     </Container>
   )

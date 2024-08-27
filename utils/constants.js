@@ -4,6 +4,7 @@ import { BsFillBuildingsFill } from "react-icons/bs";
 import { FaBuildingUser } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { BsPersonFillExclamation } from "react-icons/bs";
+import { MdOutlineTextFields } from "react-icons/md";
 import { z } from "zod";
 import axios from "axios";
 
@@ -13,7 +14,7 @@ export const MenuData = {
 
   'User Management': {
     Icon: FaUsers,
-    link: '/user-management'
+    link: '/user-management',
   },
 
   'Enquiry Management': {
@@ -30,6 +31,11 @@ export const MenuData = {
     Icon: BsFillBuildingsFill,
     link: '/branch'
   },
+
+  'Follow Up': {
+    Icon: BsPersonFillExclamation,
+    link: '/follow-up'
+  }
 
 }
 
@@ -75,6 +81,13 @@ export const Menus = [
       name: 'Follow Up',
       Icon: BsPersonFillExclamation,
       link: '/follow-up'
+    },
+
+    {
+      id: 7,
+      name: 'Custom Fields',
+      Icon: MdOutlineTextFields,
+      link: '/custom-fields'
     },
 
 ]
@@ -282,7 +295,7 @@ export const getColumnHeader = (data = [], ActionsRenderer, deletedFields = []) 
 
   }
 
-  newArr.push({ field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer })
+  newArr.push({ field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer, pinned: 'right', width: 100 })
 
   return newArr;
 

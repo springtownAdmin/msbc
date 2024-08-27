@@ -17,6 +17,7 @@ import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MdDelete } from "react-icons/md";
 import useLoader, { Loader } from '@/hooks/useLoader';
 
 const ActionsRenderer = (params) => {
@@ -42,7 +43,7 @@ const UserManagement = () => {
 //   const usersList = data.users;
 
   const [usersList, setUsersList] = useState([]);
-  const { getUsers, getGroups } = useAPI();
+  const { getUsers, getGroups, deleteGroup } = useAPI();
   const { getItem } = useStorage();
   const [ dateRange, setDateRange ] = useState({ start: null, end: null });
   const [ rolesList, setRolesList ] = useState([]);
@@ -55,22 +56,29 @@ const UserManagement = () => {
 
   const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
+  const getAllUsers = async () => {
+
+    showLoader();
+    const result = await getUsers();
+    const resultGroups = await getGroups();
+    setUsersList(result);
+    setRolesList(resultGroups.map((x) => ({ id: x.group_id, role: x.group_name, description: x.description })));
+    hideLoader();
+
+  }
+
   useEffect(() => {
 
-    const getAllUsers = async () => {
+    getAllUsers();
+    
+  },[]);
 
-        showLoader();
-        const result = await getUsers();
-        const resultGroups = await getGroups();
-        setUsersList(result);
-        setRolesList(resultGroups.map((x) => ({ id: x.group_id, role: x.group_name, description: x.description })));
-        hideLoader();
+  const handleDelete = async (deleteId) => {
 
-    }
+      await deleteGroup(deleteId);
+      getItem('company_name') !== null && getAllUsers();
 
-    getItem('company_name') !== null && getAllUsers();
-
-  },[])
+  }
 
   const ActionsRendererRoles = (params) => {
 
@@ -78,11 +86,15 @@ const UserManagement = () => {
     const editPath = `user-management/roles/edit/${item.id}`
 
     return (
-        <div className='flex h-full'>
+        <div className='flex gap-5 h-full'>
             <CustomTooltip content='Edit'>
                 <Link href={editPath}>
                     <MdEdit size={20}/>
                 </Link>
+            </CustomTooltip>
+
+            <CustomTooltip content='Remove'>
+              <MdDelete size={20} onClick={() => handleDelete(item.id)} />
             </CustomTooltip>
         </div>
     );

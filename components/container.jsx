@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CustomTooltip } from './custom-tooltip';
 import useStorage from '@/hooks/useStorage';
-import { MdLogout } from "react-icons/md";
+import { MdDashboard, MdLogout } from "react-icons/md";
 import Image from 'next/image';
 import dwerpLogo from '@/public/images/dwerp-full-logo.png'
 import ProtectedRoute from './protected-route';
@@ -21,6 +21,8 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '@/lib/slices/list';
+import { CheckPermission } from './check-permission';
+import { BsPersonFillExclamation } from 'react-icons/bs';
 
 export const Container = ({ children, id = 1 }) => {
 
@@ -32,28 +34,76 @@ export const Container = ({ children, id = 1 }) => {
   const [openUserInfo, setOpenUserInfo] = useState(false);
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
-  const { getItems, getItem, clearStorage } = useStorage();
-  // const permissions = JSON.parse(getItem('permissions'));
+  const { getItems, getItem, clearStorage, setItems } = useStorage();
 
-  // console.log(permissions)
-  // const MenuItems = permissions.filter((x) => x.can_view === true).map((y, i) => ({
-  //   id: i+1,
-  //   name: y.module,
-  //   Icon: MenuData[y.module].Icon,
-  //   link: MenuData[y.module].link
-  // }))
   const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
-  const currentState = useSelector((state) => state.list);
-  const dispatch = useDispatch();
+  // const [MenuItems, setMenuItems] = useState(null);
+  
+  // const allMenus = useSelector((state) => state.list);
 
-  console.log(currentState)
+  // useEffect(() => {
 
-  useEffect(() => {
+  //   const setUsersData = () => {
 
-    const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-    setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+  //     console.log(allMenus)
 
-  }, []);
+  //     const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+  //     setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+
+  //   }
+
+  //   const setMenu = () => {
+
+  //     const permissions = getItem('permissions');
+  //     const getAllMenus = permissions.filter((x) => x.can_view === true);
+
+  //     const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+  //     setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+
+  //     let setAllMenus = [];
+
+  //     setAllMenus.push({
+  //       id: 1,
+  //       name: 'Dashboard',
+  //       Icon: MdDashboard,
+  //       link: '/dashboard'
+  //     });
+
+  //     getAllMenus.forEach((y) => {
+
+  //       const item = {
+  //         id: setAllMenus.length + 1,
+  //         name: y.module,
+  //         Icon: MenuData[y.module].Icon,
+  //         link: MenuData[y.module].link
+  //       }
+
+  //       setAllMenus.push(item);
+
+  //       if (item.name === 'Enquiry Management') {
+
+  //         setAllMenus.push({
+  //           id: setAllMenus.length + 1,
+  //           name: 'Follow Up',
+  //           Icon: BsPersonFillExclamation,
+  //           link: '/follow-up'
+  //         })
+
+  //       }
+
+  //     });
+
+  //     setMenuItems([ ...setAllMenus ]);
+  //     setItems({ Menus: setAllMenus });
+
+  //   }
+
+  //   setMenu();
+  //   setUsersData();
+
+  // }, []);
+
+  // if (!MenuItems) return null; 
 
   const handleMenu = (data) => {
     router.push(data.link);
@@ -132,16 +182,6 @@ export const Container = ({ children, id = 1 }) => {
                         <Label>Address</Label>
                         <Textarea rows={3} className='w-[97%] mt-1' value={userDetails.address} onChange={handleUserDetails}  />
                     </div>
-
-                    {/* <div className='w-[98%]'>
-                        <Label>Product Description</Label>
-                        <Textarea rows={3} className='w-[97%] mt-1' name='description' value={addProduct.description} onChange={handleChange} />
-                    </div>
-
-                    <div className='w-[98%]'>
-                        <Label>Quantity</Label>
-                        <Input type='text' className='w-[97%] mt-1' name='quantity' value={addProduct.quantity} onChange={handleChange} />
-                    </div> */}
 
                 </div>
 
@@ -242,8 +282,10 @@ export const Container = ({ children, id = 1 }) => {
               <hr />
 
               <div className='w-full h-[90%] p-4 overflow-auto'>
-                  
-                {children}
+                
+                {/* <CheckPermission> */}
+                  {children}
+                {/* </CheckPermission> */}
 
               </div>
 

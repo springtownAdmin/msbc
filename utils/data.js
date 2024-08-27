@@ -668,27 +668,36 @@ export const fieldData = [
 
     {
         id: 1,
+        name: 'Field Name',
         label: 'Field Name',
         type: 'text',
         value: '',
-        required: true
+        required: true,
+        is_visible: true,
+        read_only: false
     },
 
     {
         id: 2,
+        name: 'Label Name',
         label: 'Label Name',
         type: 'text',
         value: '',
-        required: true
+        required: true,
+        is_visible: true,
+        read_only: false
     },
 
     {
         id: 3,
+        name: 'Field Type',
         label: 'Field Type',
         type: 'select',
         list: [ 'Date', 'String', 'Number', 'Checkbox', 'Select', 'Multi-Select', 'Textarea' ],
         value: '',
-        required: true
+        required: true,
+        is_visible: true,
+        read_only: false
     },
 
 ]

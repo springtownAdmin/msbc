@@ -92,7 +92,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
     const handleSave = () => {
 
         const newProduct = {
-            product_id: addProduct.product_id + 1,
+            product_id: productData.length + 1,
             product_name: addProduct.product_name, 
             description: addProduct.description,
             quantity: addProduct.quantity

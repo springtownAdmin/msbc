@@ -21,27 +21,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createZodValidation, formatDateToYYYYMMDD, getColumnHeader, getRowData, putValues } from '@/utils/constants';
 import { Form } from './ui/form';
 import useAPI from '@/hooks/useAPI';
-
-const ActionsRenderer = (params) => {
-
-    return (
-        <div className='flex items-center h-full'>
-            <div>
-                <MdEdit size={20}/>
-            </div>
-        </div>
-    );
-  
-};
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
     const [open, setOpen] = useState(false);
     const [followUps, setFollowUps] = useState(followUpData);
     const [getAllFollowUps, setAllFollowUps] = useState([]);
+    const { show, showLoader, hideLoader } = useLoader();
 
-    const { getUsers, addFollowUp, getEnquiryFollowUps } = useAPI();
+    const { getUsers, addFollowUp, getEnquiryFollowUps, getOneFollowUp, updateOneFollowUp } = useAPI();
     const followValues = putValues(followUps);
+
+    const [ formType, setFormType ] = useState('Add');
+    const [ followUpId, setFollowUpId ] = useState(0); 
     const newFollowUps = { ...followValues, enquiry_no: enquiryNo };
 
     const form = useForm({
@@ -49,51 +42,37 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         defaultValues: newFollowUps
     })
 
+    const fillData = async () => {
+
+        showLoader();
+        const data = await getUsers();
+        const enquiryFollowUps = await getEnquiryFollowUps(enquiry_id);
+
+        setAllFollowUps(enquiryFollowUps.map(((x) => ({
+            id: x.id,
+            chaseOn: formatDateToYYYYMMDD(x.chase_on),
+            chasedBy: x.chased_by,
+            description: x.description,
+            followUpType: x.follow_up_type,
+            phone: x.phone,
+            email: x.email,
+            mobile: x.mobile
+        }))));
+
+        const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}`}))
+
+        const newFollowUps = followUps.map((x) => (x.name === 'Reminder to' || x.name === 'Chased By' ? { ...x, list: reminderToList } : x));
+
+        setFollowUps(newFollowUps);
+        hideLoader();
+
+    }
+
     useEffect(() => {
-
-        const fillData = async () => {
-
-            const data = await getUsers();
-            const enquiryFollowUps = await getEnquiryFollowUps(enquiry_id);
-
-            console.log(enquiryFollowUps)
-
-            setAllFollowUps(enquiryFollowUps.map(((x) => ({
-                // enquiryDate: formatDateToYYYYMMDD(x.enquiry_date),
-                chaseOn: formatDateToYYYYMMDD(x.chase_on),
-                chasedBy: x.chased_by,
-                description: x.description,
-                followUpType: x.follow_up_type,
-                phone: x.phone,
-                email: x.email,
-                mobile: x.mobile
-            }))));
-
-            const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}`}))
-
-            const newFollowUps = followUps.map((x) => (x.name === 'Reminder to' || x.name === 'Chased By' ? { ...x, list: reminderToList } : x));
-
-            setFollowUps(newFollowUps);
-
-        }
 
         fillData();
 
     }, []);
-
-    const rowData = useMemo(() => getRowData(getAllFollowUps), [getAllFollowUps]);
-  
-    const columnDefs = useMemo(() => [
-        { field: 'chaseOn', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agDateColumnFilter' },
-        // { field: 'chaseOn', headerName: 'Chased On', filter: 'agDateColumnFilter' },
-        { field: 'chasedBy', headerName: 'Chased By', filter: 'agTextColumnFilter' },
-        { field: 'description', headerName: 'Description', filter: 'agTextColumnFilter' },
-        { field: 'followUpType', headerName: 'Follow Up type', filter: 'agTextColumnFilter' },
-        { field: 'phone', headerName: 'Phone', filter: 'agTextColumnFilter' },
-        { field: 'email', headerName: 'Email', filter: 'agTextColumnFilter' },
-        { field: 'mobile', headerName: 'Mobile', filter: 'agTextColumnFilter' },
-        { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer }
-    ], []);
 
     // const rowData = [
 
@@ -186,9 +165,8 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         }
 
         await addFollowUp(updatedData);
+        await fillData();
         handleClose();
-
-        // console.log(form.getValues());
 
     }
 
@@ -196,8 +174,83 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         params.api.sizeColumnsToFit();
     };
 
+    const handleEdit = async (params) => {
+
+        const result = params.data;
+        const singleFollowUp = await getOneFollowUp(result.id);
+        const data = await getUsers();
+        const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}`}))
+
+        const getChasedById = reminderToList.filter((x) => x.label === singleFollowUp.chased_by);
+        form.setValue('chased_by', getChasedById[0].value);
+        form.setValue('chase_on', singleFollowUp.chase_on);
+        form.setValue('type', singleFollowUp.follow_up_type);
+        form.setValue('description', singleFollowUp.description);
+        form.setValue('reminder_to', `${singleFollowUp.reminder_to ?? ''}`);
+        form.setValue('completed', singleFollowUp.completed);
+
+        setFormType('Edit');
+        setFollowUpId(result.id)
+        handleOpen();
+
+    }
+
+    const onEdit = async () => {
+
+        const values = form.getValues();
+
+        const reqBody = {
+            chase_on: values.chase_on,
+            chased_by: values.chased_by,
+            description: values.description,
+            type: values.type,
+            contact_person: values.reminder_to,
+            completed: values.completed,
+            reminder: values.reminder_to !== '',
+            reminder_to: values.reminder_to
+        }
+
+        await updateOneFollowUp(reqBody, followUpId);
+        await fillData();
+        form.setValue('chased_by', '');
+        form.setValue('chase_on', new Date());
+        form.setValue('type', '');
+        form.setValue('description', '');
+        form.setValue('reminder_to', '');
+        form.setValue('completed', false);
+
+        handleClose()
+
+    }
+
+    const ActionsRenderer = (params) => {
+
+        return (
+            <div className='flex items-center h-full'>
+                <div className='cursor-pointer' onClick={() => handleEdit(params)}>
+                    <MdEdit size={20} />
+                </div>
+            </div>
+        );
+      
+    };
+
+    const rowData = useMemo(() => getRowData(getAllFollowUps), [getAllFollowUps]);
+  
+    const columnDefs = useMemo(() => [
+        { field: 'chaseOn', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agDateColumnFilter' },
+        // { field: 'chaseOn', headerName: 'Chased On', filter: 'agDateColumnFilter' },
+        { field: 'chasedBy', headerName: 'Chased By', filter: 'agTextColumnFilter' },
+        { field: 'description', headerName: 'Description', filter: 'agTextColumnFilter' },
+        { field: 'followUpType', headerName: 'Follow Up type', filter: 'agTextColumnFilter' },
+        { field: 'phone', headerName: 'Phone', filter: 'agTextColumnFilter' },
+        { field: 'email', headerName: 'Email', filter: 'agTextColumnFilter' },
+        { field: 'mobile', headerName: 'Mobile', filter: 'agTextColumnFilter' },
+        { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer }
+    ], []);
+
     return (
-        <>
+        <Loader show={show}>
 
             <Dialog open={open} onOpenChange={handleClose}>
 
@@ -207,9 +260,9 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
                         <DialogContent className="sm:max-w-[425px]">
 
                             <DialogHeader>
-                                <DialogTitle>Add Follow Up</DialogTitle>
+                                <DialogTitle>{formType} Follow Up</DialogTitle>
                                 <DialogDescription>
-                                    Add necessary follow-up details for enquiry
+                                    {formType} necessary follow-up details for enquiry
                                 </DialogDescription>
                             </DialogHeader>
 
@@ -225,7 +278,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
                             <DialogFooter>
                                 <Button type="button" variant='secondary' onClick={handleClose}>Cancel</Button>
-                                <Button type='button' onClick={onSubmit}>Save</Button>
+                                <Button type='button' onClick={formType === 'Add' ? onSubmit : onEdit}>Save</Button>
                             </DialogFooter>
 
                         </DialogContent>
@@ -257,7 +310,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
                 />
             </div>
 
-        </>
+        </Loader>
     );
 
 }

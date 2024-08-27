@@ -7,8 +7,29 @@ import { Container } from "@/components/container";
 import { DatePickerWithRange } from "@/components/date-picker-range";
 import { RecentActivity, Reminders, DeliveryStatus, EnquiryChart, PaymentOverdue } from '@/components/dashboard-activity';
 import ProtectedRoute from "@/components/protected-route";
+import { useEffect, useState } from "react";
+import useStorage from "@/hooks/useStorage";
+import useLoader, { Loader } from "@/hooks/useLoader";
 
 const Dashboard = () => {
+
+  // const [menuId, setMenuId] = useState(null);
+  // const { getItem } = useStorage();
+
+  // useEffect(() => {
+
+  //   const setData = () => {
+
+  //     const allItems = getItem('Menus');
+  //     setMenuId(allItems.filter((x) => x.name === 'Dashboard')[0].id)
+
+  //   };
+
+  //   setData();
+
+  // }, []);
+
+  // if (!menuId) return null;
 
   return (
 

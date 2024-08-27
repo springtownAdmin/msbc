@@ -7,7 +7,7 @@ const useStorage = () => {
 
         if (typeof window !== 'undefined') {
 
-            storage === 'local' ? window.localStorage.setItem(key, value) : window.sessionStorage.getItem(key, value);
+            storage === 'local' ? window.localStorage.setItem(key, JSON.stringify(value)) : window.sessionStorage.getItem(key, JSON.stringify(value));
 
         }
 
@@ -79,7 +79,7 @@ const useStorage = () => {
 
         if (typeof window !== 'undefined') {
 
-            const value = storage === 'local' ? window.localStorage.getItem(key) : window.sessionStorage.getItem(key);
+            const value = storage === 'local' ? JSON.parse(window.localStorage.getItem(key)) : JSON.parse(window.sessionStorage.getItem(key));
 
             return value;
 

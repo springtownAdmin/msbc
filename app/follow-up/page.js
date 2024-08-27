@@ -111,7 +111,7 @@ const FollowUp = () => {
         { field: 'phone', headerName: 'Phone', filter: 'agTextColumnFilter' },
         { field: 'mobile', headerName: 'Mobile', filter: 'agTextColumnFilter' },
         { field: 'email', headerName: 'Email', filter: 'agTextColumnFilter' },
-        { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer }
+        { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer, pinned: 'right', width: 100 }
         
     ], []);
     

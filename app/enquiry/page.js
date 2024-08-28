@@ -18,6 +18,8 @@ import { Search } from 'lucide-react';
 import useAPI from '@/hooks/useAPI';
 import useStorage from '@/hooks/useStorage';
 import useLoader, { Loader } from '@/hooks/useLoader';
+import PermissionBasedComponent from '@/components/common/PermissionBasedComponent';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const ActionsRenderer = (params) => {
 
@@ -26,11 +28,13 @@ const ActionsRenderer = (params) => {
 
   return (
       <div className='flex items-center justify-center h-full'>
+        <PermissionBasedComponent permissionName='can_edit' moduleUrl='/enquiry'>
           <CustomTooltip content='Edit'>
               <Link href={editPath}>
                   <MdEdit size={20}/>
               </Link>
           </CustomTooltip>
+        </PermissionBasedComponent>
       </div>
   );
 
@@ -102,11 +106,13 @@ const Enquiry = () => {
             <Loader show={show}>
 
                 <div className='w-full flex my-3 gap-3'>
-                    <Link href={'enquiry/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                        <CustomTooltip content='Add Enquiry' position='right'>
-                            <AiOutlineFileAdd size={22} />
-                        </CustomTooltip>
-                    </Link>
+                    <PermissionBasedComponent permissionName='can_add' moduleUrl='/enquiry'>
+                        <Link href={'enquiry/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                            <CustomTooltip content='Add Enquiry' position='right'>
+                                <AiOutlineFileAdd size={22} />
+                            </CustomTooltip>
+                        </Link>
+                    </PermissionBasedComponent>
 
                     <div>
                         <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
@@ -148,4 +154,4 @@ const Enquiry = () => {
 
 }
 
-export default Enquiry
+export default wrapPermissionCheck(Enquiry, 'can_view', '/enquiry');

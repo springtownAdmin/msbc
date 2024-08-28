@@ -39,8 +39,6 @@ export const Container = ({ children, id = 1 }) => {
 
   const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
   // const [MenuItems, setMenuItems] = useState(null);
-  
-  // const allMenus = useSelector((state) => state.list);
 
   useEffect(() => {
 
@@ -51,53 +49,55 @@ export const Container = ({ children, id = 1 }) => {
 
     }
 
-    const setMenu = () => {
+    // const setMenu = () => {
 
-      const permissions = getItem('permissions');
-      const getAllMenus = permissions.filter((x) => x.can_view === true);
+    //   // const setAllMenus = getItem('Menus');
+    //   const permissions = getItem('permissions')
 
-      const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-      setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+    //   let setAllMenus = [];
 
-      let setAllMenus = [];
+    //   setAllMenus.push({
+    //       id: 1,
+    //       name: 'Dashboard',
+    //       Icon: MdDashboard,
+    //       link: '/dashboard'
+    //   });
+        
+    //   permissions.forEach((y) => {
 
-      setAllMenus.push({
-        id: 1,
-        name: 'Dashboard',
-        Icon: MdDashboard,
-        link: '/dashboard'
-      });
+    //       const item = {
+    //           id: setAllMenus.length + 1,
+    //           name: y.module,
+    //           Icon: MenuData[y.module].Icon,
+    //           link: MenuData[y.module].link
+    //       }
+    
+    //       setAllMenus.push(item);
+  
+    //       if (item.name === 'Enquiry Management') {
+  
+    //       setAllMenus.push({
+    //           id: setAllMenus.length + 1,
+    //           name: 'Follow Up',
+    //           Icon: BsPersonFillExclamation,
+    //           link: '/follow-up'
+    //       })
+  
+    //       }
 
-      getAllMenus.forEach((y) => {
+    //   })
+    //   // setActiveId(allData.Routes[route]);
 
-        const item = {
-          id: setAllMenus.length + 1,
-          name: y.module,
-          Icon: MenuData[y.module].Icon,
-          link: MenuData[y.module].link
-        }
+    //   const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+    //   setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
-        setAllMenus.push(item);
+    //   setMenuItems([ ...setAllMenus ]);
+    //   // setItems({ Menus: setAllMenus });
 
-        if (item.name === 'Enquiry Management') {
-
-          setAllMenus.push({
-            id: setAllMenus.length + 1,
-            name: 'Follow Up',
-            Icon: BsPersonFillExclamation,
-            link: '/follow-up'
-          })
-
-        }
-
-      });
-
-      setMenuItems([ ...setAllMenus ]);
-      setItems({ Menus: setAllMenus });
-
-    }
+    // }
 
     // setMenu();
+
     setUsersData();
 
   }, []);
@@ -137,7 +137,7 @@ export const Container = ({ children, id = 1 }) => {
     };
   }, []);
 
-  // if (!MenuItems) return null; 
+  if (!MenuItems) return null; 
 
   const handleMenu = (data) => {
     router.push(data.link);
@@ -306,7 +306,6 @@ export const Container = ({ children, id = 1 }) => {
 
                 )
                 
-
               })}
 
             </div>

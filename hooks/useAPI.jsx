@@ -1,14 +1,16 @@
 "use client";
 
-import { BACKEND_API } from '@/utils/constants';
+import { BACKEND_API, MenuData } from '@/utils/constants';
 import useCustomToast from './useCustomToast';
 import useStorage from './useStorage';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { addItems } from '@/lib/slices/list';
+import { setPermissions } from '@/lib/slices/permissionSlice';
+import { MdDashboard } from 'react-icons/md';
+import { BsPersonFillExclamation } from 'react-icons/bs';
 
 const useAPI = () => {
-  
 
     const { showToast } = useCustomToast();
     const { setItems, setItem, getItem } = useStorage();
@@ -27,9 +29,61 @@ const useAPI = () => {
                 return;
             }
 
+            const menusPermissions = result.permissions.map((x) => (
+                { 
+                    menuId: x.module_id,
+                    menuName: x.module,
+                    moduleUrl: MenuData[x.module].link,
+                    can_view: x.can_view,
+                    can_edit: x.can_edit,
+                    can_add: x.can_add
+                }
+            ));
+
+            let setAllMenus = [];
+
+            setAllMenus.push({
+                id: 1,
+                name: 'Dashboard',
+                Icon: MdDashboard,
+                link: '/dashboard'
+            });
+              
+            result.permissions.forEach((y) => {
+
+                const item = {
+                    id: setAllMenus.length + 1,
+                    name: y.module,
+                    Icon: MenuData[y.module].Icon,
+                    link: MenuData[y.module].link
+                }
+          
+                setAllMenus.push(item);
+        
+                if (item.name === 'Enquiry Management') {
+        
+                setAllMenus.push({
+                    id: setAllMenus.length + 1,
+                    name: 'Follow Up',
+                    Icon: BsPersonFillExclamation,
+                    link: '/follow-up'
+                })
+        
+                }
+
+            })
+
+            let routes = {};
+            setAllMenus.forEach((x) => {
+                routes[x.link] = x.id
+            })
+
             setItems(result);
+            setItem("Menus", setAllMenus);
+            setItem("Routes", routes);
             setItem("company_name", company_name);  
-            dispatch(addItems({ key: "Menus", data: result.permissions }))
+            dispatch(addItems({ key: "Menus", data: result.permissions }));
+            dispatch(setPermissions(menusPermissions));
             router.push('/dashboard');          
 
         } catch (e) {

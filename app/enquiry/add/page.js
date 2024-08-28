@@ -22,7 +22,8 @@ import { template01 } from '@/helper/templates';
 import useAPI from '@/hooks/useAPI';
 import { FollowUpDetails } from '@/components/follow-ups';
 import useLoader, { Loader } from '@/hooks/useLoader';
-
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
+import useStorage from '@/hooks/useStorage';
 
 const Add = () => {
 
@@ -37,6 +38,7 @@ const Add = () => {
     const [ sectionTab, setSectionTab ] = useState('enquiry-details');
     const [ productData, setProductData ] = useState([]);
     const { show, showLoader, hideLoader } = useLoader();
+    const { getItem } = useStorage();
 
     const form = useForm({
         resolver: zodResolver(createZodValidation(enquiryData)),
@@ -90,7 +92,6 @@ const Add = () => {
         ]
     }
 
-
     useEffect(() => {
 
         const fillData = async () => {
@@ -100,6 +101,8 @@ const Add = () => {
             const listStatus = await getStatuses();
             const listBranches = await getBranches();
             const listUsers = await getUsers();
+
+            const allMenus = getItem("Menus");
 
             const selectedCustomer = listOrganization.map((x) => ({ id: x.organization_id, value: `${x.organization_id}`, label: x.name }));
             const status_result = listStatus.map((x) => ({ id: x.id, value: `${x.id}`, label: x.status_name }));
@@ -400,4 +403,4 @@ const Add = () => {
 
 }
 
-export default Add
+export default wrapPermissionCheck(Add, 'can_add', '/enquiry');

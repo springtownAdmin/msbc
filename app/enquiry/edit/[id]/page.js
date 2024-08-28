@@ -25,6 +25,7 @@ import { Printer } from 'lucide-react';
 import axios from 'axios';
 import { template01 } from '@/helper/templates';
 import useCustomToast from '@/hooks/useCustomToast';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const Edit = ({ params }) => {
 
@@ -446,4 +447,4 @@ const Edit = ({ params }) => {
 
 }
 
-export default Edit
+export default wrapPermissionCheck(Edit, 'can_edit', '/enquiry');

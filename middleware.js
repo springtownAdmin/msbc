@@ -4,11 +4,13 @@ export function middleware(request) {
     
     const currentPath = request.nextUrl.pathname;
 
+    console.log('==============================================>')
     console.log(`Request to: ${currentPath}`);
+    console.log('==============================================>')
     return NextResponse.next();
     
 }
 
 export const config = {
-    matcher: [ '/' ],
+    matcher: [ '/', '/branch', '/enquiry', '/organization' ],
 };

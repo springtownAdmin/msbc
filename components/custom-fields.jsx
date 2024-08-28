@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, FileOutput } from 'lucide-react';
 import { Calendar } from './ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { toSnakeCase } from '@/utils/constants';
@@ -14,6 +14,11 @@ import { Checkbox } from './ui/checkbox';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { File, Trash2 } from 'lucide-react';
+import pdfIcon from '@/public/images/pdf-icon.png';
+import csvIcon from '@/public/images/csv-icon.png';
+import Image from 'next/image';
+import { LuFile } from 'react-icons/lu';
+import { MdDownload } from "react-icons/md";
 
 export const CustomFields = (props) => {
 
@@ -24,6 +29,7 @@ export const CustomFields = (props) => {
     const [values, setValues] = useState(type === 'multi-select' ? v.length ? v.join(', ').trim() : '' : '');
     const uploadRef = useRef();
     const [files, setFiles] = useState([]);
+    const [previews, setPreviews] = useState([]);
 
     const handleUpload = () => {
         uploadRef.current.click();
@@ -33,15 +39,31 @@ export const CustomFields = (props) => {
 
         const newFiles = Array.from(e.target.files);
         const updatedFiles = [ ...files, ...newFiles ];
+        const updatedPreview = updatedFiles.map((x) => x.type.startsWith('image/') ? URL.createObjectURL(x) : x.type === 'application/pdf' ? 'pdf' : x.type === 'text/csv' ? 'csv' : 'file');
+        setPreviews(updatedPreview);
         setFiles(updatedFiles);
-    
     }
 
     const handleRemoveFile = (id) => {
 
         const allFiles = [ ...files ];
         const newFiles = allFiles.filter((_,idx) => idx !== id);
+        const newPreviews = previews.filter((_,idx) => idx !== id);
         setFiles(newFiles);
+        setPreviews(newPreviews);
+
+    }
+
+    const handleDownload = (id) => {
+
+        const currentFile = files[id];
+
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(currentFile);
+        a.download = currentFile.name;
+        a.click();
+
+        URL.revokeObjectURL(currentFile);
 
     }
 
@@ -357,17 +379,45 @@ export const CustomFields = (props) => {
                         <div className='overflow-auto h-[80%] w-full'>
 
 
+                            <div className='flex gap-3 flex-wrap'>
+
                             {files.map((x, i) => (
                             
-                                <div key={i} className='p-2 border border-slate-100 flex justify-between items-center rounded-sm mb-2'>
-                                <div className='flex gap-3 items-center'>
-                                    <File size={18} />
-                                    <div>{x.name}</div>
-                                </div>
-                                <Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} />
+                                // <div key={i} className='p-2 border border-slate-100 flex justify-between items-center rounded-sm mb-2'>
+                                // <div className='flex gap-3 items-center'>
+                                //     <File size={18} />
+                                //     <div>{x.name}</div>
+                                // </div>
+                                // <Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} />
+                                // </div>
+
+                                <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
+                                    <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
+                                        {previews[i] === 'pdf' ?
+                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                                <Image src={pdfIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+                                            </div>
+                                        : previews[i] === 'csv' ?
+                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                                <Image src={csvIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+                                            </div>
+                                        : previews[i] === 'file' ?
+                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                                <LuFile size={30} />
+                                            </div>
+                                        : <img src={previews[i]} alt={`${x.name}-${i}`} className='h-full w-full' />}
+                                    </div>
+                                    <div className='flex justify-between items-center p-2 bg-white w-full'>
+                                        <div className='text-sm w-full truncate font-medium'>{x.name}</div>
+                                        <div className='flex gap-2 items-center'>
+                                            <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(i)} /></div>
+                                            <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} /></div>
+                                        </div>
+                                    </div>
                                 </div>
 
                             ))}
+                            </div>
 
                         </div>
                     </div>

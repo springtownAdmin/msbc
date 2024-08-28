@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MenuData, Menus, Menus2 } from "@/utils/constants";
-import { Check } from "lucide-react"
+import { Check, Info } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CustomTooltip } from './custom-tooltip';
@@ -29,8 +29,9 @@ export const Container = ({ children, id = 1 }) => {
   const activeId = id;
   const router = useRouter();
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [alert, setAlert] = useState({ alert: false, message: '' });
   const [openUserInfo, setOpenUserInfo] = useState(false);
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
@@ -41,67 +42,100 @@ export const Container = ({ children, id = 1 }) => {
   
   // const allMenus = useSelector((state) => state.list);
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   const setUsersData = () => {
+    const setUsersData = () => {
 
-  //     console.log(allMenus)
+      const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+      setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
-  //     const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-  //     setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+    }
 
-  //   }
+    const setMenu = () => {
 
-  //   const setMenu = () => {
+      const permissions = getItem('permissions');
+      const getAllMenus = permissions.filter((x) => x.can_view === true);
 
-  //     const permissions = getItem('permissions');
-  //     const getAllMenus = permissions.filter((x) => x.can_view === true);
+      const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+      setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
-  //     const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-  //     setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+      let setAllMenus = [];
 
-  //     let setAllMenus = [];
+      setAllMenus.push({
+        id: 1,
+        name: 'Dashboard',
+        Icon: MdDashboard,
+        link: '/dashboard'
+      });
 
-  //     setAllMenus.push({
-  //       id: 1,
-  //       name: 'Dashboard',
-  //       Icon: MdDashboard,
-  //       link: '/dashboard'
-  //     });
+      getAllMenus.forEach((y) => {
 
-  //     getAllMenus.forEach((y) => {
+        const item = {
+          id: setAllMenus.length + 1,
+          name: y.module,
+          Icon: MenuData[y.module].Icon,
+          link: MenuData[y.module].link
+        }
 
-  //       const item = {
-  //         id: setAllMenus.length + 1,
-  //         name: y.module,
-  //         Icon: MenuData[y.module].Icon,
-  //         link: MenuData[y.module].link
-  //       }
+        setAllMenus.push(item);
 
-  //       setAllMenus.push(item);
+        if (item.name === 'Enquiry Management') {
 
-  //       if (item.name === 'Enquiry Management') {
+          setAllMenus.push({
+            id: setAllMenus.length + 1,
+            name: 'Follow Up',
+            Icon: BsPersonFillExclamation,
+            link: '/follow-up'
+          })
 
-  //         setAllMenus.push({
-  //           id: setAllMenus.length + 1,
-  //           name: 'Follow Up',
-  //           Icon: BsPersonFillExclamation,
-  //           link: '/follow-up'
-  //         })
+        }
 
-  //       }
+      });
 
-  //     });
+      setMenuItems([ ...setAllMenus ]);
+      setItems({ Menus: setAllMenus });
 
-  //     setMenuItems([ ...setAllMenus ]);
-  //     setItems({ Menus: setAllMenus });
+    }
 
-  //   }
+    // setMenu();
+    setUsersData();
 
-  //   setMenu();
-  //   setUsersData();
+  }, []);
 
-  // }, []);
+
+  useEffect(() => {
+    // Connect to WebSocket server
+    const ws = new WebSocket('ws://13.127.133.23:8000/ws/notifications/1');
+
+    ws.onopen = function () {
+      console.log('Connection established');
+    };
+
+    ws.onmessage = function (event) {
+      // console.log('Data received from server:', event.data);
+      setAlert({ alert: true, message: event.data });
+      // setMessages((prevMessages) => [...prevMessages, event.data]);
+    };
+
+    ws.onclose = function (event) {
+      if (event.wasClean) {
+        console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+      } else {
+        console.log('Connection died');
+      }
+    };
+
+    ws.onerror = function (error) {
+      console.log(`[WebSocket Error] ${error.message}`);
+    };
+
+    // setSocket(ws);
+
+    // Cleanup on component unmount
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   // if (!MenuItems) return null; 
 
@@ -188,6 +222,30 @@ export const Container = ({ children, id = 1 }) => {
                 <DialogFooter>
                     <Button type="button" variant='secondary' onClick={handleCloseUserInfo}>Cancel</Button>
                     <Button type="button" onClick={handleSaveUserInfo}>Save</Button>
+                </DialogFooter>
+
+            </DialogContent>
+
+          </Dialog>
+
+          <Dialog open={alert.alert}>
+
+            <DialogContent className="sm:max-w-[425px]">
+
+                <DialogHeader>
+                    <DialogTitle>
+                      <div className='flex gap-3 items-center'>
+                        Alert <Info />
+                      </div>
+                    </DialogTitle>
+                </DialogHeader>
+
+                <div>
+                  {alert.message}
+                </div>
+
+                <DialogFooter>
+                  <Button type='button' onClick={() => setAlert({ alert: false, message: '' })}>OK</Button>
                 </DialogFooter>
 
             </DialogContent>

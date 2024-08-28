@@ -147,11 +147,22 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
     const handleOpen = () => {
         setOpen(true);
+
+        // if (formType === 'Add') {
+            form.setValue('chased_by', '');
+            form.setValue('chase_on', new Date());
+            form.setValue('type', '');
+            form.setValue('description', '');
+            form.setValue('reminder_to', '');
+            form.setValue('completed', false);
+        // }
     }
 
     const onSubmit = async () => {
 
         const values = form.getValues();
+
+        console.log(values.chase_on)
 
         const updatedData = {
             enq_no: values.enquiry_no,
@@ -191,7 +202,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
         setFormType('Edit');
         setFollowUpId(result.id)
-        handleOpen();
+        setOpen(true)
 
     }
 
@@ -219,7 +230,9 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         form.setValue('reminder_to', '');
         form.setValue('completed', false);
 
-        handleClose()
+        setFormType('Add');
+        // handleClose()
+        setOpen(false)
 
     }
 

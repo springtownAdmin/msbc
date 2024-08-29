@@ -37,7 +37,7 @@ export const Container = ({ children, id = 1 }) => {
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
   const { getItems, getItem, clearStorage, setItems } = useStorage();
 
-  const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
+  const MenuItems = Menus;
   // const [MenuItems, setMenuItems] = useState(null);
 
   useEffect(() => {

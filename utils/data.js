@@ -494,7 +494,7 @@ export const followUpData = [
         id: 3,
         name: 'Chase On',
         label: 'Chase On',
-        type: 'date',
+        type: 'datetime',
         value: '',
         required: true,
         is_visible: true,

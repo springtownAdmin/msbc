@@ -154,4 +154,4 @@ const Enquiry = () => {
 
 }
 
-export default wrapPermissionCheck(Enquiry, 'can_view', '/enquiry');
+export default wrapPermissionCheck(Enquiry, 'can_view');

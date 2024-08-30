@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import useAPI from '@/hooks/useAPI';
 import useLoader, { Loader } from '@/hooks/useLoader';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const Add = () => {
 
@@ -223,4 +224,4 @@ const Add = () => {
   )
 }
 
-export default Add
+export default wrapPermissionCheck(Add,'can_add');

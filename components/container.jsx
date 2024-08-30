@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CustomTooltip } from './custom-tooltip';
 import useStorage from '@/hooks/useStorage';
-import { MdDashboard, MdLogout } from "react-icons/md";
+import { MdDashboard, MdLogout, MdOutlineTextFields } from "react-icons/md";
 import Image from 'next/image';
 import dwerpLogo from '@/public/images/dwerp-full-logo.png'
 import ProtectedRoute from './protected-route';
@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '@/lib/slices/list';
 import { CheckPermission } from './check-permission';
 import { BsPersonFillExclamation } from 'react-icons/bs';
+import PermissionBasedComponent from './common/PermissionBasedComponent';
+import useAPI from '@/hooks/useAPI';
 
 export const Container = ({ children, id = 1 }) => {
 
@@ -35,9 +37,22 @@ export const Container = ({ children, id = 1 }) => {
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
   const { getItems, clearStorage, setItems } = useStorage();
+  const [permissions, setPermissions] = useState([]);
+  const { setSideBarMenuPermissions } = useAPI();
 
-  const MenuItems = Menus;
-  // const [MenuItems, setMenuItems] = useState(null);
+  useEffect(() => {
+    const fetchPermissions = async () => {
+        const response = await setSideBarMenuPermissions();
+        setPermissions(response);
+
+          // Print permissions data
+    };
+
+    fetchPermissions();
+}, [router, permissions?.length === 0]); 
+
+  // const MenuItems = Menus;
+  const [MenuItems, setMenuItems] = useState(null);
 
   useEffect(() => {
 
@@ -48,58 +63,69 @@ export const Container = ({ children, id = 1 }) => {
 
     }
 
-    // const setMenu = () => {
+    const setMenu = () => {
 
-    //   // const setAllMenus = getItem('Menus');
-    //   const permissions = getItem('permissions')
+      // const setAllMenus = getItem('Menus');
+      // const permissions = getItem('permissions')
 
-    //   let setAllMenus = [];
+      let setAllMenus = [];
 
-    //   setAllMenus.push({
-    //       id: 1,
-    //       name: 'Dashboard',
-    //       Icon: MdDashboard,
-    //       link: '/dashboard'
-    //   });
+      setAllMenus.push({
+          id: 1,
+          name: 'Dashboard',
+          Icon: MdDashboard,
+          link: '/dashboard'
+      });
         
-    //   permissions.forEach((y) => {
+      permissions?.forEach((y) => {
 
-    //       const item = {
-    //           id: setAllMenus.length + 1,
-    //           name: y.module,
-    //           Icon: MenuData[y.module].Icon,
-    //           link: MenuData[y.module].link
-    //       }
+          const item = {
+              id: setAllMenus.length + 1,
+              name: y.module_name,
+              Icon: MenuData[y.module_name].Icon,
+              link: MenuData[y.module_name].link
+          }
     
-    //       setAllMenus.push(item);
+          setAllMenus.push(item);
   
-    //       if (item.name === 'Enquiry Management') {
+          if (item.name === 'Enquiry Management') {
   
-    //       setAllMenus.push({
-    //           id: setAllMenus.length + 1,
-    //           name: 'Follow Up',
-    //           Icon: BsPersonFillExclamation,
-    //           link: '/follow-up'
-    //       })
+            setAllMenus.push({
+                id: setAllMenus.length + 1,
+                name: 'Follow Up',
+                Icon: BsPersonFillExclamation,
+                link: '/follow-up'
+            })
   
-    //       }
+          }
 
-    //   })
-    //   // setActiveId(allData.Routes[route]);
+          if (item.name === 'User Management') {
 
-    //   const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-    //   setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+            setAllMenus.push({
+              id: setAllMenus.length + 1,
+              name: 'Custom Fields',
+              Icon: MdOutlineTextFields,
+              link: '/custom-fields'
+            })
 
-    //   setMenuItems([ ...setAllMenus ]);
-    //   // setItems({ Menus: setAllMenus });
+          }
 
-    // }
+      })
+      // setActiveId(allData.Routes[route]);
 
-    // setMenu();
+      const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+      setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+
+      setMenuItems([ ...setAllMenus ]);
+      // setItems({ Menus: setAllMenus });
+
+    }
+
+    setMenu();
 
     setUsersData();
 
-  }, []);
+  }, [permissions]);
 
   if (!MenuItems) return null; 
 
@@ -201,13 +227,17 @@ export const Container = ({ children, id = 1 }) => {
                 if (v?.submenu === undefined) {
 
                   return (
-                    <div key={`MenuItem-${i}`}>
-                      <CustomTooltip content={v.name}>
-                        <div onClick={() => handleMenu(v)} className={`${activeId === v.id ? 'bg-orange-500 text-white' : 'hover:bg-orange-100 text-orange-500'} transition-all duration-200 p-2 rounded-md`}>
-                          <v.Icon size={25} />
-                        </div>
-                      </CustomTooltip>
-                    </div>
+                    <PermissionBasedComponent permissionName='can_view' moduleUrl={v.link}>
+
+                      <div key={`MenuItem-${i}`}>
+                        <CustomTooltip content={v.name}>
+                          <div onClick={() => handleMenu(v)} className={`${activeId === v.id ? 'bg-orange-500 text-white' : 'hover:bg-orange-100 text-orange-500'} transition-all duration-200 p-2 rounded-md`}>
+                            <v.Icon size={25} />
+                          </div>
+                        </CustomTooltip>
+                      </div>
+                      
+                    </PermissionBasedComponent>
                   )
 
                 }

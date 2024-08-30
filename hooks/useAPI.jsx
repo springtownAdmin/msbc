@@ -79,11 +79,12 @@ const useAPI = () => {
             })
 
             setItems(result);
-            setItem("Menus", setAllMenus);
-            setItem("Routes", routes);
+            // setItem("Menus", setAllMenus);
+            // setItem("Routes", routes);
+            dispatch(setPermissions(result.permissions));
             setItem("company_name", company_name);  
-            dispatch(addItems({ key: "Menus", data: result.permissions }));
-            dispatch(setPermissions(menusPermissions));
+            // dispatch(addItems({ key: "Menus", data: result.permissions }));
+            // dispatch(setPermissions(menusPermissions));
             router.push('/dashboard');          
 
         } catch (e) {
@@ -100,6 +101,21 @@ const useAPI = () => {
         return getItem('company_name')
 
     }
+
+    const setSideBarMenuPermissions = async () => {
+        // We're using this Hook in our container module which loads latest state. 
+        // We update state in our localstorage to make sure we're fetching latest state updated. 
+        try {
+        
+          const company_name = getItem('company_name');
+          const userId = getItem('user_id');
+          const result = await BACKEND_API.get(`/user/${userId}/permissions?company_name=${company_name}`);
+          dispatch(setPermissions(result.data.permissions));
+          return result.data.permissions;
+        } catch (error) {
+          console.error('Failed to fetch permissions:', error);
+        }
+    };
 
     const getUser = async (id = 1) => {
 
@@ -648,7 +664,7 @@ const useAPI = () => {
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
-        deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel
+        deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions
     };
 
 }

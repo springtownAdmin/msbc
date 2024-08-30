@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/protected-route";
 import { useEffect, useState } from "react";
 import useStorage from "@/hooks/useStorage";
 import useLoader, { Loader } from "@/hooks/useLoader";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
 

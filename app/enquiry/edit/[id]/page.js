@@ -447,4 +447,4 @@ const Edit = ({ params }) => {
 
 }
 
-export default wrapPermissionCheck(Edit, 'can_edit', '/enquiry');
+export default wrapPermissionCheck(Edit, 'can_edit');

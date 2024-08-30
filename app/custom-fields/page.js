@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomGrid } from '@/components/grid';
 import { DynamicFields } from '@/components/dynamic-fields';
+import useAPI from '@/hooks/useAPI';
 
 const CustomFieldsPage = () => {
 
@@ -73,6 +74,9 @@ const CustomFieldsPage = () => {
     })
 
     const form = [ enquiryForm, customerForm, projectForm, branchForm, organizationForm ];
+
+    const { addField, getFields, updateFieldLabel } = useAPI();
+    const [ editLabelId, setEditLabelId ] = useState(0);
 
     const form2 = useForm({
         resolver: zodResolver(createZodValidation(fieldData)),
@@ -205,15 +209,33 @@ const CustomFieldsPage = () => {
 
     const handleLabelSave = () => {
 
+        // let newArr = [];
+
+        // sectionData.forEach((x, i) => {
+
+        //     if (i === sectionId) {
+
+
+        //     }
+
+        // })
+
         const newData = sectionData.map((x, i) => {
             
             if (i === sectionId) return [ ...labelNames ];
 
             return x;
 
-        })
+        });
+
+        // const reqBody = {
+        //     table_name: sectionId === 0 ? 'enquiryheader' : '',
+        //     field_name: 
+        // }
+        // await updateFieldLabel()
         setSectionData(newData);
         setOpen(false);
+
     }
 
     const handleClose3 = () => {

@@ -1,10 +1,10 @@
-
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClientProvider } from "@/components/client-provider";
 import { Toaster } from "@/components/ui/toaster"
 import { Suspense } from "react";
 import Loading from "./loading";
+import WebSocketProvider from "@/components/web-socket-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,11 +15,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 
+
   return (
       <html lang="en">
         <body className={inter.className} style={{ overflow: 'hidden' }}>
             <ClientProvider>
               <Suspense fallback={<Loading />}>
+                <WebSocketProvider />
                 {children}
               </Suspense>
             </ClientProvider>

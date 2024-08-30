@@ -173,7 +173,8 @@ const useAPI = () => {
 
         try {
 
-            const resp = await BACKEND_API.post(`/branches`, reqBody);
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/branches`, { ...reqBody, company_name });
 
             showToast(resp.data.status_code, resp.data.message);
     
@@ -591,11 +592,63 @@ const useAPI = () => {
 
     }
 
+    const addField = async (reqBody) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/add-field?company_name=${company_name}`, reqBody);
+
+            showToast(resp.data.status_code, resp.data.message);
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getFields = async ({ table_name }) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/fields?table_name=${table_name}&company_name=${company_name}`);
+
+            return resp.data.fields;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const updateFieldLabel = async (reqBody) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const resp = await BACKEND_API.post(`/update-field-label?company_name=${company_name}`, reqBody);
+
+            showToast(resp.data.status_code, resp.data.message);
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
-        deleteGroup, getOneFollowUp, updateOneFollowUp
+        deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel
     };
 
 }

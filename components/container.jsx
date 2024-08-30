@@ -31,11 +31,10 @@ export const Container = ({ children, id = 1 }) => {
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [alert, setAlert] = useState({ alert: false, message: '' });
   const [openUserInfo, setOpenUserInfo] = useState(false);
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
-  const { getItems, getItem, clearStorage, setItems } = useStorage();
+  const { getItems, clearStorage, setItems } = useStorage();
 
   const MenuItems = Menus;
   // const [MenuItems, setMenuItems] = useState(null);
@@ -102,41 +101,6 @@ export const Container = ({ children, id = 1 }) => {
 
   }, []);
 
-
-  useEffect(() => {
-    // Connect to WebSocket server
-    const ws = new WebSocket('ws://13.127.133.23:8000/ws/notifications/1');
-
-    ws.onopen = function () {
-      console.log('Connection established');
-    };
-
-    ws.onmessage = function (event) {
-      // console.log('Data received from server:', event.data);
-      setAlert({ alert: true, message: event.data });
-      // setMessages((prevMessages) => [...prevMessages, event.data]);
-    };
-
-    ws.onclose = function (event) {
-      if (event.wasClean) {
-        console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
-      } else {
-        console.log('Connection died');
-      }
-    };
-
-    ws.onerror = function (error) {
-      console.log(`[WebSocket Error] ${error.message}`);
-    };
-
-    // setSocket(ws);
-
-    // Cleanup on component unmount
-    return () => {
-      ws.close();
-    };
-  }, []);
-
   if (!MenuItems) return null; 
 
   const handleMenu = (data) => {
@@ -181,7 +145,7 @@ export const Container = ({ children, id = 1 }) => {
 
           <Dialog open={openUserInfo} onOpenChange={handleCloseUserInfo}>
 
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px]" aria-describedby='alert-box'>
 
                 <DialogHeader>
                     <DialogTitle>Add / Edit User Info</DialogTitle>
@@ -222,30 +186,6 @@ export const Container = ({ children, id = 1 }) => {
                 <DialogFooter>
                     <Button type="button" variant='secondary' onClick={handleCloseUserInfo}>Cancel</Button>
                     <Button type="button" onClick={handleSaveUserInfo}>Save</Button>
-                </DialogFooter>
-
-            </DialogContent>
-
-          </Dialog>
-
-          <Dialog open={alert.alert}>
-
-            <DialogContent className="sm:max-w-[425px]">
-
-                <DialogHeader>
-                    <DialogTitle>
-                      <div className='flex gap-3 items-center'>
-                        Alert <Info />
-                      </div>
-                    </DialogTitle>
-                </DialogHeader>
-
-                <div>
-                  {alert.message}
-                </div>
-
-                <DialogFooter>
-                  <Button type='button' onClick={() => setAlert({ alert: false, message: '' })}>OK</Button>
                 </DialogFooter>
 
             </DialogContent>
@@ -340,9 +280,7 @@ export const Container = ({ children, id = 1 }) => {
 
               <div className='w-full h-[90%] p-4 overflow-auto'>
                 
-                {/* <CheckPermission> */}
-                  {children}
-                {/* </CheckPermission> */}
+                {children}
 
               </div>
 

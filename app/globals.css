@@ -185,3 +185,49 @@ input[type="number"] { appearance: none; margin: 0; }
   flex-direction: column;
   align-items: center;
 }
+
+.placeholder {
+  background: #eee;
+  position: relative;
+  overflow: hidden;
+}
+
+
+.image-placeholder {
+  aspect-ratio: 16 / 12;
+  margin-bottom: 1rem;
+}
+
+
+.title-placeholder {
+  aspect-ratio: 16 / 1.5;
+  margin-bottom: 2rem;
+}
+
+
+.text-placeholder {
+  aspect-ratio: 16 / 1;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.placeholder:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100px;
+  background: linear-gradient(90deg, #eee, #f4f4f4, #eee);
+  animation: gradient 1s infinite ease-in-out;
+}
+
+@keyframes gradient {
+  form {
+    left: 0%;
+  }
+  
+  to {
+    left: 100%;
+  }
+}

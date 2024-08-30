@@ -149,12 +149,12 @@ export const CustomFields = (props) => {
                                     <Calendar
                                         mode="single"
                                         selected={new Date(field.value)}
-                                        onSelect={(date) => field.onChange(date.toISOString())}
+                                        onSelect={field.onChange}
                                         // disabled={(date) => (date > new Date() || date < new Date("1900-01-01"))}
                                         initialFocus
                                     />
                                     <div className='p-3 border-t border-border'>
-                                        <TimePickerDemo setDate={(date) => field.onChange(date.toISOString())} date={field.value} />
+                                        <TimePickerDemo setDate={field.onChange} date={field.value} />
                                     </div>
                                 </PopoverContent>
 

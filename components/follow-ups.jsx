@@ -22,6 +22,7 @@ import { createZodValidation, formatDateToYYYYMMDD, getColumnHeader, getRowData,
 import { Form } from './ui/form';
 import useAPI from '@/hooks/useAPI';
 import useLoader, { Loader } from '@/hooks/useLoader';
+import { BsStars } from "react-icons/bs";
 
 export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
@@ -162,7 +163,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
         const values = form.getValues();
 
-        console.log(values.chase_on)
+        console.log(new Date(values.chase_on))
 
         const updatedData = {
             enq_no: values.enquiry_no,
@@ -194,7 +195,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
         const getChasedById = reminderToList.filter((x) => x.label === singleFollowUp.chased_by);
         form.setValue('chased_by', getChasedById[0].value);
-        form.setValue('chase_on', singleFollowUp.chase_on);
+        form.setValue('chase_on', new Date(singleFollowUp.chase_on));
         form.setValue('type', singleFollowUp.follow_up_type);
         form.setValue('description', singleFollowUp.description);
         form.setValue('reminder_to', `${singleFollowUp.reminder_to ?? ''}`);
@@ -262,6 +263,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer }
     ], []);
 
+    const [ openSummary, setOpenSummary ] = useState(false);
+
+    const handleOpenSummary = () => setOpenSummary(true);
+    const handleCloseSummary = () => setOpenSummary(false);
+
     return (
         <Loader show={show}>
 
@@ -301,11 +307,46 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
             </Dialog>
 
-            <div className='w-full flex my-3'>
+            <Dialog open={openSummary} onOpenChange={handleCloseSummary}>
+                <DialogContent className="sm:max-w-[425px]">
+
+                    <DialogHeader>
+                        <DialogTitle> <div className='flex items-center gap-3 w-[150px]'><BsStars /> AI Summary</div></DialogTitle>
+                        <DialogDescription>
+                            Summary for the enquiry - {enquiryNo}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="flex flex-col items-center gap-2 py-4 w-full h-[300px] overflow-auto">
+
+                        <div className='image-placeholder placeholder rounded-sm h-full w-full'></div>
+
+                        {/* <div className='flex gap-4'>
+                            <div className='image-placeholder placeholder m-2 h-[30rem] w-[48%] rounded-md'></div>
+                            <div className='image-placeholder placeholder m-2 h-[30rem] w-[48%] rounded-md'></div>
+                        </div> */}
+
+                    </div>
+
+                    <DialogFooter>
+                        <Button type="button" variant='secondary' onClick={handleCloseSummary}>Cancel</Button>
+                    </DialogFooter>
+
+                </DialogContent>
+            </Dialog>
+
+            <div className='w-full justify-between flex my-3'>
                 <div className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250' onClick={handleOpen}>
                     <CustomTooltip content='Add Follow Up' position='right'>
                         <AiOutlineFileAdd size={22} />
                     </CustomTooltip>
+                </div>
+
+                <div>
+                    <Button className='flex gap-2' type='button' onClick={handleOpenSummary}>
+                        <BsStars />
+                        Generate Summary
+                    </Button>
                 </div>
             </div>
 

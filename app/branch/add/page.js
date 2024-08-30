@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form } from '@/components/ui/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import useAPI from '@/hooks/useAPI';
+import useStorage from '@/hooks/useStorage';
 import { createZodValidation, putValues } from '@/utils/constants';
 import { branchData } from '@/utils/data';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +21,7 @@ const Add = () => {
   const router = useRouter();
 
   const { createBranch } = useAPI();
+  const { getItem } = useStorage();
 
   const updatedBranch = branchData.filter((_, i) => i !== 0);
 
@@ -28,20 +30,11 @@ const Add = () => {
     defaultValues: putValues(updatedBranch)
   });
 
-  function onSubmit(values) {
-    
+  const onSubmit = async (values) => {
 
-    if (typeof window !== undefined || typeof window !== null) {
-
-      let company_name = window.localStorage.getItem('company_name');
-      form.setValue('company_name', company_name);
-      // values.company_name = company_name;
       createBranch(values);
       router.push('/branch');
 
-
-    }
-    
   }
 
   const handleCancel = () => {

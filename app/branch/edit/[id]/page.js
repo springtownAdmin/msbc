@@ -1,5 +1,6 @@
 "use client";
 
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 import { Container } from '@/components/container'
 import { DynamicFields } from '@/components/dynamic-fields';
 import { CustomGrid } from '@/components/grid';
@@ -195,4 +196,4 @@ const Edit = ({ params }) => {
 
 }
 
-export default Edit
+export default wrapPermissionCheck(Edit,'can_edit');

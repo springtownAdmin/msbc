@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import useAPI from '@/hooks/useAPI';
 import useLoader, { Loader } from '@/hooks/useLoader';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const Edit = ({ params }) => {
 
@@ -147,4 +148,4 @@ const Edit = ({ params }) => {
 
 }
 
-export default Edit
+export default wrapPermissionCheck(Edit,'can_edit');

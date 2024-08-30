@@ -17,6 +17,19 @@ const useAPI = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
+    const setSideBarMenuPermissions = async () => {
+        // We're using this Hook in our container module which loads latest state. 
+        // We update state in our localstorage to make sure we're fetching latest state updated. 
+        try {
+          const result = await BACKEND_API.get(`/user/${getItem('user_id')}/permissions?company_name=${getItem('company_name')}`);
+          dispatch(setPermissions(result.data.permissions));
+          return result.data.permissions;
+        } catch (error) {
+          console.error('Failed to fetch permissions:', error);
+        }
+      };
+    
+
     const authenticateUser = async (reqBody, company_name) => {
 
         try {
@@ -28,64 +41,14 @@ const useAPI = () => {
                 showToast(result.status_code, result.message);
                 return;
             }
-
-            const menusPermissions = result.permissions.map((x) => (
-                { 
-                    menuId: x.module_id,
-                    menuName: x.module,
-                    moduleUrl: MenuData[x.module].link,
-                    can_view: x.can_view,
-                    can_edit: x.can_edit,
-                    can_add: x.can_add
-                }
-            ));
-
-            let setAllMenus = [];
-
-            setAllMenus.push({
-                id: 1,
-                name: 'Dashboard',
-                Icon: MdDashboard,
-                link: '/dashboard'
-            });
-              
-            result.permissions.forEach((y) => {
-
-                const item = {
-                    id: setAllMenus.length + 1,
-                    name: y.module,
-                    Icon: MenuData[y.module].Icon,
-                    link: MenuData[y.module].link
-                }
-          
-                setAllMenus.push(item);
-        
-                if (item.name === 'Enquiry Management') {
-        
-                setAllMenus.push({
-                    id: setAllMenus.length + 1,
-                    name: 'Follow Up',
-                    Icon: BsPersonFillExclamation,
-                    link: '/follow-up'
-                })
-        
-                }
-
-            })
-
-            let routes = {};
-            setAllMenus.forEach((x) => {
-                routes[x.link] = x.id
-            })
-
             setItems(result);
-            setItem("Menus", setAllMenus);
-            setItem("Routes", routes);
+            // setItem("Menus", setAllMenus);
+            // setItem("Routes", routes);
+            dispatch(setPermissions(result.permissions));
             setItem("company_name", company_name);  
-            dispatch(addItems({ key: "Menus", data: result.permissions }));
-            dispatch(setPermissions(menusPermissions));
-            router.push('/dashboard');          
+            router.push('/dashboard');   
 
+            
         } catch (e) {
 
             showToast(400, e.message);
@@ -595,7 +558,7 @@ const useAPI = () => {
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
-        deleteGroup, getOneFollowUp, updateOneFollowUp
+        deleteGroup, getOneFollowUp, updateOneFollowUp, setSideBarMenuPermissions
     };
 
 }

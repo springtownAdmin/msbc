@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CustomGrid } from '@/components/grid';
 import { DynamicFields } from '@/components/dynamic-fields';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const CustomFieldsPage = () => {
 
@@ -632,4 +633,4 @@ const CustomFieldsPage = () => {
 
 }
 
-export default CustomFieldsPage
+export default wrapPermissionCheck(CustomFieldsPage,'can_view')

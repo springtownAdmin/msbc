@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
@@ -19,6 +19,7 @@ import csvIcon from '@/public/images/csv-icon.png';
 import Image from 'next/image';
 import { LuFile } from 'react-icons/lu';
 import { MdDownload } from "react-icons/md";
+import axios from 'axios';
 
 export const CustomFields = (props) => {
 
@@ -28,44 +29,89 @@ export const CustomFields = (props) => {
     const v = form.watch(name) || [];
     const [values, setValues] = useState(type === 'multi-select' ? v.length ? v.join(', ').trim() : '' : '');
     const uploadRef = useRef();
+    const [selectedFileForUpload, setselectedFileForUpload] = useState(null);
     const [files, setFiles] = useState([]);
     const [previews, setPreviews] = useState([]);
 
-    const handleUpload = () => {
+    const handleUpload = async () => {
         uploadRef.current.click();
+
+        if (!selectedFileForUpload) return;
+        const formData = new FormData();
+        formData.append('file', selectedFileForUpload);
+        const fileName = selectedFileForUpload.name;
+
+        try {
+        await axios.post(`http://13.127.133.23:8000/enquiry/ENQ24082204/upload?company_name=HolBox02&file_name=${fileName}`, formData, {
+            params: { file_name: fileName, file_path: path },
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        handleFiles();
+        } catch (error) {
+        console.error(error);
+        }
     }
+   
   
-    const handleFiles = (e) => {
+    const handleFiles = async (e) => {
 
-        const newFiles = Array.from(e.target.files);
-        const updatedFiles = [ ...files, ...newFiles ];
-        const updatedPreview = updatedFiles.map((x) => x.type.startsWith('image/') ? URL.createObjectURL(x) : x.type === 'application/pdf' ? 'pdf' : x.type === 'text/csv' ? 'csv' : 'file');
-        setPreviews(updatedPreview);
-        setFiles(updatedFiles);
+        // const newFiles = Array.from(e.target.files);
+        // const updatedFiles = [ ...files, ...newFiles ];
+        // const updatedPreview = updatedFiles.map((x) => x.type.startsWith('image/') ? URL.createObjectURL(x) : x.type === 'application/pdf' ? 'pdf' : x.type === 'text/csv' ? 'csv' : 'file');
+        // setPreviews(updatedPreview);
+        // setFiles(updatedFiles);
+        // uploadRef.current.click();
+        try {
+            const response = await axios.get(`http://13.127.133.23:8000/enquiry/ENQ24082204/files?company_name=HolBox02`);
+            setFiles(response.data.files);
+            console.log(files);
+            
+          } catch (error) {
+            console.error(error);
+          }
     }
 
-    const handleRemoveFile = (id) => {
+    
 
-        const allFiles = [ ...files ];
-        const newFiles = allFiles.filter((_,idx) => idx !== id);
-        const newPreviews = previews.filter((_,idx) => idx !== id);
-        setFiles(newFiles);
-        setPreviews(newPreviews);
+    const handleRemoveFile = async (fileName, filePath) => {
 
-    }
+        // const allFiles = [ ...files ];
+        // const newFiles = allFiles.filter((_,idx) => idx !== id);
+        // const newPreviews = previews.filter((_,idx) => idx !== id);
+        // setFiles(newFiles);
+        // setPreviews(newPreviews);
 
-    const handleDownload = (id) => {
-
-        const currentFile = files[id];
-
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(currentFile);
-        a.download = currentFile.name;
-        a.click();
-
-        URL.revokeObjectURL(currentFile);
+        try {
+            await axios.delete('http://localhost:8000/delete/', { params: { file_name: fileName, file_path: filePath } });
+            handleFiles();
+          } catch (error) {
+            console.error(error);
+          }
 
     }
+
+    const handleDownload = async (fileName, filePath) => {
+
+        // const currentFile = files[id];
+
+        // const a = document.createElement('a');
+        // a.href = URL.createObjectURL(currentFile);
+        // a.download = currentFile.name;
+        // a.click();
+
+        // URL.revokeObjectURL(currentFile);
+
+        try {
+            const response = await axios.get('http://localhost:8000/download/', { params: { file_name: fileName, file_path: filePath } });
+            window.open(response.data.file_url);
+          } catch (error) {
+            console.error(error);
+          }
+
+    }
+    // useEffect(() => {
+    //    handleFiles();
+    //   }, [files.length == 0]);
 
     if (type === 'text') {
 
@@ -375,7 +421,7 @@ export const CustomFields = (props) => {
                 {files.length ? 
 
                     <div className='m-2 h-full'>
-                        <div className='flex w-full justify-end mb-2'><Button variant='secondary' type='button' onClick={handleUpload}>Upload more</Button></div>
+                        <div className='flex w-full justify-end mb-2'><Button variant='secondary' type='button' onClick={() => handleUpload()}>Upload more</Button></div>
                         <div className='overflow-auto h-[80%] w-full'>
 
 
@@ -410,8 +456,8 @@ export const CustomFields = (props) => {
                                     <div className='flex justify-between items-center p-2 bg-white w-full'>
                                         <div className='text-sm w-full truncate font-medium'>{x.name}</div>
                                         <div className='flex gap-2 items-center'>
-                                            <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(i)} /></div>
-                                            <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} /></div>
+                                            <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(x.file_name, x.file_path)} /></div>
+                                            <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(x.file_name, x.file_path)} /></div>
                                         </div>
                                     </div>
                                 </div>
@@ -423,9 +469,10 @@ export const CustomFields = (props) => {
                     </div>
 
                 : 
-                    <div className='flex justify-center items-center h-full w-full text-gray-400' onClick={handleUpload}>
-                        Upload documents here...
-                    </div>
+                    // <div className='flex justify-center items-center h-full w-full text-gray-400' onClick={() => handleUpload('')}>
+                    //     Upload documents here...
+                    // </div> 
+                    null
                 }
 
             </div>

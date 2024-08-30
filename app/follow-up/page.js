@@ -13,14 +13,17 @@ import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import useAPI from "@/hooks/useAPI";
 import useLoader, { Loader } from "@/hooks/useLoader";
+import wrapPermissionCheck from "@/components/common/wrapPermissionCheck";
 
 const ActionsRenderer = (params) => {
 
     return (
         <div className='flex items-center h-full'>
-            <div>
-                <MdEdit size={20}/>
-            </div>
+            <PermissionBasedComponent permissionName = 'can_edit' moduleUrl='/enquiry'>
+                <div>
+                    <MdEdit size={20}/>
+                </div>
+            </PermissionBasedComponent>
         </div>
     );
   
@@ -172,4 +175,4 @@ const FollowUp = () => {
   )
 }
 
-export default FollowUp
+export default wrapPermissionCheck(FollowUp,'can_view');

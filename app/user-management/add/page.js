@@ -1,5 +1,6 @@
 "use client";
 
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 import { Container } from '@/components/container'
 import { DynamicFields } from '@/components/dynamic-fields';
 import { CustomGrid } from '@/components/grid';
@@ -132,4 +133,4 @@ const Add = () => {
     );
 }
 
-export default Add
+export default wrapPermissionCheck(Add,'can_add');

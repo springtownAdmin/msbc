@@ -17,6 +17,8 @@ import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import useLoader, { Loader } from '@/hooks/useLoader';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
+import PermissionBasedComponent from '@/components/common/PermissionBasedComponent';
 
 const ActionsRenderer = (params) => {
 
@@ -24,13 +26,17 @@ const ActionsRenderer = (params) => {
   const editPath = `branch/edit/${item.branch_code}`
 
   return (
+    
       <div className='flex items-center justify-center h-full'>
+        <PermissionBasedComponent permissionName='can_edit' moduleUrl='/branch'>
           <CustomTooltip content='Edit'>
               <Link href={editPath}>
                   <MdEdit size={20}/>
               </Link>
           </CustomTooltip>
+          </PermissionBasedComponent>
       </div>
+      
   );
 
 };
@@ -86,11 +92,13 @@ const Branch = () => {
           <Loader show={show}>
 
             <div className='w-full flex my-3 gap-3'>
+               <PermissionBasedComponent permissionName='can_add' moduleUrl='/branch'>
                 <Link href={'branch/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                    <CustomTooltip content='Add Branch' position='right'>
-                        <AiOutlineFileAdd size={22} />
-                    </CustomTooltip>
-                </Link>
+                      <CustomTooltip content='Add Branch' position='right'>
+                          <AiOutlineFileAdd size={22} />
+                      </CustomTooltip>
+                  </Link>
+               </PermissionBasedComponent>
 
                 <div>
                   <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
@@ -131,4 +139,4 @@ const Branch = () => {
 
 }
 
-export default Branch
+export default wrapPermissionCheck(Branch,'can_view')

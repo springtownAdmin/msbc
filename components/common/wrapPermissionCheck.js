@@ -1,41 +1,47 @@
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Loading from '@/app/loading';
 
 const wrapPermissionCheck = (Component, permissionType) => {
-
   const WrappedComponent = (props) => {
     const router = useRouter();
     const pathname = usePathname();
     const permissions = useSelector((state) => state.permissions.permissions);
+    const [hasPermission, setHasPermission] = useState(null);
+
+    
 
     useEffect(() => {
-      const currentPath = pathname;
+      let currentpath = pathname;
+      if(pathname == '/custom-fields'){
+        currentpath = '/user-management';
+      }
+      if(pathname == '/follow-up'){
+        currentpath = '/enquiry';
+      }
+      
+      // Check for permission and update state
+      const permission = permissions.find(p => p.module_url === currentpath || currentpath.startsWith(`${p.module_url}/`));
+      const isAuthorized = permission ? permission[permissionType] : false;
+      setHasPermission(isAuthorized);
 
-      const permission = permissions.find(p => {
-        return p.moduleUrl === currentPath || currentPath.startsWith(`${p.moduleUrl}/`);
-      });
-
-      const hasPermission = permission ? permission[permissionType] : false;
-
-      if (!hasPermission) {
+      // Redirect if not authorized
+      if (isAuthorized === false) {
         router.push('/not-found');
       }
     }, [permissions, router, pathname, permissionType]);
 
-    const permission = permissions.find((p) => {
-      return p.moduleUrl === pathname || pathname.startsWith(`${p.moduleUrl}/`);
-    });
+    // Render nothing or a loading indicator while checking permissions
+    if (hasPermission === null) {
+      return <Loading />;
+    }
 
-    const hasPermission = permission ? permission[permissionType] : false;
-
-    // Render the component if the user has permission
-    if(!hasPermission) return null;
-    return <Component {...props} />;
+    // Render the wrapped component if permission is granted
+    return hasPermission ? <Component {...props} /> : null;
   };
 
   return WrappedComponent;
-  
 };
 
 export default wrapPermissionCheck;

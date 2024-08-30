@@ -19,6 +19,8 @@ import { Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MdDelete } from "react-icons/md";
 import useLoader, { Loader } from '@/hooks/useLoader';
+import PermissionBasedComponent from '@/components/common/PermissionBasedComponent';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const ActionsRenderer = (params) => {
 
@@ -27,11 +29,13 @@ const ActionsRenderer = (params) => {
 
   return (
       <div className='flex h-full'>
+        <PermissionBasedComponent permissionName="can_edit" moduleUrl="/user-management">
           <CustomTooltip content='Edit'>
               <Link href={editPath}>
                   <MdEdit size={20}/>
               </Link>
           </CustomTooltip>
+          </PermissionBasedComponent>
       </div>
   );
 
@@ -145,11 +149,13 @@ const UserManagement = () => {
 
               <div className='w-full flex my-3 gap-3'>
 
-                  <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                      <CustomTooltip content='Add User' position='right'>
-                          <AiOutlineFileAdd size={22} />
-                      </CustomTooltip>
-                  </Link>
+                  <PermissionBasedComponent permissionName='can_add' moduleUrl='/user-management'>
+                    <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                        <CustomTooltip content='Add User' position='right'>
+                            <AiOutlineFileAdd size={22} />
+                        </CustomTooltip>
+                    </Link>
+                  </PermissionBasedComponent> 
 
                   <div>
                     <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
@@ -187,13 +193,13 @@ const UserManagement = () => {
             <TabsContent value='roles'>
 
               <div className='w-full flex my-3 gap-3'>
-
+              <PermissionBasedComponent permissionName='can_edit' moduleUrl='/user-management'>
                 <Link href={'user-management/roles/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
                     <CustomTooltip content='Add Role' position='right'>
                         <AiOutlineFileAdd size={22} />
                     </CustomTooltip>
                 </Link>
-
+                </PermissionBasedComponent>
               </div>
 
               <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
@@ -223,4 +229,4 @@ const UserManagement = () => {
 
 }
 
-export default UserManagement
+export default wrapPermissionCheck(UserManagement,'can_view');

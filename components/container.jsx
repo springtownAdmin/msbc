@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CustomTooltip } from './custom-tooltip';
 import useStorage from '@/hooks/useStorage';
-import { MdDashboard, MdLogout } from "react-icons/md";
+import { MdDashboard, MdLogout, MdOutlineTextFields } from "react-icons/md";
 import Image from 'next/image';
 import dwerpLogo from '@/public/images/dwerp-full-logo.png'
 import ProtectedRoute from './protected-route';
@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from '@/lib/slices/list';
 import { CheckPermission } from './check-permission';
 import { BsPersonFillExclamation } from 'react-icons/bs';
+import PermissionBasedComponent from './common/PermissionBasedComponent';
+import useAPI from '@/hooks/useAPI';
 
 export const Container = ({ children, id = 1 }) => {
 
@@ -36,9 +38,23 @@ export const Container = ({ children, id = 1 }) => {
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
   const { getItems, getItem, clearStorage, setItems } = useStorage();
+  const [permissions,setPermissions] = useState([]);
 
-  const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
-  // const [MenuItems, setMenuItems] = useState(null);
+  const { setSideBarMenuPermissions } = useAPI();
+
+    useEffect(() => {
+        const fetchPermissions = async () => {
+            const response = await setSideBarMenuPermissions();
+            setPermissions(response);
+            
+              // Print permissions data
+        };
+
+        fetchPermissions();
+    }, [router,permissions.length == 0]); 
+  
+  // const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
+  const [MenuItems, setMenuItems] = useState(null);
 
   useEffect(() => {
 
@@ -49,93 +65,108 @@ export const Container = ({ children, id = 1 }) => {
 
     }
 
-    // const setMenu = () => {
+    const setMenu = () => {
 
-    //   // const setAllMenus = getItem('Menus');
-    //   const permissions = getItem('permissions')
+      // const setAllMenus = getItem('Menus');
+      
 
-    //   let setAllMenus = [];
+      let setAllMenus = [];
 
-    //   setAllMenus.push({
-    //       id: 1,
-    //       name: 'Dashboard',
-    //       Icon: MdDashboard,
-    //       link: '/dashboard'
-    //   });
+      setAllMenus.push({
+          id: 1,
+          name: 'Dashboard',
+          Icon: MdDashboard,
+          link: '/dashboard'
+      });
         
-    //   permissions.forEach((y) => {
 
-    //       const item = {
-    //           id: setAllMenus.length + 1,
-    //           name: y.module,
-    //           Icon: MenuData[y.module].Icon,
-    //           link: MenuData[y.module].link
-    //       }
+      permissions.forEach((y) => {
+          
+          const item = {
+              id: setAllMenus.length + 1,
+              name: y.module_name,
+              Icon: MenuData[y.module_name].Icon,
+              link: MenuData[y.module_name].link
+          }
+          
+          setAllMenus.push(item);
+  
+          // see this below two hard coded paths/modules
+          if (item.name === 'Enquiry Management') {
+  
+          setAllMenus.push({
+              id: setAllMenus.length + 1,
+              name: 'Follow Up',
+              Icon: BsPersonFillExclamation,
+              link: '/follow-up'
+          })
+  
+          }
+          
+          if (item.name === 'User Management') {
+  
+            setAllMenus.push({
+                id: setAllMenus.length + 1,
+                name: 'Custom Fields',
+                Icon: MdOutlineTextFields,
+                link: '/custom-fields'
+            })
     
-    //       setAllMenus.push(item);
-  
-    //       if (item.name === 'Enquiry Management') {
-  
-    //       setAllMenus.push({
-    //           id: setAllMenus.length + 1,
-    //           name: 'Follow Up',
-    //           Icon: BsPersonFillExclamation,
-    //           link: '/follow-up'
-    //       })
-  
-    //       }
+            }
 
-    //   })
-    //   // setActiveId(allData.Routes[route]);
+      })
+      // setActiveId(allData.Routes[route]);
 
-    //   const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
-    //   setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
+      const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
+      setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
-    //   setMenuItems([ ...setAllMenus ]);
-    //   // setItems({ Menus: setAllMenus });
+      setMenuItems([ ...setAllMenus ]);
+      // setItems({ Menus: setAllMenus });
 
-    // }
+    }
 
-    // setMenu();
+    setMenu();
 
     setUsersData();
+    
 
-  }, []);
+  }, [permissions]);
 
 
-  useEffect(() => {
-    // Connect to WebSocket server
-    const ws = new WebSocket('ws://13.127.133.23:8000/ws/notifications/1');
+  // useEffect(() => {
+  //   // Connect to WebSocket server
+  //   const ws = new WebSocket('ws://13.127.133.23:8000/ws/notifications/1');
 
-    ws.onopen = function () {
-      console.log('Connection established');
-    };
+  //   ws.onopen = function () {
+  //     console.log('Connection established');
+  //   };
 
-    ws.onmessage = function (event) {
-      // console.log('Data received from server:', event.data);
-      setAlert({ alert: true, message: event.data });
-      // setMessages((prevMessages) => [...prevMessages, event.data]);
-    };
+  //   ws.onmessage = function (event) {
+  //     // console.log('Data received from server:', event.data);
+  //     setAlert({ alert: true, message: event.data });
+  //     // setMessages((prevMessages) => [...prevMessages, event.data]);
+  //   };
 
-    ws.onclose = function (event) {
-      if (event.wasClean) {
-        console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
-      } else {
-        console.log('Connection died');
-      }
-    };
+  //   ws.onclose = function (event) {
+  //     if (event.wasClean) {
+  //       console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+  //     } else {
+  //       console.log('Connection died');
+  //     }
+  //   };
 
-    ws.onerror = function (error) {
-      console.log(`[WebSocket Error] ${error.message}`);
-    };
+  //   ws.onerror = function (error) {
+  //     console.log(`[WebSocket Error] ${error.message}`);
+  //   };
 
-    // setSocket(ws);
+  //   // setSocket(ws);
 
-    // Cleanup on component unmount
-    return () => {
-      ws.close();
-    };
-  }, []);
+  //   // Cleanup on component unmount
+  //   return () => {
+  //     ws.close();
+  //   };
+  // }, []);
+
 
   if (!MenuItems) return null; 
 
@@ -257,17 +288,17 @@ export const Container = ({ children, id = 1 }) => {
             <div className="p-4 flex flex-col gap-4 items-center">
 
               {MenuItems.map((v, i) => {
-
                 if (v?.submenu === undefined) {
-
                   return (
-                    <div key={`MenuItem-${i}`}>
-                      <CustomTooltip content={v.name}>
-                        <div onClick={() => handleMenu(v)} className={`${activeId === v.id ? 'bg-orange-500 text-white' : 'hover:bg-orange-100 text-orange-500'} transition-all duration-200 p-2 rounded-md`}>
-                          <v.Icon size={25} />
+                    <PermissionBasedComponent permissionName='can_view' moduleUrl={v.link}>
+                        <div key={`MenuItem-${i}`}>
+                          <CustomTooltip content={v.name}>
+                            <div onClick={() => handleMenu(v)} className={`${activeId === v.id ? 'bg-orange-500 text-white' : 'hover:bg-orange-100 text-orange-500'} transition-all duration-200 p-2 rounded-md`}>
+                              <v.Icon size={25} />
+                            </div>
+                          </CustomTooltip>
                         </div>
-                      </CustomTooltip>
-                    </div>
+                    </PermissionBasedComponent>
                   )
 
                 }

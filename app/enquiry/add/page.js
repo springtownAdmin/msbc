@@ -403,4 +403,4 @@ const Add = () => {
 
 }
 
-export default wrapPermissionCheck(Add, 'can_add', '/enquiry');
+export default wrapPermissionCheck(Add, 'can_add');

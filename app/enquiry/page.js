@@ -50,7 +50,7 @@ const Enquiry = () => {
   const [ dateRange, setDateRange ] = useState({ start: null, end: null });
   const { company_name } = useStorage();
   const { showLoader, hideLoader, show } = useLoader();
-
+  
   const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
 
   const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
@@ -154,4 +154,4 @@ const Enquiry = () => {
 
 }
 
-export default wrapPermissionCheck(Enquiry, 'can_view', '/enquiry');
+export default wrapPermissionCheck(Enquiry, 'can_view');

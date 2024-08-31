@@ -260,7 +260,7 @@ const Edit = ({ params }) => {
 
     <>
 
-        <Container id={4}>
+        <Container id={4} route='/enquiry'>
 
           <Loader show={show}>
 
@@ -447,4 +447,4 @@ const Edit = ({ params }) => {
 
 }
 
-export default wrapPermissionCheck(Edit, 'can_edit', '/enquiry');
+export default wrapPermissionCheck(Edit, 'can_edit');

@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/protected-route";
 import { useEffect, useState } from "react";
 import useStorage from "@/hooks/useStorage";
 import useLoader, { Loader } from "@/hooks/useLoader";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
 
@@ -35,7 +36,7 @@ const Dashboard = () => {
 
     <>
 
-      <Container id={1}>
+      <Container id={1} route='/dashboard'>
 
         <div className="flex gap-3">
 

@@ -35,6 +35,11 @@ export const MenuData = {
   'Follow Up': {
     Icon: BsPersonFillExclamation,
     link: '/follow-up'
+  },
+
+  'Custom Fields': {
+    Icon: MdOutlineTextFields,
+    link: '/custom-fields'
   }
 
 }

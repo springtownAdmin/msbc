@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const Edit = ({ params }) => {
 
@@ -69,7 +70,7 @@ const Edit = ({ params }) => {
   return (
     <>
 
-      <Container id={2}>
+      <Container id={2} route='/branch'>
 
         <Loader show={show}>
 
@@ -195,4 +196,4 @@ const Edit = ({ params }) => {
 
 }
 
-export default Edit
+export default wrapPermissionCheck(Edit,'can_edit');

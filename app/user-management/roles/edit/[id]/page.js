@@ -18,6 +18,7 @@ import { Form } from '@/components/ui/form';
 import useAPI from '@/hooks/useAPI';
 import useLoader from '@/hooks/useLoader';
 import { Loader } from '@/hooks/useLoader';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const Edit = ({ params }) => {
 
@@ -139,7 +140,7 @@ const Edit = ({ params }) => {
 
 
   return (
-    <Container id={3}>
+    <Container id={3} route='/user-management'>
 
         <Loader show={show}>
 
@@ -238,4 +239,4 @@ const Edit = ({ params }) => {
   )
 }
 
-export default Edit
+export default wrapPermissionCheck(Edit,'can_edit');

@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
+import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const Add = () => {
 
@@ -70,7 +71,7 @@ const Add = () => {
     return (
       <>
 
-        <Container id={3}>
+        <Container id={3} route='/user-management'>
     
             <Tabs defaultValue="user-details" className='w-full'>
               
@@ -132,4 +133,4 @@ const Add = () => {
     );
 }
 
-export default Add
+export default wrapPermissionCheck(Add,'can_add');

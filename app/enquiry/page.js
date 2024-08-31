@@ -101,7 +101,7 @@ const Enquiry = () => {
   return (
     <>
 
-        <Container id={4}>
+        <Container id={4} route='/enquiry'>
 
             <Loader show={show}>
 
@@ -154,4 +154,4 @@ const Enquiry = () => {
 
 }
 
-export default wrapPermissionCheck(Enquiry, 'can_view', '/enquiry');
+export default wrapPermissionCheck(Enquiry, 'can_view');

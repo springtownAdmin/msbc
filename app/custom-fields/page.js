@@ -295,7 +295,7 @@ const CustomFieldsPage = () => {
     }
 
     return (
-        <Container id={7}>
+        <Container id={7} route='/custom-fields'>
 
             <Dialog open={open} onOpenChange={handleClose}>
 

@@ -81,7 +81,7 @@ const Edit = ({ params }) => {
   return (
     <>
 
-      <Container id={3}>
+      <Container id={3} route='/user-management'>
 
         <Loader show={show}>
 

@@ -42,7 +42,7 @@ const Add = () => {
 
     return (
         <>
-            <Container id={5}>
+            <Container id={5} route='/organization'>
 
                 <Tabs defaultValue="organization-details" className='w-full'>
 

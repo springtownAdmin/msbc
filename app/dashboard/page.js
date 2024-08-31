@@ -36,7 +36,7 @@ const Dashboard = () => {
 
     <>
 
-      <Container id={1}>
+      <Container id={1} route='/dashboard'>
 
         <div className="flex gap-3">
 

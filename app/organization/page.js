@@ -83,7 +83,7 @@ const Organization = () => {
     };
 
   return (
-    <Container id={5}>
+    <Container id={5} route='/organization'>
 
         <Loader show={show}>
 

@@ -136,7 +136,7 @@ const FollowUp = () => {
     }
 
   return (
-    <Container id={6}>
+    <Container id={6} route='/follow-up'>
 
         <Loader show={show}>
 

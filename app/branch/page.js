@@ -85,7 +85,7 @@ const Branch = () => {
   return (
     <>
 
-      <Container id={2}>
+      <Container id={2} route='/branch'>
 
           <Loader show={show}>
 

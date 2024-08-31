@@ -26,9 +26,10 @@ import { BsPersonFillExclamation } from 'react-icons/bs';
 import PermissionBasedComponent from './common/PermissionBasedComponent';
 import useAPI from '@/hooks/useAPI';
 
-export const Container = ({ children, id = 1 }) => {
+export const Container = ({ children, id = 1, route = '' }) => {
 
-  const activeId = id;
+  // const activeId = id;
+  const [ activeId, setActiveId ] = useState(1);
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
@@ -64,9 +65,6 @@ export const Container = ({ children, id = 1 }) => {
     }
 
     const setMenu = () => {
-
-      // const setAllMenus = getItem('Menus');
-      // const permissions = getItem('permissions')
 
       let setAllMenus = [];
 
@@ -111,13 +109,13 @@ export const Container = ({ children, id = 1 }) => {
           }
 
       })
-      // setActiveId(allData.Routes[route]);
 
       const data = getItems([ 'first_name', 'last_name', 'email', 'phone', 'address' ]);
       setUserDetails({ firstname: data[0], lastname: data[1], email: data[2], phone: data[3], address: data[4] });
 
       setMenuItems([ ...setAllMenus ]);
-      // setItems({ Menus: setAllMenus });
+      const findID = setAllMenus?.filter((x) => x?.link === route)[0]?.id;
+      setActiveId(findID)
 
     }
 

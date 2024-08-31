@@ -101,7 +101,7 @@ const Enquiry = () => {
   return (
     <>
 
-        <Container id={4}>
+        <Container id={4} route='/enquiry'>
 
             <Loader show={show}>
 

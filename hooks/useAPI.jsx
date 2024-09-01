@@ -1,6 +1,6 @@
 "use client";
 
-import { BACKEND_API, MenuData } from '@/utils/constants';
+import { AI_SUMMARY_API, BACKEND_API, MenuData } from '@/utils/constants';
 import useCustomToast from './useCustomToast';
 import useStorage from './useStorage';
 import { useRouter } from 'next/navigation';
@@ -659,12 +659,65 @@ const useAPI = () => {
 
     }
 
+    const getUpcomingReminders = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const userId = getItem('user_id');
+            const resp = await BACKEND_API.get(`/upcoming_reminders/${userId}?company_name=${company_name}`);
+
+            return resp.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getEnquiriesChart = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const userId = getItem('user_id');
+            const resp = await BACKEND_API.get(`/enquiry_status_counts/${userId}?company_name=${company_name}`);
+
+            return resp.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const getFollowUpSummary = async (reqBody) => {
+
+        try {
+
+            const resp = await AI_SUMMARY_API.post(`/get-summary`, reqBody);
+
+            return resp.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
-        deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions
+        deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions,
+        getUpcomingReminders, getEnquiriesChart, getFollowUpSummary
     };
 
 }

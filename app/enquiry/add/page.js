@@ -25,6 +25,7 @@ import useLoader, { Loader } from '@/hooks/useLoader';
 import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 import useStorage from '@/hooks/useStorage';
 import { Printer } from 'lucide-react';
+import FileUploadSection from '@/components/FileUploadSection';
 
 const Add = () => {
 
@@ -325,10 +326,10 @@ const Add = () => {
 
                                         <div className='flex justify-end gap-3 w-full'>
                                             <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                                            <Button variant="secondary" type='button' onClick={handlePrint}>
+                                            {/* <Button variant="secondary" type='button' onClick={handlePrint}>
                                                 <Printer size={18} className="mr-2 h-4 w-4" />
                                                 Print
-                                            </Button>
+                                            </Button> */}
                                             <Button>Save</Button>
                                         </div>
 
@@ -350,7 +351,8 @@ const Add = () => {
                                 </CardHeader>
 
                                 <CardContent>
-                                    <CustomFields form={form} type='file' />
+                                    {/* <CustomFields form={form} type='file' /> */}
+                                    <FileUploadSection />
                                 </CardContent>
 
                             </Card>

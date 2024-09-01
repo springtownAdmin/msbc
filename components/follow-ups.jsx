@@ -23,6 +23,17 @@ import { Form } from './ui/form';
 import useAPI from '@/hooks/useAPI';
 import useLoader, { Loader } from '@/hooks/useLoader';
 import { BsStars } from "react-icons/bs";
+import MarkdownIt from 'markdown-it';
+
+const md = new MarkdownIt();
+
+const MarkdownComponent = ({ markdown }) => {
+
+    const htmlContent = md.render(markdown);
+  
+    return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+
+};
 
 export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
@@ -31,8 +42,10 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
     const [getAllFollowUps, setAllFollowUps] = useState([]);
     const { show, showLoader, hideLoader } = useLoader();
 
-    const { getUsers, addFollowUp, getEnquiryFollowUps, getOneFollowUp, updateOneFollowUp } = useAPI();
+    const { getUsers, addFollowUp, getEnquiryFollowUps, getOneFollowUp, updateOneFollowUp, getFollowUpSummary } = useAPI();
     const followValues = putValues(followUps);
+    const [ followUpSummary, setFollowUpSummary ] = useState('');
+    const [ summaryLoader, setSummaryLoader ] = useState(false);
 
     const [ formType, setFormType ] = useState('Add');
     const [ followUpId, setFollowUpId ] = useState(0); 
@@ -147,16 +160,16 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
     }
 
     const handleOpen = () => {
+        
         setOpen(true);
 
-        // if (formType === 'Add') {
-            form.setValue('chased_by', '');
-            form.setValue('chase_on', new Date());
-            form.setValue('type', '');
-            form.setValue('description', '');
-            form.setValue('reminder_to', '');
-            form.setValue('completed', false);
-        // }
+        form.setValue('chased_by', '');
+        form.setValue('chase_on', new Date());
+        form.setValue('type', '');
+        form.setValue('description', '');
+        form.setValue('reminder_to', '');
+        form.setValue('completed', false);
+
     }
 
     const onSubmit = async () => {
@@ -232,7 +245,6 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         form.setValue('completed', false);
 
         setFormType('Add');
-        // handleClose()
         setOpen(false)
 
     }
@@ -265,7 +277,18 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
     const [ openSummary, setOpenSummary ] = useState(false);
 
-    const handleOpenSummary = () => setOpenSummary(true);
+    const handleOpenSummary = async () => {
+        setOpenSummary(true);
+        setSummaryLoader(true);
+        const collectFollowUps = getAllFollowUps.map((x) => ({ chase_on: x.chaseOn, chased_by: x.chasedBy, description: x.description }));
+        const reqBody = { enquiry_no: enquiryNo, follow_ups: collectFollowUps };
+
+        console.log(reqBody);
+        const summary = await getFollowUpSummary(reqBody);
+        setFollowUpSummary(summary?.response);
+        setSummaryLoader(false);
+    }
+
     const handleCloseSummary = () => setOpenSummary(false);
 
     return (
@@ -319,12 +342,12 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
                     <div className="flex flex-col items-center gap-2 py-4 w-full h-[300px] overflow-auto">
 
-                        <div className='image-placeholder placeholder rounded-sm h-full w-full'></div>
-
-                        {/* <div className='flex gap-4'>
-                            <div className='image-placeholder placeholder m-2 h-[30rem] w-[48%] rounded-md'></div>
-                            <div className='image-placeholder placeholder m-2 h-[30rem] w-[48%] rounded-md'></div>
-                        </div> */}
+                        {summaryLoader ? <div className='image-placeholder placeholder rounded-sm h-full w-full'></div> :
+                        
+                            <pre className='font-sans text-sm' style={{ overflow: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                                <MarkdownComponent markdown={followUpSummary} />
+                            </pre>
+                        }
 
                     </div>
 

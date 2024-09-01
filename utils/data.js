@@ -763,3 +763,41 @@ export const rolesData = [
 
 ]
 
+export const emailData = [
+
+    {
+        id: 1,
+        name: 'Enquiry No',
+        label: 'Enquiry No',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: true
+    },
+
+    {
+        id: 2,
+        name: 'Receiver',
+        label: 'Receiver',
+        type: 'text',
+        list: [],
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 3,
+        name: 'Email Prompt',
+        label: 'Email Prompt',
+        type: 'textarea',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+]
+

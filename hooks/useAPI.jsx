@@ -711,13 +711,29 @@ const useAPI = () => {
 
     }
 
+    const getEmailContent = async (reqBody) => {
+
+        try {
+
+            const resp = await AI_SUMMARY_API.post(`/generate_email`, reqBody);
+
+            return resp.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
         deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions,
-        getUpcomingReminders, getEnquiriesChart, getFollowUpSummary
+        getUpcomingReminders, getEnquiriesChart, getFollowUpSummary, getEmailContent
     };
 
 }

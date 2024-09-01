@@ -365,6 +365,12 @@ export const BACKEND_API = axios.create({
 
 })
 
+export const AI_SUMMARY_API = axios.create({
+
+  baseURL: process.env.AI_SUMMARY_API,
+  
+})
+
 
 /**
  * regular expression to check for valid hour format (01-23)
@@ -546,6 +552,23 @@ export function display12HourValue(hours) {
   if (hours >= 22) return `${hours - 12}`;
   if (hours % 12 > 9) return `${hours}`;
   return `0${hours % 12}`;
+}
+
+export function convertTo12HourFormat(timeString) {
+  // Extract hours, minutes, and seconds
+  let [hours, minutes] = timeString.split(':');
+
+  // Convert hours to a number
+  hours = parseInt(hours, 10);
+
+  // Determine AM or PM
+  const period = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert hours to 12-hour format
+  hours = hours % 12 || 12;
+
+  // Return formatted time
+  return `${hours}:${minutes} ${period}`;
 }
  
 

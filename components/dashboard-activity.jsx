@@ -8,6 +8,7 @@ import { Label, Pie, PieChart } from "recharts"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bar, BarChart, LabelList } from "recharts"
 import { Button } from './ui/button';
+import { convertTo12HourFormat } from '@/utils/constants';
 
 const AreachartData = [
   { elements: "Black Handle", planned_qty: 50 },
@@ -25,33 +26,24 @@ const AreachartConfig = {
   }
 }
 
-const EnquirychartData = [
-    { enquiry: "leadIn", enquiries: 2, fill: "blue" },
-    { enquiry: "lost", enquiries: 1, fill: "red" },
-    { enquiry: "quoteInProgress", enquiries: 1, fill: "orange" },
-    { enquiry: "quoteReady", enquiries: 2, fill: "green" },
-]
+// const EnquirychartData = [
+//     { enquiry: "leadIn", enquiries: 2, fill: "blue" },
+//     { enquiry: "lost", enquiries: 1, fill: "red" },
+//     { enquiry: "quoteInProgress", enquiries: 1, fill: "orange" },
+//     { enquiry: "quoteReady", enquiries: 2, fill: "green" },
+// ]
   
+
 const EnquirychartConfig = {
-enquiries: {
-    label: "Enquiries",
-},
-leadIn: {
-    label: "Lead In",
-    color: "hsl(var(--chart-1))",
-},
-lost: {
-    label: "Lost",
-    color: "hsl(var(--chart-2))",
-},
-quoteInProgress: {
-    label: "Quote In Progress",
-    color: "hsl(var(--chart-3))",
-},
-quoteReady: {
-    label: "Quote Ready",
-    color: "hsl(var(--chart-4))",
-}
+
+  enquiries: { label: "Enquiries" },
+  "Lead In": { label: "Lead In", color: "hsl(var(--chart-1))" },
+  "Lost": { label: "Lost", color: "hsl(var(--chart-2))" },
+  "Quote In Progress": { label: "Quote In Progress", color: "hsl(var(--chart-3))" },
+  "Quote Ready": { label: "Quote Ready", color: "hsl(var(--chart-4))" },
+  "Waiting Information - Cost.": { label: "Waiting Information - Cost.", color: "hsl(var(--chart-5))" },
+  "Waiting Information - Supl.": { label: "Waiting Information - Supl.", color: "hsl(var(--chart-6))" },
+
 }
 
 const BarchartData = [
@@ -103,11 +95,12 @@ export const DeliveryStatus = () => {
   )
 }
 
-export const EnquiryChart = () => {
+export const EnquiryChart = ({ EnquirychartData }) => {
 
     const totalVisitors = React.useMemo(() => {
       return EnquirychartData.reduce((acc, curr) => acc + curr.enquiries, 0)
-    }, [])
+    }, []);
+
   
     return (
   
@@ -158,27 +151,41 @@ export const EnquiryChart = () => {
     )
 }
 
-export const Reminders = () => {
+export const Reminders = ({ remindersData = [] }) => {
+
+      // const remindersData = [
+      //   {
+      //     reminder_date: "2024-08-31",
+      //     reminder_time: "14:30:00.570000",
+      //     enquiry_no: "ENQ24083102"
+      //   }
+      // ]
 
     return (
       <>
           <Card className='w-[400px]'>
   
               <CardHeader>
-                  <CardTitle>Reminders</CardTitle>
+                  <CardTitle>Upcoming Reminders</CardTitle>
               </CardHeader>
   
               <CardContent className='h-full overflow-auto'>
-  
-                  {[1, 2].map((v, i) => (
+
+                {remindersData.length ?
+                    remindersData.map((v, i) => (
   
                       <div key={`reminder-${i}`}>
                       
                           <div className='flex justify-between'>
   
                               <div className='flex gap-5'>
+
+                                  <div>
+                                    <div className='text-lg'>{remindersData[0]?.enquiry_no}</div>
+                                    <CardDescription className='text-xs'>{remindersData[0]?.reminder_date}</CardDescription>
+                                  </div>
   
-                                  <Avatar>
+                                  {/* <Avatar>
                                       <AvatarImage />
                                       <AvatarFallback className='bg-yellow-100'>KM</AvatarFallback>
                                   </Avatar>
@@ -186,13 +193,55 @@ export const Reminders = () => {
                                   <div>
                                       <div>Kamran</div>
                                       <CardDescription className='text-xs'>13 Feb 2024</CardDescription>
-                                  </div>
+                                  </div> */}
   
                               </div>
   
                               <div>
   
-                                  <Button variant="outline" disabled>12:00 PM</Button>
+                                  <Button variant="outline" disabled>{convertTo12HourFormat(remindersData[0]?.reminder_time)}</Button>
+  
+                              </div>
+  
+                          </div>
+  
+                          <hr className='border-gray-100 my-4' />
+  
+                      </div>
+  
+                    ))
+                    :
+                    <div className='h-[70%] w-full flex justify-center items-center text-red-500'>No reminders found!</div>
+                }
+  
+                  {remindersData.map((v, i) => (
+  
+                      <div key={`reminder-${i}`}>
+                      
+                          <div className='flex justify-between'>
+  
+                              <div className='flex gap-5'>
+
+                                  <div>
+                                    <div className='text-lg'>{remindersData[0]?.enquiry_no}</div>
+                                    <CardDescription className='text-xs'>{remindersData[0]?.reminder_date}</CardDescription>
+                                  </div>
+  
+                                  {/* <Avatar>
+                                      <AvatarImage />
+                                      <AvatarFallback className='bg-yellow-100'>KM</AvatarFallback>
+                                  </Avatar>
+  
+                                  <div>
+                                      <div>Kamran</div>
+                                      <CardDescription className='text-xs'>13 Feb 2024</CardDescription>
+                                  </div> */}
+  
+                              </div>
+  
+                              <div>
+  
+                                  <Button variant="outline" disabled>{convertTo12HourFormat(remindersData[0]?.reminder_time)}</Button>
   
                               </div>
   

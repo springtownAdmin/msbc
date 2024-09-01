@@ -8,42 +8,66 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { enquiryformSchema } from '@/helper/schema';
-import { breakData, createZodValidation, dateFormatter, formatDateToYYYYMMDD } from '@/utils/constants';
+import { breakData, createZodValidation, dateFormatter, formatDateToYYYYMMDD, putValues } from '@/utils/constants';
 import { CustomFields } from '@/components/custom-fields';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useAPI from '@/hooks/useAPI';
-import { enquiryData } from '@/utils/data';
+import { emailData, enquiryData } from '@/utils/data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CustomGrid } from '@/components/grid';
 import { DynamicFields } from '@/components/dynamic-fields';
 import { ProductDetails } from '@/components/product-details';
 import { FollowUpDetails } from '@/components/follow-ups';
 import useLoader, { Loader } from '@/hooks/useLoader';
-import { Printer } from 'lucide-react';
+import { Printer, Stars } from 'lucide-react';
 import axios from 'axios';
 import { template01 } from '@/helper/templates';
 import useCustomToast from '@/hooks/useCustomToast';
 import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 import FileUploadSection from '@/components/FileUploadSection';
+import { MdOutlineEmail } from "react-icons/md";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { BsStars } from 'react-icons/bs';
+import useStorage from '@/hooks/useStorage';
+import MarkdownIt from 'markdown-it';
+
+const md = new MarkdownIt();
+
+const MarkdownComponent = ({ markdown }) => {
+
+    const htmlContent = md.render(markdown);
+  
+    return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+
+};
 
 const Edit = ({ params }) => {
 
   const router = useRouter();
   const [ enquiry, setEnquiry ] = useState(null);
+  const [ emailEnquiry, setEmailEnquiry ] = useState(null);
   const { getEnquiry } = useAPI();
   const { getOrganizations, updateEnquiry, getOrganization, getStatuses, getBranches, getUsers } = useAPI();
   const sections = breakData(enquiryData, [ 'enquiry_by', 'billing_address', 'notes' ]);
   const [ customerData, setCustomerData ] = useState(sections[1]);
   const [ enquiryDetails, setEnquiryDetails ] = useState(sections[0]);
+  const [ emailDetails, setEmailDetails ] = useState(emailData);
 
   const [ sectionTab, setSectionTab ] = useState('enquiry-details');
   const { show, showLoader, hideLoader } = useLoader();
 
   const [ productData, setProductData ] = useState([]);
+  const [ openEmail, setOpenEmail ] = useState(false);
+  const [ openSummary, setOpenSummary ] = useState(false);
+  const [ listStatus, setListStatus ] = useState([]);
+  const [ listCustomer, setListCustomer ] = useState([]);
+  const [ emailSummary, setEmailSummary ] = useState('');
+  const { getItem } = useStorage();
 
   const { toast } = useToast();
+  const { getEmailContent } = useAPI();
   const { showToast } = useCustomToast();
 
   const id = params.id;
@@ -64,6 +88,11 @@ const Edit = ({ params }) => {
 
   }
 
+  const emailForm = useForm({
+    resolver: zodResolver(createZodValidation(emailDetails)),
+    defaultValues: putValues(emailDetails)
+  })
+
   useEffect(() => {
 
     const setData = async () => {
@@ -83,6 +112,8 @@ const Edit = ({ params }) => {
         const user_result = listUsers.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: x.first_name }));
         const customerResult = customerData.map((x) => (x.name === 'Customer' ? { ...x , list: selectedCustomer } : x));
 
+        setListStatus(status_result)
+        setListCustomer(selectedCustomer)
         const newEnquiryResult = enquiryDetails.map((x) => {
 
             if(x.name === 'Status') return { ...x, list: status_result };
@@ -102,8 +133,8 @@ const Edit = ({ params }) => {
         setEnquiry(newResult);
         await onSelectCustomer(parseInt(result.customer))
         setProductData(result.products);
-
-
+        emailForm.setValue('enquiry_no', result.enquiry_no)
+        
       } catch (e) {
 
         showToast(500, e.message);
@@ -161,6 +192,10 @@ const Edit = ({ params }) => {
   const onSelectBranch = (branch_id) => form.setValue('branch', `${branch_id}`);
 
   const onSelectSalesRep = (user_id) => form.setValue('sales_representative', `${user_id}`);
+
+  const onSelectReceiver = (user_id) => form.setValue('receiver', `${user_id}`);
+
+  const userControls = [ { name: 'Receiver', onSelect: onSelectReceiver } ];
 
   const controls = {
     enquiry: [
@@ -257,6 +292,56 @@ const Edit = ({ params }) => {
 
   const handleTabChange = (value) => setSectionTab(value);
 
+  const handleEmailClose = () => {
+
+    setOpenEmail(false);
+    emailForm.setValue('receiver', '');  
+    emailForm.setValue('email_prompt', '');  
+
+  }
+
+  const handleOpenEmailBox = () => setOpenEmail(true);
+
+  const onSubmitEmailForm = async () => {
+
+    const result = emailForm.getValues();
+    const sender = `${getItem('first_name')} ${getItem('last_name')}`;
+    const product_list = enquiry.products?.map((x) => ({ 
+        name: x.product_name,
+        code: x.product_name,
+        quantity: x.quantity,
+        description: x.description
+    }))
+
+    const reqBody = {
+        sender: sender,
+        receiver: result.receiver,
+        Enq_details: {
+            Enq_No: enquiry.enquiry_no,
+            Enq_createdBy: sender,
+            Enq_createdDate: formatDateToYYYYMMDD(enquiry.enquiry_date),
+            Enq_status: listStatus.filter((x) => x.value === enquiry.status)[0].label
+        },
+        customer_details: {
+            customer_name: listCustomer.filter((x) => x.value === enquiry.customer)[0].label,
+            customer_email: enquiry.email,
+            customer_phone: enquiry.phone,
+            customer_address: enquiry.address,
+            customer_country: ''
+        },
+        product_deatils: product_list,
+        prompt: result.email_prompt
+    }
+
+    setOpenSummary(true);
+    const resp = await getEmailContent(reqBody);
+    setEmailSummary(resp.response);
+    setOpenSummary(false);
+
+  }
+
+  const emptyEmailContent = () => setEmailSummary('');
+
   return (
 
     <>
@@ -264,6 +349,92 @@ const Edit = ({ params }) => {
         <Container id={4} route='/enquiry'>
 
           <Loader show={show}>
+
+            <Dialog open={openEmail} onOpenChange={handleEmailClose}>
+
+                <Form {...emailForm} onSubmit={emailForm.handleSubmit(onSubmitEmailForm)} >
+                    <form className='w-full'>
+
+                        <DialogContent className="sm:max-w-[425px]">
+
+                            <DialogHeader>
+                                <DialogTitle>Email Details</DialogTitle>
+                                {(!openSummary && emailSummary === '') && 
+                                <DialogDescription>
+                                    fill out all the required email details
+                                </DialogDescription>}
+                            </DialogHeader>
+
+                            {openSummary ? 
+                                <div className='image-placeholder placeholder rounded-sm h-[300px] w-full'></div> :
+                                
+                                emailSummary === '' ?
+
+                                    <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto">
+
+                                        <CustomGrid row={1} className='w-full p-2'>
+
+                                            <DynamicFields form={emailForm} data={emailData} module_name='email-details' />
+
+                                        </CustomGrid>
+
+                                    </div> :
+                                    <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto border p-2 rounded-md">
+                                        <pre className='font-sans text-sm' style={{ overflow: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                                            <MarkdownComponent markdown={emailSummary} />
+                                        </pre>
+                                    </div>
+                            }
+
+                            <DialogFooter>
+                                <Button type="button" variant='secondary' onClick={(!openSummary && emailSummary === '') ? handleEmailClose : emptyEmailContent}>Cancel</Button>
+                                {(!openSummary && emailSummary === '') && 
+                                <Button type='button' className='flex gap-2' onClick={onSubmitEmailForm}>
+                                    <BsStars /> Generate Content
+                                </Button>}
+                            </DialogFooter>
+
+                        </DialogContent>
+
+                    </form>
+                </Form>
+                   
+
+                {/* <Form {...emailForm} onSubmit={emailForm.handleSubmit(onSubmitEmailForm)} >
+                    <form className='w-full'>
+
+                        <DialogContent className="sm:max-w-[425px]">
+
+                            <DialogHeader>
+                                <DialogTitle>Email Details</DialogTitle>
+                                <DialogDescription>
+                                    fill out all the required email details
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto">
+
+                                <CustomGrid row={1} className='w-full p-2'>
+
+                                    <DynamicFields form={emailForm} data={emailData} module_name='email-details' />
+
+                                </CustomGrid>
+
+                            </div>
+
+                            <DialogFooter>
+                                <Button type="button" variant='secondary' onClick={handleEmailClose}>Cancel</Button>
+                                <Button type='button' className='flex gap-2' onClick={onSubmitEmailForm}>
+                                    <BsStars /> Generate Content
+                                </Button>
+                            </DialogFooter>
+
+                        </DialogContent>
+
+                    </form>
+                </Form> */}
+
+            </Dialog>
 
             <Form {...form}>
 
@@ -426,6 +597,10 @@ const Edit = ({ params }) => {
 
                         <div className='flex justify-end gap-3 w-full mt-4'>
                             <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
+                            <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
+                                <MdOutlineEmail ize={18} className="mr-2 h-4 w-4" />
+                                 Email
+                            </Button>
                             <Button variant="secondary" type='button' onClick={handlePrint}>
                                 <Printer size={18} className="mr-2 h-4 w-4" />
                                 Print

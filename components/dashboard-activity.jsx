@@ -24,15 +24,7 @@ const AreachartConfig = {
     label: "Planned Qty",
     color: "#2563eb",
   }
-}
-
-// const EnquirychartData = [
-//     { enquiry: "leadIn", enquiries: 2, fill: "blue" },
-//     { enquiry: "lost", enquiries: 1, fill: "red" },
-//     { enquiry: "quoteInProgress", enquiries: 1, fill: "orange" },
-//     { enquiry: "quoteReady", enquiries: 2, fill: "green" },
-// ]
-  
+} 
 
 const EnquirychartConfig = {
 
@@ -152,14 +144,6 @@ export const EnquiryChart = ({ EnquirychartData }) => {
 }
 
 export const Reminders = ({ remindersData = [] }) => {
-
-      // const remindersData = [
-      //   {
-      //     reminder_date: "2024-08-31",
-      //     reminder_time: "14:30:00.570000",
-      //     enquiry_no: "ENQ24083102"
-      //   }
-      // ]
 
     return (
       <>

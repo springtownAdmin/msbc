@@ -7,13 +7,32 @@ import { LuFile } from "react-icons/lu";
 import { MdDownload } from "react-icons/md";
 import axios from 'axios';
 import { Trash2 } from 'lucide-react';
+import { BACKEND_API } from '@/utils/constants';
+import useStorage from '@/hooks/useStorage';
+import useAPI from '@/hooks/useAPI';
 
-function FileUploadSection({enquiry_no}) {
+function FileUploadSection({ enquiry_no = '' }) {
+
     const uploadRef = useRef();
-    const [files, setFiles] = useState([]);
-    const [previews, setPreviews] = useState([]);
+    const [ files, setFiles ] = useState([]);
+    const { getFilesFromS3, addFilesToS3, removeFilesFromS3, downloadFileFromS3 } = useAPI();
+
+    const fetchFilesFromS3 = async () => {
+
+        setFiles([]);
+
+        const result = await getFilesFromS3({ enquiry_no });
+
+        if (result?.files && result?.files?.length !== 0) {
+
+            setFiles(result.files);
+
+        }
+
+    };
 
     const handleFileChange = async (event) => {
+
         const selectedFileForUpload = event.target.files[0];
 
         if (!selectedFileForUpload) {
@@ -21,82 +40,28 @@ function FileUploadSection({enquiry_no}) {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("file", selectedFileForUpload);
-        const fileName = selectedFileForUpload.name;
+        await addFilesToS3({ selectedFileForUpload: selectedFileForUpload, enquiry_no, callback: fetchFilesFromS3 });
 
-        try {
-            await axios.post(
-                `http://13.127.133.23:8000/enquiry/${enquiry_no}/upload`,
-                formData,
-                {
-                    params: { company_name: "HolBox01", file_name: fileName },
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
-            );
-            fetchFilesFromS3();
-        } catch (error) {
-            console.error("Upload error:", error);
-        }
-    };
-
-    const fetchFilesFromS3 = async () => {
-        setFiles([]);
-        try {
-            const response = await axios.get(
-                `http://13.127.133.23:8000/enquiry/${enquiry_no}/files?company_name=HolBox01`
-            );
-            console.log(response.data);
-            if (response.data.files && response.data.files.length !== 0) {
-                const updatedPreview = response.data.files.map((file) => {
-                    if (!file || !file.type) {
-                        console.error('Invalid file object:', file);
-                        return 'file';
-                    }
-                    return file.type.startsWith('image/')
-                        ? URL.createObjectURL(file) // Assuming file is a Blob for images
-                        : file.type === 'application/pdf'
-                        ? 'pdf'
-                        : file.type === 'text/csv'
-                        ? 'csv'
-                        : 'file';
-                });
-                setPreviews(updatedPreview);
-                setFiles(response.data.files);
-            } else {
-                console.log('No files available.');
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-        }
     };
 
     useEffect(() => {
+
         fetchFilesFromS3();
+
     }, []); // Run only on mount
 
     const handleRemoveFile = async (fileName, filePath) => {
-        try {
-            await axios.post(`http://13.127.133.23:8000/enquiry/${enquiry_no}/delete?company_name=HolBox01&file_name=${fileName}`, {
-                params: { file_name: fileName, file_path: filePath, company_name:'HolBox01' },
-            });
-            fetchFilesFromS3();
-        } catch (error) {
-            console.error(error);
-        }
+
+        await removeFilesFromS3({ fileName, filePath, enquiry_no, callback: fetchFilesFromS3 });
+
     };
 
     const handleDownload = async (fileName, filePath) => {
-        
-        try {
-            const response = await axios.get(`ttp://13.127.133.23:8000/enquiry/${enquiry_no}/download`, {
-                params: { file_name: fileName, file_path: filePath, company_name:'HolBox01' },
-            });
-            window.open(response.data.file_url);
-        } catch (error) {
-            console.error(error);
-        }
+
+        await downloadFileFromS3({ enquiry_no, fileName, filePath })
+
     };
+
     return (
         <div
           className={`${

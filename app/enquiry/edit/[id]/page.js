@@ -597,14 +597,14 @@ const Edit = ({ params }) => {
 
                         <div className='flex justify-end gap-3 w-full mt-4'>
                             <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                            <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
+                            {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
                                 <MdOutlineEmail ize={18} className="mr-2 h-4 w-4" />
                                  Email
-                            </Button>
-                            <Button variant="secondary" type='button' onClick={handlePrint}>
+                            </Button>}
+                            {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handlePrint}>
                                 <Printer size={18} className="mr-2 h-4 w-4" />
                                 Print
-                            </Button>
+                            </Button>}
                             <Button type="submit">Save</Button>
                         </div>
                     

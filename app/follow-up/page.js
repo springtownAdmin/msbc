@@ -15,6 +15,7 @@ import useAPI from "@/hooks/useAPI";
 import useLoader, { Loader } from "@/hooks/useLoader";
 import { TimePickerDemo } from "@/components/time-picker-demo";
 import wrapPermissionCheck from "@/components/common/wrapPermissionCheck";
+import PermissionBasedComponent from "@/components/common/PermissionBasedComponent";
 
 const ActionsRenderer = (params) => {
 
@@ -57,36 +58,6 @@ const FollowUp = () => {
 
 
     }, []);
-
-    // const rowData = [
-
-    //     {
-    //         enquiryNo: 'ENQ-AHMD-0001',
-    //         date: new Date(),
-    //         chaseOn: new Date(),
-    //         chasedBy: 'User',
-    //         description: 'Have to remind him after 2 days',
-    //         contactPerson: 'User',
-    //         followUpType: 'Email',
-    //         phone: '0987654321',
-    //         mobile: '0987654321',
-    //         email: 'abc@example.com'
-    //     },
-
-    //     {
-    //         enquiryNo: 'ENQ-AHMD-0002',
-    //         date: new Date(),
-    //         chaseOn: new Date(),
-    //         chasedBy: 'Admin',
-    //         description: 'Have to remind him after 1 days',
-    //         contactPerson: 'Admin',
-    //         followUpType: 'Phone',
-    //         phone: '0987654321',
-    //         mobile: '0987654321',
-    //         email: 'admin@example.com'
-    //     },
-
-    // ]
 
     const rowData = useMemo(() => followUpList.map((x) => ({
 

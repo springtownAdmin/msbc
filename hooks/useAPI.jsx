@@ -727,13 +727,91 @@ const useAPI = () => {
 
     }
 
+    const getFilesFromS3 = async ({ enquiry_no }) => {
+
+        try {
+
+            const company_name = getCompanyName();
+
+            const resp = await BACKEND_API.get(`/enquiry/${enquiry_no}/files?company_name=${company_name}`);
+
+            return resp.data;
+
+        } catch (e) {
+            
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const addFilesToS3 = async ({ selectedFileForUpload, enquiry_no, callback }) => {
+
+        const formData = new FormData();
+        formData.append("file", selectedFileForUpload);
+        const fileName = selectedFileForUpload.name;
+
+        try {
+
+            await BACKEND_API.post(`/enquiry/${enquiry_no}/upload`, formData, {
+                params: { company_name: getItem('company_name'), file_name: fileName },
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            callback();
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const removeFilesFromS3 = async ({ enquiry_no, fileName, filePath, callback }) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            await BACKEND_API.post(`enquiry/${enquiry_no}/delete?company_name=${company_name}&file_name=${fileName}&file_path=${filePath}`);
+
+            callback();
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
+    const downloadFileFromS3 = async ({ enquiry_no, fileName, filePath }) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const response = await BACKEND_API.get(`enquiry/${enquiry_no}/download`, {
+                params: { file_name: fileName, file_path: filePath, company_name: company_name },
+            });
+
+            window.open(response.data.file_url);
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
         deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions,
-        getUpcomingReminders, getEnquiriesChart, getFollowUpSummary, getEmailContent
+        getUpcomingReminders, getEnquiriesChart, getFollowUpSummary, getEmailContent, getFilesFromS3, addFilesToS3,
+        removeFilesFromS3, downloadFileFromS3
     };
 
 }

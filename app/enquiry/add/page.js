@@ -348,7 +348,7 @@ const Add = () => {
 
                                 <CardContent>
                                     {/* <CustomFields form={form} type='file' /> */}
-                                    <FileUploadSection />
+                                    <FileUploadSection enquiry_no='' />
                                 </CardContent>
 
                             </Card>

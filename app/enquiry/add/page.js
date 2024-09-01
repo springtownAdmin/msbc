@@ -248,9 +248,9 @@ const Add = () => {
                         
                         <TabsList>
                             <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
-                            <TabsTrigger value="document-management" >Document Management</TabsTrigger>
-                            <TabsTrigger value="product-details" >Product Details</TabsTrigger>
-                            <TabsTrigger value="follow-up" disabled>Follow Up</TabsTrigger>
+                            {/* <TabsTrigger value="document-management" >Document Management</TabsTrigger> */}
+                            {/* <TabsTrigger value="product-details" >Product Details</TabsTrigger> */}
+                            {/* <TabsTrigger value="follow-up" disabled>Follow Up</TabsTrigger> */}
                         </TabsList>
 
                         <TabsContent value="enquiry-details" className="w-full">
@@ -326,10 +326,6 @@ const Add = () => {
 
                                         <div className='flex justify-end gap-3 w-full'>
                                             <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                                            {/* <Button variant="secondary" type='button' onClick={handlePrint}>
-                                                <Printer size={18} className="mr-2 h-4 w-4" />
-                                                Print
-                                            </Button> */}
                                             <Button>Save</Button>
                                         </div>
 

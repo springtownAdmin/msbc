@@ -548,7 +548,7 @@ const Edit = ({ params }) => {
 
                                 <CardContent>
                                     {/* <CustomFields form={form} type='file' /> */}
-                                    <FileUploadSection />
+                                    <FileUploadSection enquiry_no={enquiry?.enquiry_no} />
                                 </CardContent>
 
                             </Card>

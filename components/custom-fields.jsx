@@ -410,76 +410,76 @@ export const CustomFields = (props) => {
 
     };
 
-    if (type === 'file') {
+    // if (type === 'file') {
 
-        return (
+    //     return (
 
-            <div className={`${files.length ? 'border' : 'border-2 border-dashed cursor-pointer'} rounded-sm h-[300px] w-full`}>
+    //         <div className={`${files.length ? 'border' : 'border-2 border-dashed cursor-pointer'} rounded-sm h-[300px] w-full`}>
 
-                <input ref={uploadRef} type='file' onChange={handleFiles} className='hidden' multiple />
+    //             <input ref={uploadRef} type='file' onChange={handleFiles} className='hidden' multiple />
 
-                {files.length ? 
+    //             {files.length ? 
 
-                    <div className='m-2 h-full'>
-                        <div className='flex w-full justify-end mb-2'><Button variant='secondary' type='button' onClick={() => handleUpload()}>Upload more</Button></div>
-                        <div className='overflow-auto h-[80%] w-full'>
+    //                 <div className='m-2 h-full'>
+    //                     <div className='flex w-full justify-end mb-2'><Button variant='secondary' type='button' onClick={() => handleUpload()}>Upload more</Button></div>
+    //                     <div className='overflow-auto h-[80%] w-full'>
 
 
-                            <div className='flex gap-3 flex-wrap'>
+    //                         <div className='flex gap-3 flex-wrap'>
 
-                            {files.map((x, i) => (
+    //                         {files.map((x, i) => (
                             
-                                // <div key={i} className='p-2 border border-slate-100 flex justify-between items-center rounded-sm mb-2'>
-                                // <div className='flex gap-3 items-center'>
-                                //     <File size={18} />
-                                //     <div>{x.name}</div>
-                                // </div>
-                                // <Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} />
-                                // </div>
+    //                             // <div key={i} className='p-2 border border-slate-100 flex justify-between items-center rounded-sm mb-2'>
+    //                             // <div className='flex gap-3 items-center'>
+    //                             //     <File size={18} />
+    //                             //     <div>{x.name}</div>
+    //                             // </div>
+    //                             // <Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} />
+    //                             // </div>
 
-                                <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
-                                    <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
-                                        {previews[i] === 'pdf' ?
-                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                                <Image src={pdfIcon} alt={`${x.name}-${i}`} width={50} height={80} />
-                                            </div>
-                                        : previews[i] === 'csv' ?
-                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                                <Image src={csvIcon} alt={`${x.name}-${i}`} width={50} height={80} />
-                                            </div>
-                                        : previews[i] === 'file' ?
-                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                                <LuFile size={30} />
-                                            </div>
-                                        : <img src={previews[i]} alt={`${x.name}-${i}`} className='h-full w-full' />}
-                                    </div>
-                                    <div className='flex justify-between items-center p-2 bg-white w-full'>
-                                        <div className='text-sm w-full truncate font-medium'>{x.name}</div>
-                                        <div className='flex gap-2 items-center'>
-                                            <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(x.file_name, x.file_path)} /></div>
-                                            <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(x.file_name, x.file_path)} /></div>
-                                        </div>
-                                    </div>
-                                </div>
+    //                             <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
+    //                                 <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
+    //                                     {previews[i] === 'pdf' ?
+    //                                         <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+    //                                             <Image src={pdfIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+    //                                         </div>
+    //                                     : previews[i] === 'csv' ?
+    //                                         <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+    //                                             <Image src={csvIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+    //                                         </div>
+    //                                     : previews[i] === 'file' ?
+    //                                         <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+    //                                             <LuFile size={30} />
+    //                                         </div>
+    //                                     : <img src={previews[i]} alt={`${x.name}-${i}`} className='h-full w-full' />}
+    //                                 </div>
+    //                                 <div className='flex justify-between items-center p-2 bg-white w-full'>
+    //                                     <div className='text-sm w-full truncate font-medium'>{x.name}</div>
+    //                                     <div className='flex gap-2 items-center'>
+    //                                         <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(x.file_name, x.file_path)} /></div>
+    //                                         <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(x.file_name, x.file_path)} /></div>
+    //                                     </div>
+    //                                 </div>
+    //                             </div>
 
-                            ))}
-                            </div>
+    //                         ))}
+    //                         </div>
 
-                        </div>
-                    </div>
+    //                     </div>
+    //                 </div>
 
-                : 
-                    // <div className='flex justify-center items-center h-full w-full text-gray-400' onClick={() => handleUpload('')}>
-                    //     Upload documents here...
-                    // </div> 
-                    null
-                }
+    //             : 
+    //                 // <div className='flex justify-center items-center h-full w-full text-gray-400' onClick={() => handleUpload('')}>
+    //                 //     Upload documents here...
+    //                 // </div> 
+    //                 null
+    //             }
 
-            </div>
+    //         </div>
 
-        )
+    //     )
 
-    };
+    // };
 
     if (type === 'checkbox') {
 

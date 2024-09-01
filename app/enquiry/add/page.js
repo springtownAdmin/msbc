@@ -24,6 +24,7 @@ import { FollowUpDetails } from '@/components/follow-ups';
 import useLoader, { Loader } from '@/hooks/useLoader';
 import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 import useStorage from '@/hooks/useStorage';
+import FileUploadSection from '@/components/FileUploadSection';
 
 const Add = () => {
 
@@ -346,7 +347,8 @@ const Add = () => {
                                 </CardHeader>
 
                                 <CardContent>
-                                    <CustomFields form={form} type='file' />
+                                    {/* <CustomFields form={form} type='file' /> */}
+                                    <FileUploadSection />
                                 </CardContent>
 
                             </Card>

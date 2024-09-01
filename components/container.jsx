@@ -51,7 +51,7 @@ export const Container = ({ children, id = 1 }) => {
         };
 
         fetchPermissions();
-    }, [router,permissions.length == 0]); 
+    }, [router,permissions?.length == 0]); 
   
   // const MenuItems = getItem('role') === "2" ? Menus2 : Menus;
   const [MenuItems, setMenuItems] = useState(null);
@@ -80,7 +80,7 @@ export const Container = ({ children, id = 1 }) => {
       });
         
 
-      permissions.forEach((y) => {
+      permissions?.forEach((y) => {
           
           const item = {
               id: setAllMenus.length + 1,

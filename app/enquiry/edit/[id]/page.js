@@ -26,6 +26,7 @@ import axios from 'axios';
 import { template01 } from '@/helper/templates';
 import useCustomToast from '@/hooks/useCustomToast';
 import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
+import FileUploadSection from '@/components/FileUploadSection';
 
 const Edit = ({ params }) => {
 
@@ -375,7 +376,8 @@ const Edit = ({ params }) => {
                                 </CardHeader>
 
                                 <CardContent>
-                                    <CustomFields form={form} type='file' />
+                                    {/* <CustomFields form={form} type='file' /> */}
+                                    <FileUploadSection />
                                 </CardContent>
 
                             </Card>

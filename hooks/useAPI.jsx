@@ -625,12 +625,12 @@ const useAPI = () => {
 
     }
 
-    const getFields = async ({ table_name }) => {
+    const getFields = async () => {
 
         try {
 
             const company_name = getCompanyName();
-            const resp = await BACKEND_API.post(`/fields?table_name=${table_name}&company_name=${company_name}`);
+            const resp = await BACKEND_API.get(`/fields?company_name=${company_name}`);
 
             return resp.data.fields;
 
@@ -804,6 +804,24 @@ const useAPI = () => {
 
     }
 
+    const getEnquiryStatusHistory = async () => {
+
+        try {
+
+            const userId = getItem('user_id');
+            const company_name = getCompanyName();
+            const response = await BACKEND_API.get(`enquiry_history/${userId}?company_name=${company_name}`);
+
+            return response.data;
+
+        } catch (e) {
+
+            showToast(400, e.message);
+
+        }
+        
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
@@ -811,7 +829,7 @@ const useAPI = () => {
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
         deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions,
         getUpcomingReminders, getEnquiriesChart, getFollowUpSummary, getEmailContent, getFilesFromS3, addFilesToS3,
-        removeFilesFromS3, downloadFileFromS3
+        removeFilesFromS3, downloadFileFromS3, getEnquiryStatusHistory
     };
 
 }

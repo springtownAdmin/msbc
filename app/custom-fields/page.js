@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from '@/components/container';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { branchData, enquiryData, fieldData, organizationData } from '@/utils/data';
 import { useRouter } from 'next/navigation';
@@ -78,6 +78,8 @@ const CustomFieldsPage = () => {
 
     const { addField, getFields, updateFieldLabel } = useAPI();
     const [ editLabelId, setEditLabelId ] = useState(0);
+    const [ requestBody, setRequestBody ] = useState(null);
+
 
     const form2 = useForm({
         resolver: zodResolver(createZodValidation(fieldData)),
@@ -132,7 +134,7 @@ const CustomFieldsPage = () => {
 
     }
 
-    function onSubmit2(values) {
+    const onSubmit2 = async (values) => {
 
         let newObj = {};
 
@@ -145,10 +147,17 @@ const CustomFieldsPage = () => {
         newObj['is_visible'] = true
         newObj['read_only'] = false
 
+        const reqBody = {
+            field_name: values.label_name,
+            label_name: values.label_name,
+            field_type: values.field_type,
+            is_mandatory: required
+        }
 
         if (values.field_type === 'Select' || values.field_type === 'Multi-Select' || values.field_type === 'Multi-Checkbox') {
 
             newObj['list'] = [ ...options ];
+            reqBody['options'] = [ ...options ];
 
         }
 
@@ -167,6 +176,10 @@ const CustomFieldsPage = () => {
         setLabelNames(newArr);
 
         console.log(newArr);
+
+        // await addField(reqBody);
+        // const fields = await getFields();
+        console.log(fields);
 
         handleClose2();
         setOptions(['']);
@@ -291,6 +304,12 @@ const CustomFieldsPage = () => {
     const handleSave3 = () => {
 
         setOpen3(false);
+
+    }
+
+    const handleUpdate = async () => {
+
+        // await addField(requestBody);
 
     }
 
@@ -431,8 +450,8 @@ const CustomFieldsPage = () => {
                 
                 <TabsList>
                     <TabsTrigger value='enquiry'>Enquiry</TabsTrigger>
-                    <TabsTrigger value='branch'>Branch</TabsTrigger>
-                    <TabsTrigger value='organization'>Organization</TabsTrigger>
+                    {/* <TabsTrigger value='branch'>Branch</TabsTrigger>
+                    <TabsTrigger value='organization'>Organization</TabsTrigger> */}
                 </TabsList>
 
                 <TabsContent value='enquiry'>
@@ -467,7 +486,7 @@ const CustomFieldsPage = () => {
                                         </CustomGrid>
 
                                         <div className='flex justify-end w-full mr-5'>
-                                            <Button>Update</Button>
+                                            <Button type='button' onClick={handleUpdate}>Update</Button>
                                         </div>
 
                                     </form>
@@ -475,7 +494,6 @@ const CustomFieldsPage = () => {
                                 </Form>
 
                             </CardContent>
-
 
                         </Card>
 
@@ -507,7 +525,7 @@ const CustomFieldsPage = () => {
                                         </CustomGrid>
 
                                         <div className='flex justify-end w-full mr-5'>
-                                            <Button>Update</Button>
+                                            <Button type='button' onClick={handleUpdate}>Update</Button>
                                         </div>
 
                                     </form>
@@ -544,7 +562,7 @@ const CustomFieldsPage = () => {
                                         </CustomGrid>
 
                                         <div className='flex justify-end w-full mr-5'>
-                                            <Button>Update</Button>
+                                            <Button type='button' onClick={handleUpdate}>Update</Button>
                                         </div>
 
                                     </form>

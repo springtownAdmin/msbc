@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   const [ dashboardData, setDashboardData ] = useState(null);
   const { show, showLoader, hideLoader } = useLoader();
-  const { getEnquiriesChart, getUpcomingReminders } = useAPI();
+  const { getEnquiriesChart, getUpcomingReminders, getEnquiryStatusHistory } = useAPI();
 
   const EnquirychartData = [
     { enquiry: "leadIn", enquiries: 2, fill: "blue" },
@@ -45,6 +45,7 @@ const Dashboard = () => {
       showLoader();
       const enquiriesData = await getEnquiriesChart();
       const remindersData = await getUpcomingReminders();
+      const allActivities = await getEnquiryStatusHistory();
 
       const getAllKeys = Object.keys(enquiriesData);
 
@@ -57,24 +58,7 @@ const Dashboard = () => {
 
       })
 
-      setDashboardData({ enquiryData: chartData, upcomingReminderData: remindersData })
-
-      // [
-      //   {
-      //     "reminder_date": "2024-08-31",
-      //     "reminder_time": "14:30:00.570000",
-      //     "enquiry_no": "ENQ24083102"
-      //   }
-      // ]
-
-      // const setEnquiries = getAllKeys.map((x) => ({ enquiry: x, enquiries: enquiriesData[x] }));
-      // console.log({ enquiriesData, remindersData })
-
-      // getAllKeys.forEach((x) => {
-
-      //   allEnquiries.enquiry[x]
-
-      // })
+      setDashboardData({ enquiryData: chartData, upcomingReminderData: remindersData, recentActivity: allActivities })
       hideLoader();
 
     };
@@ -83,7 +67,6 @@ const Dashboard = () => {
 
   }, []);
 
-  // if (!menuId) return null;
 
   return (
 
@@ -186,12 +169,11 @@ const Dashboard = () => {
 
             <DeliveryStatus />
 
-            <RecentActivity />
+            <RecentActivity recentActivity={dashboardData?.recentActivity} />
           
           </div>
 
         </Loader>
-
 
       </Container>
       

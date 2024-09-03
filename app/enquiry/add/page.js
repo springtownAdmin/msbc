@@ -165,11 +165,10 @@ const Add = () => {
         await createEnquiry({
             ...values,
             customer: parseInt(values.customer),
-            type: values.type[0],
-            enquiry_by: values.enquiry_by[0],
+            type: values.type,
             status: parseInt(values.status),
             branch: parseInt(values.branch),
-            enquiry_by: parseInt(values.enquiry_by[0]),
+            enquiry_by: parseInt(values.enquiry_by),
             sales_representative: parseInt(values.sales_representative),
             products: productData
         });

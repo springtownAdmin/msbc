@@ -103,13 +103,15 @@ export const EnquiryChart = ({ EnquirychartData = [] }) => {
         </CardHeader>
   
         <CardContent className="flex-1 pb-0">
+
+        {EnquirychartData.length !== 0 && totalVisitors !== 0 ? 
   
           <ChartContainer config={EnquirychartConfig} className="mx-auto aspect-square max-h-[250px]">
             <PieChart>
               
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
   
-              {EnquirychartData.length !== 0 ? <Pie data={EnquirychartData} dataKey="enquiries" nameKey="enquiry" innerRadius={60} strokeWidth={5}>
+              <Pie data={EnquirychartData} dataKey="enquiries" nameKey="enquiry" innerRadius={60} strokeWidth={5}>
                 <Label
                   content={({ viewBox }) => {
   
@@ -132,10 +134,12 @@ export const EnquiryChart = ({ EnquirychartData = [] }) => {
   
                   }}
                 />
-              </Pie> : <div className='text-red-500 h-full w-full'>No Enquiries Found!</div>}
+              </Pie>
 
             </PieChart>
           </ChartContainer>
+
+        : <div className='text-red-500 h-full w-full flex justify-center items-center'>No enquiries Found!</div>}
   
         </CardContent>
         
@@ -230,7 +234,7 @@ export const RecentActivity = ({ recentActivity = [] }) => {
                     </li>
                   </ol>
 
-                )) : <div className='text-red-500 h-full w-full'>No Activity Found!</div>}
+                )) : <div className='text-red-500 h-full w-full flex justify-center items-center'>No activity Found!</div>}
   
               </CardContent>
   

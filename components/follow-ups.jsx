@@ -189,9 +189,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
             reminder_to: parseInt(values.reminder_to)
         }
 
+        showLoader();
         await addFollowUp(updatedData);
         await fillData();
         handleClose();
+        hideLoader();
 
     }
 

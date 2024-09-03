@@ -28,9 +28,9 @@ export const enquiryData = [
         id: 3,
         label: 'Type',
         name: 'Type',
-        type: 'multi-select',
+        type: 'select',
         list: [ 'Trade', 'Contract', 'Phone Marketing', 'Retail', 'Villas', 'Projects' ],
-        value: [ 'Trade' ],
+        value: '',
         required: true,
         is_visible: true,
         read_only: false
@@ -102,7 +102,7 @@ export const enquiryData = [
         id: 8,
         label: 'Enquiry By',
         name: 'Enquiry By',
-        type: 'multi-checkbox',
+        type: 'select',
         list: [ 
             { id: '1', value: '1', label: 'PHONE' },
             { id: '2', value: '2', label: 'E-MAIL' },

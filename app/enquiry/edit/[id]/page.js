@@ -21,7 +21,7 @@ import { DynamicFields } from '@/components/dynamic-fields';
 import { ProductDetails } from '@/components/product-details';
 import { FollowUpDetails } from '@/components/follow-ups';
 import useLoader, { Loader } from '@/hooks/useLoader';
-import { Printer, Stars } from 'lucide-react';
+import { Loader2, Printer, Stars } from 'lucide-react';
 import axios from 'axios';
 import { template01 } from '@/helper/templates';
 import useCustomToast from '@/hooks/useCustomToast';
@@ -69,6 +69,8 @@ const Edit = ({ params }) => {
   const { toast } = useToast();
   const { getEmailContent } = useAPI();
   const { showToast } = useCustomToast();
+
+  const [ printLoader, setPrintLoader ] = useState(false);
 
   const id = params.id;
 
@@ -129,7 +131,7 @@ const Edit = ({ params }) => {
         setEnquiryDetails(newEnquiryResult);
         setCustomerData(customerResult);
 
-        const newResult = { ...result, enquiry_by: [result.enquiry_by], type: [result.type], tentative_project_value: `${result.tentative_project_value}` };
+        const newResult = { ...result, enquiry_by: result.enquiry_by, type: result.type, tentative_project_value: `${result.tentative_project_value}` };
         setEnquiry(newResult);
         await onSelectCustomer(parseInt(result.customer))
         setProductData(result.products);
@@ -140,7 +142,9 @@ const Edit = ({ params }) => {
         showToast(500, e.message);
 
       } finally {
+
         hideLoader();
+
       }
 
     }
@@ -166,8 +170,8 @@ const Edit = ({ params }) => {
 
     const updatedData = {
         ...values,
-        type: values.type[0],
-        enquiry_by: values.enquiry_by[0],
+        type: values.type,
+        enquiry_by: values.enquiry_by,
         estimator: '',
         country: '',
         by: '',
@@ -224,6 +228,7 @@ const Edit = ({ params }) => {
 
     try {
 
+        setPrintLoader(true);
         const reqBody = { filepath: 'images/msbc-logo.png' }
         const res = await axios.post('/api/get-base64', reqBody);
 
@@ -281,6 +286,10 @@ const Edit = ({ params }) => {
     } catch (e) {
 
         toast({ title: 'Something went wrong!', variant: 'destructive' });
+
+    } finally {
+
+        setPrintLoader(false);
 
     }
 
@@ -462,8 +471,19 @@ const Edit = ({ params }) => {
 
                                             <CardHeader>
 
-                                                <CardTitle>Enquiry Details</CardTitle>
-                                                <CardDescription>Fill out all necessary enquiry details</CardDescription>
+                                                <div className='flex w-full justify-between'>
+                                                    <div>
+                                                        <CardTitle>Enquiry Details</CardTitle>
+                                                        <CardDescription>Fill out all necessary enquiry details</CardDescription>
+                                                    </div>
+
+                                                    <div>
+                                                        {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
+                                                            <MdOutlineEmail ize={18} className="mr-2 h-4 w-4" />
+                                                            Email
+                                                        </Button>}
+                                                    </div>
+                                                </div>
 
                                             </CardHeader>
 
@@ -598,14 +618,21 @@ const Edit = ({ params }) => {
 
                         <div className='flex justify-end gap-3 w-full mt-4'>
                             <Button variant="secondary" type='button' onClick={handleCancel}>Cancel</Button>
-                            {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
-                                <MdOutlineEmail ize={18} className="mr-2 h-4 w-4" />
-                                 Email
-                            </Button>}
-                            {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handlePrint}>
-                                <Printer size={18} className="mr-2 h-4 w-4" />
-                                Print
-                            </Button>}
+
+                            {sectionTab === 'enquiry-details' && printLoader 
+                            ?
+                                <Button variant="secondary" disabled >
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Wait
+                                </Button>
+                      
+                            :
+                                <Button variant="secondary" type='button' onClick={handlePrint}>
+                                    <Printer size={18} className="mr-2 h-4 w-4" />
+                                    Print
+                                </Button>
+                            }
+
                             <Button type="submit">Save</Button>
                         </div>
                     

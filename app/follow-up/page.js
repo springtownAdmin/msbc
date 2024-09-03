@@ -16,12 +16,15 @@ import useLoader, { Loader } from "@/hooks/useLoader";
 import { TimePickerDemo } from "@/components/time-picker-demo";
 import wrapPermissionCheck from "@/components/common/wrapPermissionCheck";
 import PermissionBasedComponent from "@/components/common/PermissionBasedComponent";
+import Link from "next/link";
 
 const ActionsRenderer = (params) => {
 
+    console.log(params.data);
+
     return (
         <div className='flex items-center h-full'>
-            <PermissionBasedComponent permissionName = 'can_edit' moduleUrl='/enquiry'>
+            <PermissionBasedComponent permissionName='can_edit' moduleUrl='/enquiry'>
                 <div>
                     <MdEdit size={20}/>
                 </div>

@@ -1,8 +1,11 @@
 // src/components/common/PermissionBasedComponent.js
+import useStorage from '@/hooks/useStorage';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
 const PermissionBasedComponent = ({ permissionName, moduleUrl, children }) => {
+
+  const { getItem } = useStorage();
 
   if(moduleUrl == '/dashboard' || moduleUrl == '/'){
     return (
@@ -20,7 +23,7 @@ const PermissionBasedComponent = ({ permissionName, moduleUrl, children }) => {
     moduleUrl = '/user-management';
   }
 
-  const permissions = useSelector((state) => state.permissions.permissions);
+  const permissions = getItem('permissions');
 
   // Find the permissions object that matches the moduleUrl
   const permissionObject = permissions.find(permission => permission.module_url === moduleUrl);

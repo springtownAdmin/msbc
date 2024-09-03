@@ -383,6 +383,93 @@ export const branchData = [
 
 ]
 
+export const companyData = [
+  
+    {
+        id: 1,
+        label: 'Branch Code',
+        name: 'Branch Code',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+  
+    {
+        id: 2,
+        label: 'Branch Name',
+        name: 'Branch Name',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+        
+    },
+
+    {
+        id: 3,
+        label: 'Email',
+        name: 'Email',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 4,
+        label: 'Country',
+        name: 'Country',
+        type: 'select',
+        list: [ 'Mumbai - India', 'Paris - France', 'Stockholm - Sweden', 'Ireland',
+                'Osaka - Japan', 'Seoul - South Korea', 'Tokyo - Japan', 'Singapore',
+                'Sydney - Australia', 'Central - Canada', 'São Paulo - Brazil',
+                'Northern Virginia - USA', 'Ohio - USA', 'Northern California - USA',
+                'Oregon - USA', 'Bahrain' ],
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 5,
+        label: 'Mobile No.',
+        name: 'Mobile No.',
+        type: 'number',
+        value: null,
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 6,
+        label: 'Head Office',
+        name: 'Is HeadOffice',
+        type: 'checkbox',
+        value: false,
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 7,
+        label: 'Address',
+        name: 'Address',
+        type: 'textarea',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    }
+
+]
+
 export const userData = [
 
     {
@@ -450,6 +537,88 @@ export const userData = [
         required: false,
         is_visible: true,
         read_only: false
+    },
+
+    {
+        id: 7,
+        name: 'Address',
+        label: 'Address',
+        type: 'textarea',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+]
+
+export const onBoardingUserData = [
+
+    {
+        id: 1,
+        name: 'First Name',
+        label: 'First Name',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 2,
+        name: 'Last Name',
+        label: 'Last Name',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 3,
+        name: 'Email',
+        label: 'Email',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 4,
+        name: 'Password',
+        label: 'Password',
+        type: 'text',
+        value: '',
+        required: false,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 5,
+        name: 'Phone',
+        label: 'Phone',
+        type: 'text',
+        value: '',
+        required: true,
+        is_visible: true,
+        read_only: false
+    },
+
+    {
+        id: 6,
+        name: 'User Role',
+        label: 'User Role',
+        type: 'select',
+        list: [ 'Admin' ],
+        value: 'Admin',
+        required: false,
+        is_visible: true,
+        read_only: true
     },
 
     {

@@ -35,7 +35,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [hasFilled, setFilled] = useState(false);
   const { toast } = useToast();
-  const { authenticateUser } = useAPI();
+  const { authenticateUser, isFirstLogin } = useAPI();
   const { setItem } = useStorage();
 
   const currentState = useSelector((state) => state.list);
@@ -76,6 +76,10 @@ const Login = () => {
     setShowLoaderSignIn(true);
 
     const result = await authenticateUser({ username: data.email, password: data.password }, data.company);
+    const result2 = await isFirstLogin();
+
+    result2?.is_first_login === true && router.push('/on-boarding');
+    result2?.is_first_login === false && router.push('/dashboard');
     
     setShowLoaderSignIn(false);
 

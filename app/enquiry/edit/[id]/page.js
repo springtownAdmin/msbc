@@ -355,22 +355,23 @@ const Edit = ({ params }) => {
                 <Form {...emailForm} onSubmit={emailForm.handleSubmit(onSubmitEmailForm)} >
                     <form className='w-full'>
 
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[700px] w-[60%]">
 
-                            <DialogHeader>
+                            <DialogHeader className='space-y-0 mb-0'>
                                 <DialogTitle>Email Details</DialogTitle>
                                 {(!openSummary && emailSummary === '') && 
-                                <DialogDescription>
-                                    fill out all the required email details
-                                </DialogDescription>}
+                                    <DialogDescription>
+                                        Fill out all the required email details
+                                    </DialogDescription>
+                                }
                             </DialogHeader>
 
                             {openSummary ? 
-                                <div className='image-placeholder placeholder rounded-sm h-[300px] w-full'></div> :
+                                <div className='image-placeholder placeholder rounded-sm w-full'></div> :
                                 
                                 emailSummary === '' ?
 
-                                    <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto">
+                                    <div className="w-full overflow-auto">
 
                                         <CustomGrid row={1} className='w-full p-2'>
 
@@ -379,7 +380,7 @@ const Edit = ({ params }) => {
                                         </CustomGrid>
 
                                     </div> :
-                                    <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto border p-2 rounded-md">
+                                    <div className="flex flex-col items-center gap-3 py-4 w-full h-[500px] overflow-auto border p-2 rounded-md">
                                         <pre className='font-sans text-sm' style={{ overflow: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
                                             <MarkdownComponent markdown={emailSummary} />
                                         </pre>

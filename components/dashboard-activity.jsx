@@ -165,8 +165,8 @@ export const Reminders = ({ remindersData = [] }) => {
                               <div className='flex gap-5'>
 
                                   <div>
-                                    <div className='text-lg'>{remindersData[0]?.enquiry_no}</div>
-                                    <CardDescription className='text-xs'>{remindersData[0]?.reminder_date}</CardDescription>
+                                    <div className='text-lg'>{remindersData[i]?.enquiry_no}</div>
+                                    <CardDescription className='text-xs'>{remindersData[i]?.reminder_date}</CardDescription>
                                   </div>
   
                                   {/* <Avatar>
@@ -183,7 +183,7 @@ export const Reminders = ({ remindersData = [] }) => {
   
                               <div>
   
-                                  <Button variant="outline" disabled>{convertTo12HourFormat(remindersData[0]?.reminder_time)}</Button>
+                                  <Button variant="outline" disabled>{convertTo12HourFormat(remindersData[i]?.reminder_time)}</Button>
   
                               </div>
   
@@ -197,45 +197,6 @@ export const Reminders = ({ remindersData = [] }) => {
                     :
                     <div className='h-[70%] w-full flex justify-center items-center text-red-500'>No reminders found!</div>
                 }
-  
-                  {remindersData.map((v, i) => (
-  
-                      <div key={`reminder-${i}`}>
-                      
-                          <div className='flex justify-between'>
-  
-                              <div className='flex gap-5'>
-
-                                  <div>
-                                    <div className='text-lg'>{remindersData[0]?.enquiry_no}</div>
-                                    <CardDescription className='text-xs'>{remindersData[0]?.reminder_date}</CardDescription>
-                                  </div>
-  
-                                  {/* <Avatar>
-                                      <AvatarImage />
-                                      <AvatarFallback className='bg-yellow-100'>KM</AvatarFallback>
-                                  </Avatar>
-  
-                                  <div>
-                                      <div>Kamran</div>
-                                      <CardDescription className='text-xs'>13 Feb 2024</CardDescription>
-                                  </div> */}
-  
-                              </div>
-  
-                              <div>
-  
-                                  <Button variant="outline" disabled>{convertTo12HourFormat(remindersData[0]?.reminder_time)}</Button>
-  
-                              </div>
-  
-                          </div>
-  
-                          <hr className='border-gray-100 my-4' />
-  
-                      </div>
-  
-                  ))}
   
               </CardContent>
   

@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CustomTooltip } from './custom-tooltip';
 import useStorage from '@/hooks/useStorage';
-import { MdDashboard, MdLogout, MdOutlineTextFields } from "react-icons/md";
+import { MdDashboard, MdLogout, MdOutlineFormatListBulleted, MdOutlineTextFields } from "react-icons/md";
 import Image from 'next/image';
 import dwerpLogo from '@/public/images/dwerp-full-logo.png'
 import ProtectedRoute from './protected-route';
@@ -25,6 +25,7 @@ import { CheckPermission } from './check-permission';
 import { BsPersonFillExclamation } from 'react-icons/bs';
 import PermissionBasedComponent from './common/PermissionBasedComponent';
 import useAPI from '@/hooks/useAPI';
+import { FaHandshake } from 'react-icons/fa6';
 
 export const Container = ({ children, id = 1, route = '' }) => {
 
@@ -91,7 +92,7 @@ export const Container = ({ children, id = 1, route = '' }) => {
             setAllMenus.push({
                 id: setAllMenus.length + 1,
                 name: 'Follow Up',
-                Icon: BsPersonFillExclamation,
+                Icon: FaHandshake,
                 link: '/follow-up'
             })
   
@@ -102,7 +103,7 @@ export const Container = ({ children, id = 1, route = '' }) => {
             setAllMenus.push({
               id: setAllMenus.length + 1,
               name: 'Custom Fields',
-              Icon: MdOutlineTextFields,
+              Icon: MdOutlineFormatListBulleted,
               link: '/custom-fields'
             })
 
@@ -315,6 +316,7 @@ export const Container = ({ children, id = 1, route = '' }) => {
           </div>
 
       </div>
+      
     </ProtectedRoute>
 
   );

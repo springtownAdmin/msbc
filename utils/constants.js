@@ -1,9 +1,10 @@
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlineFormatListBulleted, MdQueryStats } from "react-icons/md";
 import { LuInfo } from "react-icons/lu";
 import { BsFillBuildingsFill } from "react-icons/bs";
-import { FaBuildingUser } from "react-icons/fa6";
+import { FaBuildingUser, FaHandshake } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { BsPersonFillExclamation } from "react-icons/bs";
+import { SiAwsorganizations } from "react-icons/si";
 import { MdOutlineTextFields } from "react-icons/md";
 import { z } from "zod";
 import axios from "axios";
@@ -18,7 +19,7 @@ export const MenuData = {
   },
 
   'Enquiry Management': {
-    Icon: LuInfo,
+    Icon: MdQueryStats,
     link: '/enquiry'
   },
 
@@ -28,17 +29,17 @@ export const MenuData = {
   },
 
   'Branch Management': {
-    Icon: BsFillBuildingsFill,
+    Icon: SiAwsorganizations,
     link: '/branch'
   },
 
   'Follow Up': {
-    Icon: BsPersonFillExclamation,
+    Icon: FaHandshake,
     link: '/follow-up'
   },
 
   'Custom Fields': {
-    Icon: MdOutlineTextFields,
+    Icon: MdOutlineFormatListBulleted,
     link: '/custom-fields'
   }
 

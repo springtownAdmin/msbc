@@ -58,6 +58,7 @@ const Dashboard = () => {
 
       })
 
+      console.log(remindersData);
       setDashboardData({ enquiryData: chartData, upcomingReminderData: remindersData, recentActivity: allActivities })
       hideLoader();
 

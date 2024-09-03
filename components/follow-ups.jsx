@@ -331,7 +331,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
             </Dialog>
 
             <Dialog open={openSummary} onOpenChange={handleCloseSummary}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[700px] w-[60%]">
 
                     <DialogHeader>
                         <DialogTitle> <div className='flex items-center gap-3 w-[150px]'><BsStars /> AI Summary</div></DialogTitle>
@@ -340,11 +340,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="flex flex-col items-center gap-2 py-4 w-full h-[300px] overflow-auto">
+                    <div className="flex flex-col items-center gap-2 w-full h-[400px] border rounded-sm overflow-auto">
 
                         {summaryLoader ? <div className='image-placeholder placeholder rounded-sm h-full w-full'></div> :
                         
-                            <pre className='font-sans text-sm' style={{ overflow: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+                            <pre className='font-sans text-sm p-2' style={{ overflow: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
                                 <MarkdownComponent markdown={followUpSummary} />
                             </pre>
                         }

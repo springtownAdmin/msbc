@@ -11,36 +11,41 @@ import { CustomGrid } from "@/components/grid";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { BACKEND_API, createZodValidation, putValues } from "@/utils/constants";
-import { branchData, userData } from "@/utils/data";
+import { companyData, onBoardingUserData, userData } from "@/utils/data";
 import { DynamicFields } from "@/components/dynamic-fields";
 import { addItem } from "@/lib/slices/list";
 import { LongLoader } from "@/components/long-loader";
 import useCustomToast from "@/hooks/useCustomToast";
 import useStorage from "@/hooks/useStorage";
+import useLoader, { Loader } from "@/hooks/useLoader";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function OnBoarding() {
 
   const [step, setStep] = useState(0);
   const router = useRouter();
   const { showToast } = useCustomToast();
+  const { show, showLoader, hideLoader } = useLoader();
   
-  const defaultValues1 = putValues(branchData);
-  const defaultValues2 = putValues(userData);
+  const defaultValues1 = putValues(companyData);
+  let defaultValues2 = putValues(onBoardingUserData, 'no-default');
   const { setItem } = useStorage();
+  const { toast } = useToast();
 
   const form1 = useForm({
     defaultValues: defaultValues1,
-    resolver: zodResolver(createZodValidation(branchData)) 
+    resolver: zodResolver(createZodValidation(companyData)) 
   });
 
   const form2 = useForm({
     defaultValues: defaultValues2,
-    resolver: zodResolver(createZodValidation(userData)) 
+    resolver: zodResolver(createZodValidation(onBoardingUserData)) 
   });
 
   const form = [ form1, form2 ];
   const dispatch = useDispatch();
-  const [showLoader, setShowLoader] = useState(false);
+  // const [showLoader, setShowLoader] = useState(false); 
+  const { getItem } = useStorage();
 
   const [formData, setFormData] = useState([ defaultValues1, defaultValues2 ]);
 
@@ -54,18 +59,21 @@ export default function OnBoarding() {
       setFormData(newArr);
 
     } else {
-
-      // router.push('/dashboard');
       
       try {
         
-        setShowLoader(true);
-        const reqBody = formData[0];
-        const reqBody2 = { ...values, company_name: formData[0].company_name };
+        showLoader();
+        const company_name = getItem('company_name');
+        const reqBody = { ...formData[0], company_name: company_name };
+        const reqBody2 = { ...values, company_name: company_name };
 
-        setItem('company_name', formData[0].company_name);
+        delete reqBody2.user_role;
 
-        const resp = await BACKEND_API.post('/branches', reqBody);
+        reqBody2['user_role'] = 2;
+
+        console.log({reqBody, reqBody2})
+
+        const resp = await BACKEND_API.post('/branches', { ...reqBody, company_name: company_name });
         const resp2 = await BACKEND_API.post('/users', reqBody2);
         const result = resp.data;
 
@@ -81,9 +89,9 @@ export default function OnBoarding() {
 
       } finally {
 
-        setShowLoader(false);
-        dispatch(addItem({ key: 'branch', data: formData[0] }));
-        dispatch(addItem({ key: 'users', data: values }));
+        hideLoader();
+        // dispatch(addItem({ key: 'branch', data: formData[0] }));
+        // dispatch(addItem({ key: 'users', data: values }));
         router.push('/dashboard');
         toast({ title: 'Branch has been created successfully!' })
 
@@ -118,86 +126,87 @@ export default function OnBoarding() {
 
   }
 
-  const handleSkip = () => {
-    router.push('/dashboard');
-  }
 
   return (
 
     <>
-      {!showLoader ? <div className="h-screen flex justify-center items-center w-full bg-orange-500">
+      <Loader show={show}>
 
-          <Form {...form[step]}>
+        <div className="h-screen flex justify-center items-center w-full bg-orange-500">
 
-            <form onSubmit={form[step].handleSubmit(onSubmit)}>
+            <Form {...form[step]}>
 
-              <motion.div initial={slider.initial} transition={slider.transition} animate={slider.animate}>
+              <form onSubmit={form[step].handleSubmit(onSubmit)}>
 
-                <Card className="md:min-w-[700px] sm:w-[500px] md:h-[500px] w-[300px] bg-white rounded-md m-2">
+                <motion.div initial={slider.initial} transition={slider.transition} animate={slider.animate}>
 
-                  <motion.div initial={branchSlider.initial} transition={branchSlider.transition} animate={branchSlider.animate}>
+                  <Card className="md:min-w-[700px] sm:w-[500px] md:h-[500px] w-[300px] bg-white rounded-md m-2">
 
-                    <CardHeader>
-                      <CardTitle>Company Details</CardTitle>
-                      <CardDescription>Please create head branch to proceed</CardDescription>
-                    </CardHeader>
+                    <motion.div initial={branchSlider.initial} transition={branchSlider.transition} animate={branchSlider.animate}>
 
-                    <CardContent className='h-[340px] overflow-auto'>
+                      <CardHeader>
+                        <CardTitle>Company Details</CardTitle>
+                        <CardDescription>Please create head branch to proceed</CardDescription>
+                      </CardHeader>
 
-                      <CustomGrid row={2}>
+                      <CardContent className='h-[340px] overflow-auto'>
 
-                        <DynamicFields data={branchData} form={form[0]} />
+                        <CustomGrid row={2}>
 
-                      </CustomGrid>
+                          <DynamicFields data={companyData} form={form[0]} />
 
-
-                    </CardContent>
-
-                    <CardFooter>
-                      <Button>Next</Button>
-                    </CardFooter>
-
-                  </motion.div>
-
-                  <motion.div initial={userSlider.initial} transition={userSlider.transition} animate={userSlider.animate}>
-
-                    <CardHeader>
-                      <CardTitle>User Details</CardTitle>
-                      <CardDescription>Create user</CardDescription>
-                    </CardHeader>
-
-                    <CardContent className='h-[340px] overflow-auto'>
-
-                      <CustomGrid row={2}>
-
-                        <DynamicFields data={userData} form={form[1]} />
-
-                      </CustomGrid>
+                        </CustomGrid>
 
 
-                    </CardContent>
+                      </CardContent>
 
-                    <CardFooter className='flex justify-between'>
-                      <div>
-                        <Button type='button' onClick={handleBack}>Back</Button>
-                      </div>
-                      <div className="flex gap-3">
-                        <Button type='button' variant='secondary' onClick={handleSkip}>Skip</Button>
+                      <CardFooter>
                         <Button>Next</Button>
-                      </div>
-                    </CardFooter>
+                      </CardFooter>
 
-                  </motion.div>
+                    </motion.div>
 
-                </Card>
+                    <motion.div initial={userSlider.initial} transition={userSlider.transition} animate={userSlider.animate}>
 
-              </motion.div>
+                      <CardHeader>
+                        <CardTitle>User Details</CardTitle>
+                        <CardDescription>Create user</CardDescription>
+                      </CardHeader>
 
-            </form>
+                      <CardContent className='h-[340px] overflow-auto'>
 
-          </Form>
+                        <CustomGrid row={2}>
 
-      </div> : <div className="h-screen flex justify-center items-center w-full bg-orange-50"><LongLoader /></div>}
+                          <DynamicFields data={onBoardingUserData} form={form[1]} />
+
+                        </CustomGrid>
+
+
+                      </CardContent>
+
+                      <CardFooter className='flex justify-between'>
+                        <div>
+                          <Button type='button' onClick={handleBack}>Back</Button>
+                        </div>
+                        <div className="flex gap-3">
+                          {/* <Button type='button' variant='secondary' onClick={handleSkip}>Skip</Button> */}
+                          <Button>Next</Button>
+                        </div>
+                      </CardFooter>
+
+                    </motion.div>
+
+                  </Card>
+
+                </motion.div>
+
+              </form>
+
+            </Form>
+
+        </div>
+
+      </Loader>
     </>
     
   );

@@ -2,13 +2,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Loading from '@/app/loading';
+import useStorage from '@/hooks/useStorage';
 
 const wrapPermissionCheck = (Component, permissionType) => {
 
   const WrappedComponent = (props) => {
     const router = useRouter();
+    const { getItem } = useStorage();
     const pathname = usePathname();
-    const permissions = useSelector((state) => state.permissions.permissions);
+    const permissions = getItem('permissions');
     const [hasPermission, setHasPermission] = useState(null);
 
     useEffect(() => {

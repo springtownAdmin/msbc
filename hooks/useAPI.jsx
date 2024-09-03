@@ -89,7 +89,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -129,7 +129,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -147,7 +147,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -165,7 +165,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -183,7 +183,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -201,7 +201,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -219,7 +219,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -239,7 +239,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -258,7 +258,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -276,7 +276,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -294,7 +294,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -312,7 +312,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -330,7 +330,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -348,7 +348,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -366,7 +366,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -384,7 +384,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -403,7 +403,7 @@ const useAPI = () => {
     
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -421,7 +421,7 @@ const useAPI = () => {
 
         } catch (e) {
             
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -440,7 +440,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -460,7 +460,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -479,7 +479,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -502,7 +502,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -521,7 +521,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -538,7 +538,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -557,7 +557,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -576,7 +576,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -595,7 +595,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -613,7 +613,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -631,7 +631,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -649,7 +649,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -667,7 +667,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -685,7 +685,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -704,7 +704,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -723,7 +723,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -740,7 +740,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -757,7 +757,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -776,7 +776,7 @@ const useAPI = () => {
 
         } catch (e) {
             
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -800,7 +800,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -818,7 +818,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -838,7 +838,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -857,7 +857,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }
@@ -875,7 +875,7 @@ const useAPI = () => {
 
         } catch (e) {
 
-            showToast(400, 'Opps! Something went wrong.');
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
         }

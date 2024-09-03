@@ -20,6 +20,7 @@ import Image from 'next/image';
 import { LuFile } from 'react-icons/lu';
 import { MdDownload } from "react-icons/md";
 import { TimePickerDemo } from './time-picker-demo';
+import { FaEyeSlash, FaRegEye } from 'react-icons/fa6';
 
 export const CustomFields = (props) => {
 
@@ -31,6 +32,7 @@ export const CustomFields = (props) => {
     const uploadRef = useRef();
     const [files, setFiles] = useState([]);
     const [previews, setPreviews] = useState([]);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleUpload = () => {
         uploadRef.current.click();
@@ -68,6 +70,10 @@ export const CustomFields = (props) => {
 
     }
 
+    const handleClickShowPassword = () => {
+        setShowPassword((show) => !show);
+      };
+
     if (type === 'text') {
 
         return (
@@ -87,6 +93,45 @@ export const CustomFields = (props) => {
         )
 
     };
+
+    if (type === 'password') {
+
+
+        return (
+            <FormField
+                control={form.control}
+                name={name}
+                render={({ field }) => (
+                    <FormItem className={className}>
+                        <FormLabel>{label}</FormLabel>
+                        <FormControl>
+                            <div className='flex items-center rounded-md relative'>
+                                <Input id="password" className={`${className}`} disabled={disabled} name="password" placeholder={placeholder} type={showPassword ? "text" : "password"} {...field} />
+                                <span className="cursor-pointer absolute right-2" onClick={handleClickShowPassword}>
+                                    {showPassword ? <FaEyeSlash /> : <FaRegEye />}
+                                </span>
+                            </div>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        )
+
+        // return (
+        //     <div className="space-y-1">
+        //             <Label htmlFor="password">Password</Label>
+        //             <div className="relative">
+        //                 <Input id="password" name="password" onChange={handleChange} placeholder={"John@123"} type={showPassword ? "text" : "password"} value={data.password} className="" />
+        //                 <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onClick={handleClickShowPassword}>
+        //                     {showPassword ? <FaEyeSlash /> : <FaRegEye />}
+        //                 </span>
+        //             </div>
+        //             {passwordError && (<ErrorComponent>{passwordError}</ErrorComponent>)}
+        //         </div>
+        // )
+
+    }
 
     if (type === 'date') {
 

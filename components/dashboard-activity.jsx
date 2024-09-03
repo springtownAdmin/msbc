@@ -87,7 +87,7 @@ export const DeliveryStatus = () => {
   )
 }
 
-export const EnquiryChart = ({ EnquirychartData }) => {
+export const EnquiryChart = ({ EnquirychartData = [] }) => {
 
     const totalVisitors = React.useMemo(() => {
       return EnquirychartData.reduce((acc, curr) => acc + curr.enquiries, 0)
@@ -109,7 +109,7 @@ export const EnquiryChart = ({ EnquirychartData }) => {
               
               <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
   
-              <Pie data={EnquirychartData} dataKey="enquiries" nameKey="enquiry" innerRadius={60} strokeWidth={5}>
+              {EnquirychartData.length !== 0 ? <Pie data={EnquirychartData} dataKey="enquiries" nameKey="enquiry" innerRadius={60} strokeWidth={5}>
                 <Label
                   content={({ viewBox }) => {
   
@@ -132,7 +132,8 @@ export const EnquiryChart = ({ EnquirychartData }) => {
   
                   }}
                 />
-              </Pie>
+              </Pie> : <div className='text-red-500 h-full w-full'>No Enquiries Found!</div>}
+
             </PieChart>
           </ChartContainer>
   
@@ -218,7 +219,7 @@ export const RecentActivity = ({ recentActivity = [] }) => {
   
               <CardContent className='overflow-auto h-[80%]'>
 
-                {recentActivity.map((x, i) => (
+                {recentActivity.length !== 0 ? recentActivity.map((x, i) => (
 
                   <ol className="relative border-s border-gray-200 dark:border-gray-700">                  
                     <li className="mb-10 ms-4">
@@ -229,7 +230,7 @@ export const RecentActivity = ({ recentActivity = [] }) => {
                     </li>
                   </ol>
 
-                ))}
+                )) : <div className='text-red-500 h-full w-full'>No Activity Found!</div>}
   
               </CardContent>
   

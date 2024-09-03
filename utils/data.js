@@ -62,20 +62,20 @@ export const enquiryData = [
         read_only: false
     },
   
-    {
-        id: 6,
-        label: 'By',
-        name: 'By',
-        type: 'select',
-        value: 'User',
-        list: [ 'Admin', 'User', 'Sales' ],
-        required: false,
-        is_visible: true,
-        read_only: false
-    },
+    // {
+    //     id: 6,
+    //     label: 'By',
+    //     name: 'By',
+    //     type: 'select',
+    //     value: 'User',
+    //     list: [ 'Admin', 'User', 'Sales' ],
+    //     required: false,
+    //     is_visible: true,
+    //     read_only: false
+    // },
   
     {
-        id: 7,
+        id: 6,
         label: 'Estimator',
         name: 'Estimator',
         type: 'select',
@@ -87,7 +87,7 @@ export const enquiryData = [
     },
   
     {
-        id: 8,
+        id: 7,
         label: 'Sales Representative',
         name: 'Sales Representative',
         type: 'select',
@@ -99,7 +99,7 @@ export const enquiryData = [
     },
   
     {
-        id: 9,
+        id: 8,
         label: 'Enquiry By',
         name: 'Enquiry By',
         type: 'multi-checkbox',
@@ -115,7 +115,7 @@ export const enquiryData = [
     },
 
     {
-        id: 10,
+        id: 9,
         label: 'Customer',
         name: 'Customer',
         type: 'select',
@@ -127,7 +127,7 @@ export const enquiryData = [
     },
 
     {
-        id: 11,
+        id: 10,
         label: 'Contact Name',
         name: 'Contact Name',
         type: 'text',
@@ -138,7 +138,7 @@ export const enquiryData = [
     },
 
     {
-        id: 12,
+        id: 11,
         label: 'Customer Email',
         name: 'Email',
         type: 'text',
@@ -149,7 +149,7 @@ export const enquiryData = [
     },
 
     {
-        id: 13,
+        id: 12,
         label: 'Mobile No',
         name: 'Mobile No',
         type: 'number',
@@ -160,7 +160,7 @@ export const enquiryData = [
     },
 
     {
-        id: 14,
+        id: 13,
         label: 'Phone No',
         name: 'Phone No',
         type: 'number',
@@ -171,7 +171,7 @@ export const enquiryData = [
     },
 
     {
-        id: 15,
+        id: 14,
         label: 'Country',
         name: 'Country',
         type: 'select',
@@ -183,7 +183,7 @@ export const enquiryData = [
     },
 
     {
-        id: 16,
+        id: 15,
         label: 'Post Code',
         name: 'Pin Code',
         type: 'number',
@@ -195,7 +195,7 @@ export const enquiryData = [
     },
 
     {
-        id: 17,
+        id: 16,
         label: 'Address',
         name: 'Address',
         type: 'textarea',
@@ -206,7 +206,7 @@ export const enquiryData = [
     },
 
     {
-        id: 18,
+        id: 17,
         label: 'Delivery Address',
         name: 'Shipping Address',
         type: 'textarea',
@@ -217,7 +217,7 @@ export const enquiryData = [
     },
 
     {
-        id: 19,
+        id: 18,
         label: 'Billing Address',
         name: 'Billing Address',
         type: 'textarea',
@@ -228,7 +228,7 @@ export const enquiryData = [
     },
 
     {
-        id: 20,
+        id: 19,
         label: 'Project Name',
         name: 'Project Name',
         type: 'text',
@@ -239,7 +239,7 @@ export const enquiryData = [
     },
 
     {
-        id: 21,
+        id: 20,
         label: 'Architect Name',
         name: 'Architect Name',
         type: 'text',
@@ -250,7 +250,7 @@ export const enquiryData = [
     },
 
     {
-        id: 22,
+        id: 21,
         label: 'Site Reference',
         name: 'Site Reference',
         type: 'text',
@@ -261,7 +261,7 @@ export const enquiryData = [
     },
 
     {
-        id: 23,
+        id: 22,
         label: 'Tentative Project Value',
         name: 'Tentative Project Value',
         type: 'number',
@@ -273,7 +273,7 @@ export const enquiryData = [
     },
 
     {
-        id: 24,
+        id: 23,
         label: 'Notes',
         name: 'Notes',
         type: 'textarea',
@@ -509,7 +509,7 @@ export const userData = [
         id: 4,
         name: 'Password',
         label: 'Password',
-        type: 'text',
+        type: 'password',
         value: '',
         required: false,
         is_visible: true,

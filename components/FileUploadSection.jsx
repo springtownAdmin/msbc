@@ -10,17 +10,20 @@ import { Trash2 } from 'lucide-react';
 import { BACKEND_API } from '@/utils/constants';
 import useStorage from '@/hooks/useStorage';
 import useAPI from '@/hooks/useAPI';
+import useLoader, { Loader } from '@/hooks/useLoader';
 
 function FileUploadSection({ enquiry_no = '' }) {
 
     const uploadRef = useRef();
     const [ files, setFiles ] = useState([]);
     const { getFilesFromS3, addFilesToS3, removeFilesFromS3, downloadFileFromS3 } = useAPI();
+    const { show, showLoader, hideLoader } = useLoader();
 
     const fetchFilesFromS3 = async () => {
 
         setFiles([]);
 
+        showLoader()
         const result = await getFilesFromS3({ enquiry_no });
 
         if (result?.files && result?.files?.length !== 0) {
@@ -28,6 +31,7 @@ function FileUploadSection({ enquiry_no = '' }) {
             setFiles(result.files);
 
         }
+        hideLoader();
 
     };
 
@@ -89,37 +93,42 @@ function FileUploadSection({ enquiry_no = '' }) {
             <div className="overflow-auto h-[80%] w-full">
               
               <div className='h-full flex text-center items-center'>
-              {enquiry_no && files.length ? (<div className="flex gap-3 flex-wrap">
-                      {files.map((file, i) => (
-                          <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
-                          <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
-                              {file.file_name.endsWith('.pdf') ?
-                                  <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                      <Image src={pdfIcon} alt={`${file.name}-${i}`} width={50} height={80} />
-                                  </div>
-                              : file.file_name.endsWith('.xlsx') || file.file_name.endsWith('.xls') || file.file_name.endsWith('.csv') ?
-                                  <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                      <Image src={csvIcon} alt={`${file.name}-${i}`} width={50} height={80} />
-                                  </div>
-                              : file.file_name.endsWith('.png') || file.file_name.endsWith('.jpg') || file.file_name.endsWith('.jpeg') ?
-                              <img src={file.file_url} alt={file.file_name} className='h-full w-full p-1' />
-                                  
-                              : <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                              <LuFile size={30} />
-                          </div>}
-                          </div>
-                          <div className='flex justify-between p-1 items-center bg-white w-full'>
-                              <div className='text-sm w-full truncate font-medium text-start'>{file.file_name}</div>
-                              <div className='flex gap-2 items-center'>
-                                  <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(file.file_name, file.file_path)} /></div>
-                                  <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(file.file_name, file.file_path)} /></div>
-                              </div>
-                          </div>
-                      </div>
-                      ))}
-              </div>) : (
-                  <div className='w-full flex h-[60%] justify-center items-center'>No files available.</div>
-              )}
+
+                <Loader show={show}>
+
+                    {enquiry_no && files.length ? (<div className="flex gap-3 flex-wrap">
+                            {files.map((file, i) => (
+                                <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
+                                <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
+                                    {file.file_name.endsWith('.pdf') ?
+                                        <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                            <Image src={pdfIcon} alt={`${file.name}-${i}`} width={50} height={80} />
+                                        </div>
+                                    : file.file_name.endsWith('.xlsx') || file.file_name.endsWith('.xls') || file.file_name.endsWith('.csv') ?
+                                        <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                            <Image src={csvIcon} alt={`${file.name}-${i}`} width={50} height={80} />
+                                        </div>
+                                    : file.file_name.endsWith('.png') || file.file_name.endsWith('.jpg') || file.file_name.endsWith('.jpeg') ?
+                                    <img src={file.file_url} alt={file.file_name} className='h-full w-full p-1' />
+                                        
+                                    : <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                    <LuFile size={30} />
+                                </div>}
+                                </div>
+                                <div className='flex justify-between p-1 items-center bg-white w-full'>
+                                    <div className='text-sm w-full truncate font-medium text-start'>{file.file_name}</div>
+                                    <div className='flex gap-2 items-center'>
+                                        <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(file.file_name, file.file_path)} /></div>
+                                        <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(file.file_name, file.file_path)} /></div>
+                                    </div>
+                                </div>
+                            </div>
+                            ))}
+                    </div>) : (
+                        <div className='w-full flex h-[60%] justify-center items-center'>No files available.</div>
+                    )}
+                    
+                </Loader>
                 
               </div>
             </div>

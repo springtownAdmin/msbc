@@ -12,6 +12,7 @@ import useStorage from "@/hooks/useStorage";
 import useLoader, { Loader } from "@/hooks/useLoader";
 import { useSelector } from "react-redux";
 import useAPI from "@/hooks/useAPI";
+import PermissionBasedComponent from "@/components/common/PermissionBasedComponent";
 
 const Dashboard = () => {
 
@@ -162,11 +163,15 @@ const Dashboard = () => {
 
             </div>
 
-            <EnquiryChart EnquirychartData={dashboardData?.enquiryData} />
+            <PermissionBasedComponent permissionName='can_view' moduleUrl='/enquiry'>
+              <EnquiryChart EnquirychartData={dashboardData?.enquiryData} />
+            </PermissionBasedComponent>
 
             <PaymentOverdue />
 
-            <Reminders remindersData={dashboardData?.upcomingReminderData} />
+            <PermissionBasedComponent permissionName='can_view' moduleUrl='/enquiry'>
+              <Reminders remindersData={dashboardData?.upcomingReminderData} />
+            </PermissionBasedComponent>
 
             <DeliveryStatus />
 

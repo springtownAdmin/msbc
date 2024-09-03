@@ -882,6 +882,25 @@ const useAPI = () => {
 
     }
 
+    const resetUserPassword = async (reqBody) => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const userId = getItem('user_id');
+            const resp = await BACKEND_API.post(`/reset_password/${userId}?company_name=${company_name}`,reqBody);
+
+            showToast(200, 'Password Changed Successfully!');
+            return resp.data;
+
+        } catch (e) {
+            
+            showToast(400, e.response.data.detail ?? 'Something Went Wrong!');
+
+        }
+
+    }
+
 
     return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
@@ -889,7 +908,7 @@ const useAPI = () => {
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,
         deleteGroup, getOneFollowUp, updateOneFollowUp, addField, getFields, updateFieldLabel, setSideBarMenuPermissions,
         getUpcomingReminders, getEnquiriesChart, getFollowUpSummary, getEmailContent, getFilesFromS3, addFilesToS3,
-        removeFilesFromS3, downloadFileFromS3, getEnquiryStatusHistory, isFirstLogin
+        removeFilesFromS3, downloadFileFromS3, getEnquiryStatusHistory, isFirstLogin, resetUserPassword
     };
 
 }

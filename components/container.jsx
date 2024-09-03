@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MenuData, Menus, Menus2 } from "@/utils/constants";
-import { Check, Info } from "lucide-react"
+import { Check, Info, KeyRound } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CustomTooltip } from './custom-tooltip';
@@ -34,13 +34,18 @@ export const Container = ({ children, id = 1, route = '' }) => {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
+  const [userPassModal, setUserPassModal] = useState(false);
   const [value, setValue] = useState("");
   const [openUserInfo, setOpenUserInfo] = useState(false);
   const inputRef = useRef(null);
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', email: '', phone: '', address: '' })
   const { getItems, clearStorage, setItems } = useStorage();
   const [permissions, setPermissions] = useState([]);
-  const { setSideBarMenuPermissions } = useAPI();
+  const { setSideBarMenuPermissions, resetUserPassword } = useAPI();
+  const [passwordDetails, setPasswordDetails] = useState({
+    current_password: "",
+    new_password: "",
+  });
 
   useEffect(() => {
     const fetchPermissions = async () => {
@@ -163,12 +168,36 @@ export const Container = ({ children, id = 1, route = '' }) => {
 
   }
 
+  const handlePasswordDetails = (e) => {
+    setPasswordDetails({ ...passwordDetails, [e.target.name]: e.target.value });
+    console.log(passwordDetails);
+    
+  };
+
+const handleOpenPasswordModal= () => {
+    setUserPassModal(true);
+  };
+
+  const handleClosePasswordModal = () => {
+    setUserPassModal(false);
+  };
+
+const handleSaveNewPassoword = async () => {
+    try {
+      await resetUserPassword(passwordDetails);
+      handleClosePasswordModal();
+      handleCloseUserInfo();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
 
     <ProtectedRoute>
       <div className="w-full h-screen relative flex">
 
-          <Dialog open={openUserInfo} onOpenChange={handleCloseUserInfo}>
+          {/* <Dialog open={openUserInfo} onOpenChange={handleCloseUserInfo}>
 
             <DialogContent className="sm:max-w-[425px]" aria-describedby='alert-box'>
 
@@ -215,7 +244,151 @@ export const Container = ({ children, id = 1, route = '' }) => {
 
             </DialogContent>
 
+          </Dialog> */}
+
+          <Dialog open={openUserInfo} onOpenChange={handleCloseUserInfo}>
+          <DialogContent
+            className="sm:max-w-[425px]"
+            aria-describedby="alert-box"
+          >
+            <DialogHeader>
+              <DialogTitle>Add / Edit User Info</DialogTitle>
+              <DialogDescription>
+                Add / Edit necessary user details
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto">
+              <div className="w-[98%]">
+                <Label>First Name</Label>
+                <Input
+                  type="text"
+                  className="w-[97%] mt-1"
+                  name="firstname"
+                  value={userDetails.firstname}
+                  onChange={handleUserDetails}
+                />
+              </div>
+
+              <div className="w-[98%]">
+                <Label>Last Name</Label>
+                <Input
+                  type="text"
+                  className="w-[97%] mt-1"
+                  name="lastname"
+                  value={userDetails.lastname}
+                  onChange={handleUserDetails}
+                />
+              </div>
+
+              <div className="w-[98%]">
+                <Label>Phone</Label>
+                <Input
+                  type="text"
+                  className="w-[97%] mt-1"
+                  name="phone"
+                  value={userDetails.phone}
+                  onChange={handleUserDetails}
+                />
+              </div>
+
+              <div className="w-[98%]">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  className="w-[97%] mt-1"
+                  name="email"
+                  value={userDetails.email}
+                  onChange={handleUserDetails}
+                />
+              </div>
+
+              <div className="w-[98%]">
+                <Label>Address</Label>
+                <Textarea
+                  rows={3}
+                  className="w-[97%] mt-1"
+                  value={userDetails.address}
+                  onChange={handleUserDetails}
+                />
+              </div>
+
+              {/* <Button type="button" variant="secondary" className="cursor-pointer flex gap-2" onClick={handleOpenPasswordModal}><KeyRound /> Change Password</Button> */}
+            </div>
+
+            <DialogFooter>
+              <div className='flex justify-between w-full'>
+                <div>
+                  <Button type="button" variant="secondary" className="cursor-pointer flex gap-2" onClick={handleOpenPasswordModal}><KeyRound /> Change Password</Button>
+                </div>
+                <div className='flex gap-2'>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleCloseUserInfo}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="button" onClick={handleSaveUserInfo}>
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </DialogFooter>
+          </DialogContent>
           </Dialog>
+
+        <Dialog open={userPassModal} onOpenChange={handleClosePasswordModal}>
+          <DialogContent
+            className="sm:max-w-[425px]"
+            aria-describedby="alert-box"
+          >
+            <DialogHeader>
+              <DialogTitle>Change User Password</DialogTitle>
+              <DialogDescription>
+                Verify old password and change
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex flex-col items-center gap-3 py-4 w-full h-[300px] overflow-auto">
+              <div className="w-[98%]">
+                <Label>Current Password</Label>
+                <Input
+                  type="password"
+                  className="w-[97%] mt-1"
+                  name="current_password"
+                  value={passwordDetails.current_password}
+                  onChange={handlePasswordDetails}
+                />
+              </div>
+
+              <div className="w-[98%]">
+                <Label>New Password</Label>
+                <Input
+                  type="password"
+                  className="w-[97%] mt-1"
+                  name="new_password"
+                  value={passwordDetails.new_password}
+                  onChange={handlePasswordDetails}
+                />
+              </div>
+
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleClosePasswordModal}
+              >
+                Cancel
+              </Button>
+              <Button type="button" onClick={handleSaveNewPassoword}>
+                Save
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
           <div className="border-r h-full w-[65px]">
 

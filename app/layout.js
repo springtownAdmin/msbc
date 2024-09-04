@@ -9,24 +9,24 @@ import WebSocketProvider from "@/components/web-socket-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "DWERP - Enquiry",
-  description: "An enquiry system for MSBC",
+  title: "DWERP",
+  description: "A DWERP for MSBC",
 };
 
 export default function RootLayout({ children }) {
 
   return (
-      <html lang="en">
-        <body style={{ overflow: 'hidden' }}>
-            <ClientProvider>
-              <Suspense fallback={<Loading />}>
-                <WebSocketProvider />
-                {children}
-              </Suspense>
-            </ClientProvider>
-            <Toaster />
-        </body>
-      </html>
+    <html lang="en">
+      <body style={{ overflow: 'hidden' }}>
+        <ClientProvider>
+          <Suspense fallback={<Loading />}>
+            {/* <WebSocketProvider /> */}
+            {children}
+          </Suspense>
+        </ClientProvider>
+        <Toaster />
+      </body>
+    </html>
   );
 
 }

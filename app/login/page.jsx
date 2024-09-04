@@ -63,7 +63,7 @@ const Login = () => {
       } else {
         setPasswordError("");
       }
-      
+
     }
 
     setData((prevData) => ({ ...prevData, [name]: value }));
@@ -75,17 +75,17 @@ const Login = () => {
 
     setShowLoaderSignIn(true);
 
-    const result = await authenticateUser({ username: data.email, password: data.password }, data.company);
-    const result2 = await isFirstLogin();
+    const currentUrl = window.location.href;;
+    let companyName = currentUrl.split('//')[1].split('.')[0].toLowerCase();
 
-    result2?.is_first_login === true && router.push('/on-boarding');
-    result2?.is_first_login === false && router.push('/dashboard');
-    
+    const result = await authenticateUser({ username: data.email, password: data.password }, companyName);
+    if (result) {
+      const result2 = await isFirstLogin();
+      result2?.is_first_login === true && router.push('/on-boarding');
+      result2?.is_first_login === false && router.push('/dashboard');
+    }
+
     setShowLoaderSignIn(false);
-
-    console.log(result);
-
-    console.log(currentState);
 
     // try {
 
@@ -100,7 +100,7 @@ const Login = () => {
     //       dispatch(login());
     //       localStorage.setItem("email", data.email);
     //       router.push("/");
-        
+
     //     } else {
 
     //       // toast.error("Session token was not set properly.");
@@ -127,6 +127,62 @@ const Login = () => {
 
   };
 
+  // const handleSignIn = async () => {
+
+  //   setShowLoaderSignIn(true);
+
+  //   const result = await authenticateUser({ username: data.email, password: data.password }, data.company);
+  //   const result2 = await isFirstLogin();
+
+  //   result2?.is_first_login === true && router.push('/on-boarding');
+  //   result2?.is_first_login === false && router.push('/dashboard');
+
+  //   setShowLoaderSignIn(false);
+
+  //   console.log(result);
+
+  //   console.log(currentState);
+
+  //   // try {
+
+  //   //   const session = await signIn(data);
+
+  //   //   if (session && session.AccessToken) {
+
+  //   //     sessionStorage.setItem("accessToken", session.AccessToken);
+
+  //   //     if (sessionStorage.getItem("accessToken")) {
+
+  //   //       dispatch(login());
+  //   //       localStorage.setItem("email", data.email);
+  //   //       router.push("/");
+
+  //   //     } else {
+
+  //   //       // toast.error("Session token was not set properly.");
+  //   //       toast({ variant: 'destructive', title: "Session token was not set properly." })
+
+  //   //     }
+
+  //   //   } else {
+
+  //   //     // toast.error("SignIn session or AccessToken is undefined.");
+  //   //     toast({ variant: 'destructive', title: "SignIn session or AccessToken is undefined." })
+
+  //   //   }
+
+  //   // } catch (error) {
+
+  //   //   toast({ variant: 'destructive', title: 'Something went wrong!', description: `Error: ${error.message}` })
+
+  //   // } finally {
+
+  //   //   setShowLoaderSignIn(false);
+
+  //   // }
+
+  // };
+
   return (
 
     <div className={`w-full h-[100vh] flex justify-center items-center bg-orange-600`}>
@@ -135,50 +191,50 @@ const Login = () => {
 
         <Card className="flex flex-col justify-between w-[400px]">
 
-            <CardHeader>
+          <CardHeader>
 
-                <div className="flex w-full justify-center">
-                    <Image src={DWERPLogo} alt='dwerp-logo' height={50} width={50} />
-                </div>
+            <div className="flex w-full justify-center">
+              <Image src={DWERPLogo} alt='dwerp-logo' height={50} width={50} />
+            </div>
 
-                <CardTitle className={`text-center text-slate-800]`}>Welcome</CardTitle>
-                
-                <CardDescription className="text-center">
-                    Sign In to your account
-                </CardDescription>
+            <CardTitle className={`text-center text-slate-800]`}>Welcome</CardTitle>
 
-            </CardHeader>
+            <CardDescription className="text-center">
+              Sign In to your account
+            </CardDescription>
 
-            <CardContent className="space-y-2">
+          </CardHeader>
 
-                <div className="space-y-1">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" name="email" placeholder={"johndoe@gmail.com"} value={data.email} onChange={handleChange} required />
-                </div>
+          <CardContent className="space-y-2">
 
-                <div className="space-y-1">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                        <Input id="password" name="password" onChange={handleChange} placeholder={"John@123"} type={showPassword ? "text" : "password"} value={data.password} className="" />
-                        <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onClick={handleClickShowPassword}>
-                            {showPassword ? <FaEyeSlash /> : <FaRegEye />}
-                        </span>
-                    </div>
-                    {passwordError && (<ErrorComponent>{passwordError}</ErrorComponent>)}
-                </div>
+            <div className="space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" name="email" placeholder={"johndoe@gmail.com"} value={data.email} onChange={handleChange} required />
+            </div>
 
-                <div className="space-y-1">
+            <div className="space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input id="password" name="password" onChange={handleChange} placeholder={"John@123"} type={showPassword ? "text" : "password"} value={data.password} className="" />
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onClick={handleClickShowPassword}>
+                  {showPassword ? <FaEyeSlash /> : <FaRegEye />}
+                </span>
+              </div>
+              {passwordError && (<ErrorComponent>{passwordError}</ErrorComponent>)}
+            </div>
+
+            {/* <div className="space-y-1">
                     <Label htmlFor="company">Company Name</Label>
                     <Input id="company" type="company" name="company" placeholder={"xyz"} value={data.company} onChange={handleChange} required />
-                </div>
+                </div> */}
 
-            </CardContent>
+          </CardContent>
 
-            <CardFooter className="flex-col">
-                <Button className={`w-full ${!hasFilled || passwordError ? "opacity-50" : "hover:opacity-50"}`} onClick={handleSignIn} disabled={!hasFilled || passwordError}>
-                    {loaderSignIn ? <Loading color="#FFFFFF" /> : <div>Sign In</div>}
-                </Button>
-            </CardFooter>
+          <CardFooter className="flex-col">
+            <Button className={`w-full ${!hasFilled || passwordError ? "opacity-50" : "hover:opacity-50"}`} onClick={handleSignIn} disabled={!hasFilled || passwordError}>
+              {loaderSignIn ? <Loading color="#FFFFFF" /> : <div>Sign In</div>}
+            </Button>
+          </CardFooter>
 
         </Card>
 

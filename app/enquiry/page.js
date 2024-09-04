@@ -23,134 +23,136 @@ import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 
 const ActionsRenderer = (params) => {
 
-  const item = params.data
-  const editPath = `enquiry/edit/${item.id}`
+    const item = params.data
+    const editPath = `enquiry/edit/${item.id}`
 
-  return (
-      <div className='flex items-center justify-center h-full'>
-        <PermissionBasedComponent permissionName='can_edit' moduleUrl='/enquiry'>
-          <CustomTooltip content='Edit'>
-              <Link href={editPath}>
-                  <MdEdit size={20}/>
-              </Link>
-          </CustomTooltip>
-        </PermissionBasedComponent>
-      </div>
-  );
+    return (
+        <div className='flex items-center justify-center h-full'>
+            <PermissionBasedComponent permissionName='can_edit' moduleUrl='/enquiry'>
+                <div className='cursor-pointer hover:text-red-500'>
+                    <CustomTooltip content='Edit'>
+                        <Link href={editPath}>
+                            <MdEdit size={20} />
+                        </Link>
+                    </CustomTooltip>
+                </div>
+            </PermissionBasedComponent>
+        </div>
+    );
 
 };
 
 const Enquiry = () => {
 
-//   const { data } = useSelector((state) => state.list);
-//   const enquiryList = data.enquiry
-  
-  const { getEnquiries } = useAPI();
-  const [ enquiryList, setEnquiryList ] = useState([]);
-  const [ dateRange, setDateRange ] = useState({ start: null, end: null });
-  const { company_name } = useStorage();
-  const { showLoader, hideLoader, show } = useLoader();
+    //   const { data } = useSelector((state) => state.list);
+    //   const enquiryList = data.enquiry
 
-  const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
+    const { getEnquiries } = useAPI();
+    const [enquiryList, setEnquiryList] = useState([]);
+    const [dateRange, setDateRange] = useState({ start: null, end: null });
+    const { company_name } = useStorage();
+    const { showLoader, hideLoader, show } = useLoader();
 
-  const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
+    const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
 
-  useEffect(() => {
+    const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
-    const getData = async () => {
+    useEffect(() => {
 
-        showLoader();
-        const result = await getEnquiries();
+        const getData = async () => {
 
-        const newResult = result.map((x) => {
+            showLoader();
+            const result = await getEnquiries();
 
-            return {
-                ...x,
-                enquiry_date: formatDateToYYYYMMDD(x.enquiry_date),
-                enquiry_by: x.enquiry_by === 1 ? "Phone" : x.enquiry_by === 2 ? "E-Mail" : x.enquiry_by === 3 ? "Marketing" : null
-            }
+            const newResult = result.map((x) => {
 
-        });
+                return {
+                    ...x,
+                    enquiry_date: formatDateToYYYYMMDD(x.enquiry_date),
+                    enquiry_by: x.enquiry_by === 1 ? "Phone" : x.enquiry_by === 2 ? "E-Mail" : x.enquiry_by === 3 ? "Marketing" : null
+                }
+
+            });
 
 
-        setEnquiryList(newResult);
-        hideLoader();
+            setEnquiryList(newResult);
+            hideLoader();
 
-    }
+        }
 
-    company_name !== null && getData();
+        company_name !== null && getData();
 
-  }, []);
+    }, []);
 
-  const rowData = useMemo(() => getRowData(enquiryList), [enquiryList]);
+    const rowData = useMemo(() => getRowData(enquiryList), [enquiryList]);
 
-  const columnDefs = useMemo(() => getColumnHeader(enquiryData, ActionsRenderer, ['By', 'Country', 'Pin Code']), []);
+    const columnDefs = useMemo(() => getColumnHeader(enquiryData, ActionsRenderer, ['By', 'Country', 'Pin Code']), []);
 
-  const defaultColDef = useMemo(() => {
-    return {
-        floatingFilter: true,
-        sortable: true,
-        resizable: true,
+    const defaultColDef = useMemo(() => {
+        return {
+            floatingFilter: true,
+            sortable: true,
+            resizable: true,
+        };
+    }, []);
+
+    const onGridReady = (params) => {
+        params.api.sizeColumnsToFit();
     };
-  }, []);
 
-  const onGridReady = (params) => {
-    params.api.sizeColumnsToFit();
-  };
+    return (
+        <>
 
-  return (
-    <>
+            <Container id={4} route='/enquiry'>
 
-        <Container id={4} route='/enquiry'>
+                <Loader show={show}>
 
-            <Loader show={show}>
+                    <div className='w-full flex my-3 gap-3'>
+                        <PermissionBasedComponent permissionName='can_add' moduleUrl='/enquiry'>
+                            <Link href={'enquiry/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                                <CustomTooltip content='Add Enquiry' position='right'>
+                                    <AiOutlineFileAdd size={22} />
+                                </CustomTooltip>
+                            </Link>
+                        </PermissionBasedComponent>
 
-                <div className='w-full flex my-3 gap-3'>
-                    <PermissionBasedComponent permissionName='can_add' moduleUrl='/enquiry'>
-                        <Link href={'enquiry/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                            <CustomTooltip content='Add Enquiry' position='right'>
-                                <AiOutlineFileAdd size={22} />
-                            </CustomTooltip>
-                        </Link>
-                    </PermissionBasedComponent>
+                        <div>
+                            <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                        </div>
 
-                    <div>
-                        <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                        <div>
+                            <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                        </div>
+
+                        <div>
+                            <Button type='button'>
+                                <Search className="mr-2 h-4 w-4" />
+                                Search
+                            </Button>
+                        </div>
+
                     </div>
 
-                    <div>
-                        <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                    <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+                        <AgGridReact
+                            rowData={rowData}
+                            // onGridReady={onGridReady}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            rowSelection="multiple"
+                            suppressRowClickSelection={true}
+                            pagination={true}
+                            paginationPageSize={10}
+                            paginationPageSizeSelector={[10, 25, 50]}
+                        />
                     </div>
 
-                    <div>
-                        <Button type='button'>
-                        <Search className="mr-2 h-4 w-4" />
-                            Search
-                        </Button>
-                    </div>
+                </Loader>
 
-                </div>
+            </Container>
 
-                <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-                    <AgGridReact
-                        rowData={rowData}
-                        // onGridReady={onGridReady}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        rowSelection="multiple"
-                        suppressRowClickSelection={true}
-                        pagination={true}
-                        paginationPageSize={10}
-                        paginationPageSizeSelector={[10, 25, 50]}
-                    />
-                </div>
-
-            </Loader>
-
-        </Container>
-        
-    </>
-  );
+        </>
+    );
 
 }
 

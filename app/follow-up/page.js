@@ -32,21 +32,21 @@ const ActionsRenderer = (params) => {
     return (
         <div className='flex items-center h-full'>
             <PermissionBasedComponent permissionName='can_edit' moduleUrl='/enquiry'>
-                <div className="cursor-pointer" onClick={handleClick}>
-                    <MdEdit size={20}/>
+                <div className="cursor-pointer hover:text-red-500" onClick={handleClick}>
+                    <MdEdit size={20} />
                 </div>
             </PermissionBasedComponent>
         </div>
     );
-  
+
 };
 
 const FollowUp = () => {
 
     const [open, setOpen] = useState(false);
-    const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+    const [dateRange, setDateRange] = useState({ start: null, end: null });
     const { getAllFollowUps } = useAPI();
-    const [ followUpList, setFollowUpList ] = useState([]);
+    const [followUpList, setFollowUpList] = useState([]);
     const { showLoader, hideLoader, show } = useLoader();
 
     const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
@@ -86,7 +86,7 @@ const FollowUp = () => {
     })), [followUpList]);
 
     const columnDefs = useMemo(() => [
-        
+
         { field: 'enquiryNo', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
         { field: 'enquiryDate', headerName: 'Enquiry Date', filter: 'agDateColumnFilter' },
         { field: 'chaseOn', headerName: 'Chase On', filter: 'agDateColumnFilter' },
@@ -98,9 +98,9 @@ const FollowUp = () => {
         { field: 'mobile', headerName: 'Mobile', filter: 'agTextColumnFilter' },
         { field: 'email', headerName: 'Email', filter: 'agTextColumnFilter' },
         { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer, pinned: 'right', width: 100 }
-        
+
     ], []);
-    
+
     const defaultColDef = useMemo(() => {
         return {
             floatingFilter: true,
@@ -117,45 +117,45 @@ const FollowUp = () => {
         setOpen(true);
     }
 
-  return (
-    <Container id={6} route='/follow-up'>
+    return (
+        <Container id={6} route='/follow-up'>
 
-        <Loader show={show}>
+            <Loader show={show}>
 
-            <div className='w-full flex my-3 gap-3'>
-                <div>
-                    <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                <div className='w-full flex my-3 gap-3'>
+                    <div>
+                        <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                    </div>
+
+                    <div>
+                        <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                    </div>
+
+                    <div>
+                        <Button type='button'>
+                            <Search className="mr-2 h-4 w-4" />
+                            Search
+                        </Button>
+                    </div>
                 </div>
 
-                <div>
-                    <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+                    <AgGridReact
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowSelection="multiple"
+                        suppressRowClickSelection={true}
+                        pagination={true}
+                        paginationPageSize={10}
+                        paginationPageSizeSelector={[10, 25, 50]}
+                    />
                 </div>
 
-                <div>
-                    <Button type='button'>
-                        <Search className="mr-2 h-4 w-4" />
-                        Search
-                    </Button>
-                </div>
-            </div>
+            </Loader>
 
-            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-                <AgGridReact
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowSelection="multiple"
-                    suppressRowClickSelection={true}
-                    pagination={true}
-                    paginationPageSize={10}
-                    paginationPageSizeSelector={[10, 25, 50]}
-                />
-            </div>
-            
-        </Loader>
-
-    </Container>
-  )
+        </Container>
+    )
 }
 
-export default wrapPermissionCheck(FollowUp,'can_view');
+export default wrapPermissionCheck(FollowUp, 'can_view');

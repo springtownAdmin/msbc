@@ -28,29 +28,31 @@ const ActionsRenderer = (params) => {
   const editPath = `user-management/edit/${item.user_id}`
 
   return (
-      <div className='flex h-full'>
-        <PermissionBasedComponent permissionName="can_edit" moduleUrl="/user-management">
+    <div className='flex h-full'>
+      <PermissionBasedComponent permissionName="can_edit" moduleUrl="/user-management">
+        <div className='cursor-pointer hover:text-red-500'>
           <CustomTooltip content='Edit'>
-              <Link href={editPath}>
-                  <MdEdit size={20}/>
-              </Link>
+            <Link href={editPath}>
+              <MdEdit size={20} />
+            </Link>
           </CustomTooltip>
-        </PermissionBasedComponent>
-      </div>
+        </div>
+      </PermissionBasedComponent>
+    </div>
   );
 
 };
 
 const UserManagement = () => {
 
-//   const { data } = useSelector((state) => state.list);
-//   const usersList = data.users;
+  //   const { data } = useSelector((state) => state.list);
+  //   const usersList = data.users;
 
   const [usersList, setUsersList] = useState([]);
   const { getUsers, getGroups, deleteGroup } = useAPI();
   const { getItem } = useStorage();
-  const [ dateRange, setDateRange ] = useState({ start: null, end: null });
-  const [ rolesList, setRolesList ] = useState([]);
+  const [dateRange, setDateRange] = useState({ start: null, end: null });
+  const [rolesList, setRolesList] = useState([]);
   const { showLoader, hideLoader, show } = useLoader();
   const [currentTab, setCurrentTab] = useState('users');
 
@@ -74,14 +76,14 @@ const UserManagement = () => {
   useEffect(() => {
 
     getAllUsers();
-    
-  },[]);
+
+  }, []);
 
 
   const handleDelete = async (deleteId) => {
 
-      await deleteGroup(deleteId);
-      getItem('company_name') !== null && getAllUsers();
+    await deleteGroup(deleteId);
+    getItem('company_name') !== null && getAllUsers();
 
   }
 
@@ -91,17 +93,17 @@ const UserManagement = () => {
     const editPath = `user-management/roles/edit/${item.id}`
 
     return (
-        <div className='flex gap-5 h-full'>
-            <CustomTooltip content='Edit'>
-                <Link href={editPath}>
-                    <MdEdit size={20}/>
-                </Link>
-            </CustomTooltip>
+      <div className='flex gap-5 h-full'>
+        <CustomTooltip content='Edit'>
+          <Link href={editPath}>
+            <MdEdit size={20} />
+          </Link>
+        </CustomTooltip>
 
-            <CustomTooltip content='Remove'>
-              <MdDelete size={20} onClick={() => handleDelete(item.id)} />
-            </CustomTooltip>
-        </div>
+        <CustomTooltip content='Remove'>
+          <MdDelete size={20} onClick={() => handleDelete(item.id)} />
+        </CustomTooltip>
+      </div>
     );
 
   };
@@ -113,18 +115,18 @@ const UserManagement = () => {
   const rowDataRoles = useMemo(() => getRowData(rolesList), [rolesList]);
 
   const columnRole = useMemo(() => [
-        
+
     { field: 'role', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
     { field: 'description', headerName: 'Description', filter: 'agTextColumnFilter' },
     { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRendererRoles }
-    
-], []);
+
+  ], []);
 
   const defaultColDef = useMemo(() => {
     return {
-        floatingFilter: true,
-        sortable: true,
-        resizable: true,
+      floatingFilter: true,
+      sortable: true,
+      resizable: true,
     };
   }, []);
 
@@ -152,41 +154,41 @@ const UserManagement = () => {
 
                 <PermissionBasedComponent permissionName='can_add' moduleUrl='/user-management'>
                   <Link href={'user-management/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                      <CustomTooltip content='Add User' position='right'>
-                          <AiOutlineFileAdd size={22} />
-                      </CustomTooltip>
+                    <CustomTooltip content='Add User' position='right'>
+                      <AiOutlineFileAdd size={22} />
+                    </CustomTooltip>
                   </Link>
                 </PermissionBasedComponent>
 
-                  <div>
-                    <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
-                  </div>
+                <div>
+                  <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                </div>
 
-                  <div>
-                    <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
-                  </div>
+                <div>
+                  <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                </div>
 
-                  <div>
-                    <Button type='button'>
-                      <Search className="mr-2 h-4 w-4" />
-                      Search
-                    </Button>
-                  </div>
+                <div>
+                  <Button type='button'>
+                    <Search className="mr-2 h-4 w-4" />
+                    Search
+                  </Button>
+                </div>
 
               </div>
 
               <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-                  <AgGridReact
-                      rowData={rowData}
-                      columnDefs={columnDefs}
-                      onGridReady={onGridReady}
-                      defaultColDef={defaultColDef}
-                      rowSelection="multiple"
-                      suppressRowClickSelection={true}
-                      pagination={true}
-                      paginationPageSize={10}
-                      paginationPageSizeSelector={[10, 25, 50]}
-                  />
+                <AgGridReact
+                  rowData={rowData}
+                  columnDefs={columnDefs}
+                  onGridReady={onGridReady}
+                  defaultColDef={defaultColDef}
+                  rowSelection="multiple"
+                  suppressRowClickSelection={true}
+                  pagination={true}
+                  paginationPageSize={10}
+                  paginationPageSizeSelector={[10, 25, 50]}
+                />
               </div>
 
             </TabsContent>
@@ -196,9 +198,9 @@ const UserManagement = () => {
               <div className='w-full flex my-3 gap-3'>
                 <PermissionBasedComponent permissionName='can_edit' moduleUrl='/user-management'>
                   <Link href={'user-management/roles/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                      <CustomTooltip content='Add Role' position='right'>
-                          <AiOutlineFileAdd size={22} />
-                      </CustomTooltip>
+                    <CustomTooltip content='Add Role' position='right'>
+                      <AiOutlineFileAdd size={22} />
+                    </CustomTooltip>
                   </Link>
                 </PermissionBasedComponent>
 
@@ -206,15 +208,15 @@ const UserManagement = () => {
 
               <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
                 <AgGridReact
-                    rowData={rowDataRoles}
-                    columnDefs={columnRole}
-                    onGridReady={onGridReady}
-                    defaultColDef={defaultColDef}
-                    rowSelection="multiple"
-                    suppressRowClickSelection={true}
-                    pagination={true}
-                    paginationPageSize={10}
-                    paginationPageSizeSelector={[10, 25, 50]}
+                  rowData={rowDataRoles}
+                  columnDefs={columnRole}
+                  onGridReady={onGridReady}
+                  defaultColDef={defaultColDef}
+                  rowSelection="multiple"
+                  suppressRowClickSelection={true}
+                  pagination={true}
+                  paginationPageSize={10}
+                  paginationPageSizeSelector={[10, 25, 50]}
                 />
               </div>
 
@@ -223,7 +225,7 @@ const UserManagement = () => {
           </Tabs>
 
         </Loader>
-          
+
       </Container>
 
     </>

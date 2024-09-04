@@ -26,15 +26,19 @@ const ActionsRenderer = (params) => {
   const editPath = `branch/edit/${item.branch_code}`
 
   return (
-      <div className='flex items-center justify-center h-full'>
-        <PermissionBasedComponent permissionName='can_edit' moduleUrl='/branch'>
+    <div className='flex items-center justify-center h-full'>
+      <PermissionBasedComponent permissionName='can_edit' moduleUrl='/branch'>
+
+        <div className='cursor-pointer text-red-500'>
           <CustomTooltip content='Edit'>
-              <Link href={editPath}>
-                  <MdEdit size={20}/>
-              </Link>
+            <Link href={editPath}>
+              <MdEdit size={20} />
+            </Link>
           </CustomTooltip>
-        </PermissionBasedComponent>
-      </div>
+        </div>
+
+      </PermissionBasedComponent>
+    </div>
   );
 
 };
@@ -42,8 +46,8 @@ const ActionsRenderer = (params) => {
 const Branch = () => {
 
   const { getBranches } = useAPI();
-  const [ branchList, setBranchList ] = useState([]);
-  const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+  const [branchList, setBranchList] = useState([]);
+  const [dateRange, setDateRange] = useState({ start: null, end: null });
   const { company_name } = useStorage();
 
   const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
@@ -55,10 +59,10 @@ const Branch = () => {
 
     const getData = async () => {
 
-        showLoader();
-        const result = await getBranches();
-        setBranchList(result);
-        hideLoader();
+      showLoader();
+      const result = await getBranches();
+      setBranchList(result);
+      hideLoader();
 
     }
 
@@ -72,9 +76,9 @@ const Branch = () => {
 
   const defaultColDef = useMemo(() => {
     return {
-        floatingFilter: true,
-        sortable: true,
-        resizable: true,
+      floatingFilter: true,
+      sortable: true,
+      resizable: true,
     };
   }, []);
 
@@ -87,48 +91,48 @@ const Branch = () => {
 
       <Container id={2} route='/branch'>
 
-          <Loader show={show}>
+        <Loader show={show}>
 
-            <div className='w-full flex my-3 gap-3'>
-              <PermissionBasedComponent permissionName='can_add' moduleUrl='/branch'>
-                <Link href={'branch/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                    <CustomTooltip content='Add Branch' position='right'>
-                        <AiOutlineFileAdd size={22} />
-                    </CustomTooltip>
-                </Link>
-              </PermissionBasedComponent>
+          <div className='w-full flex my-3 gap-3'>
+            <PermissionBasedComponent permissionName='can_add' moduleUrl='/branch'>
+              <Link href={'branch/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                <CustomTooltip content='Add Branch' position='right'>
+                  <AiOutlineFileAdd size={22} />
+                </CustomTooltip>
+              </Link>
+            </PermissionBasedComponent>
 
-                <div>
-                  <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
-                </div>
-
-                <div>
-                  <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
-                </div>
-
-                <div>
-                  <Button type='button'>
-                    <Search className="mr-2 h-4 w-4" />
-                    Search
-                  </Button>
-                </div>
+            <div>
+              <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
             </div>
 
-            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-                <AgGridReact
-                    rowData={rowData}
-                    onGridReady={onGridReady}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowSelection="multiple"
-                    suppressRowClickSelection={true}
-                    pagination={true}
-                    paginationPageSize={10}
-                    paginationPageSizeSelector={[10, 25, 50]}
-                />
+            <div>
+              <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
             </div>
 
-          </Loader>       
+            <div>
+              <Button type='button'>
+                <Search className="mr-2 h-4 w-4" />
+                Search
+              </Button>
+            </div>
+          </div>
+
+          <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+            <AgGridReact
+              rowData={rowData}
+              onGridReady={onGridReady}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              rowSelection="multiple"
+              suppressRowClickSelection={true}
+              pagination={true}
+              paginationPageSize={10}
+              paginationPageSizeSelector={[10, 25, 50]}
+            />
+          </div>
+
+        </Loader>
 
       </Container>
 
@@ -137,4 +141,4 @@ const Branch = () => {
 
 }
 
-export default wrapPermissionCheck(Branch,'can_view')
+export default wrapPermissionCheck(Branch, 'can_view')

@@ -24,31 +24,33 @@ const ActionsRenderer = (params) => {
 
     const item = params.data
     const editPath = `organization/edit/${item.organization_id}`
-  
+
     return (
         <div className='flex items-center justify-center h-full'>
             <PermissionBasedComponent permissionName="can_edit" moduleUrl='/organization'>
-                <CustomTooltip content='Edit'>
-                    <Link href={editPath}>
-                        <MdEdit size={20}/>
-                    </Link>
-                </CustomTooltip>
+                <div className='cursor-pointer hover:text-red-500'>
+                    <CustomTooltip content='Edit'>
+                        <Link href={editPath}>
+                            <MdEdit size={20} />
+                        </Link>
+                    </CustomTooltip>
+                </div>
             </PermissionBasedComponent>
         </div>
     );
-  
+
 };
 
 const Organization = () => {
 
     const { getOrganizations } = useAPI();
-    const [ organizationList, setOrganizationList ] = useState([]);
+    const [organizationList, setOrganizationList] = useState([]);
     const { company_name } = useStorage();
-    const [ dateRange, setDateRange ] = useState({ start: null, end: null });
+    const [dateRange, setDateRange] = useState({ start: null, end: null });
     const { showLoader, hideLoader, show } = useLoader();
 
     const handleRangeStart = (v) => setDateRange({ ...dateRange, start: v });
-  
+
     const handleRangeEnd = (v) => setDateRange({ ...dateRange, end: v });
 
     useEffect(() => {
@@ -65,74 +67,74 @@ const Organization = () => {
         company_name !== null && getData();
 
     }, []);
-  
+
     const rowData = useMemo(() => getRowData(organizationList), [organizationList]);
-  
+
     const columnDefs = useMemo(() => getColumnHeader(organizationData, ActionsRenderer), []);
-  
+
     const defaultColDef = useMemo(() => {
-      return {
-          floatingFilter: true,
-          sortable: true,
-          resizable: true,
-      };
+        return {
+            floatingFilter: true,
+            sortable: true,
+            resizable: true,
+        };
     }, []);
-  
+
     const onGridReady = (params) => {
-      params.api.sizeColumnsToFit();
+        params.api.sizeColumnsToFit();
     };
 
-  return (
-    <Container id={5} route='/organization'>
+    return (
+        <Container id={5} route='/organization'>
 
-        <Loader show={show}>
+            <Loader show={show}>
 
-            <div className='w-full flex my-3 gap-3'>
+                <div className='w-full flex my-3 gap-3'>
 
-                <PermissionBasedComponent permissionName="can_add" moduleUrl='/organization'>
-                    <Link href={'organization/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
-                        <CustomTooltip content='Add Organization' position='right'>
-                            <AiOutlineFileAdd size={22} />
-                        </CustomTooltip>
-                    </Link>
-                </PermissionBasedComponent>
+                    <PermissionBasedComponent permissionName="can_add" moduleUrl='/organization'>
+                        <Link href={'organization/add'} className='flex items-center border rounded-md p-2 hover:bg-gray-100 transition-all duration-250'>
+                            <CustomTooltip content='Add Organization' position='right'>
+                                <AiOutlineFileAdd size={22} />
+                            </CustomTooltip>
+                        </Link>
+                    </PermissionBasedComponent>
 
-                <div>
-                    <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                    <div>
+                        <DatePicker placeholder='Start Date' className='w-[200px]' date={dateRange.start} onSelect={handleRangeStart} />
+                    </div>
+
+                    <div>
+                        <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                    </div>
+
+                    <div>
+                        <Button type='button'>
+                            <Search className="mr-2 h-4 w-4" />
+                            Search
+                        </Button>
+                    </div>
+
                 </div>
 
-                <div>
-                    <DatePicker placeholder='End Date' className='w-[200px]' date={dateRange.end} onSelect={handleRangeEnd} />
+                <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
+                    <AgGridReact
+                        rowData={rowData}
+                        // onGridReady={onGridReady}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowSelection="multiple"
+                        suppressRowClickSelection={true}
+                        pagination={true}
+                        paginationPageSize={10}
+                        paginationPageSizeSelector={[10, 25, 50]}
+                    />
                 </div>
 
-                <div>
-                    <Button type='button'>
-                        <Search className="mr-2 h-4 w-4" />
-                        Search
-                    </Button>
-                </div>
+            </Loader>
 
-            </div>
-
-            <div className={"ag-theme-quartz w-full"} style={{ height: 500 }}>
-                <AgGridReact
-                    rowData={rowData}
-                    // onGridReady={onGridReady}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowSelection="multiple"
-                    suppressRowClickSelection={true}
-                    pagination={true}
-                    paginationPageSize={10}
-                    paginationPageSizeSelector={[10, 25, 50]}
-                />
-            </div>
-            
-        </Loader>
-
-    </Container>
-  );
+        </Container>
+    );
 
 }
 
-export default wrapPermissionCheck(Organization,'can_view');
+export default wrapPermissionCheck(Organization, 'can_view');

@@ -17,15 +17,22 @@ import { TimePickerDemo } from "@/components/time-picker-demo";
 import wrapPermissionCheck from "@/components/common/wrapPermissionCheck";
 import PermissionBasedComponent from "@/components/common/PermissionBasedComponent";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const ActionsRenderer = (params) => {
 
-    console.log(params.data);
+    const router = useRouter();
+
+    const handleClick = () => {
+
+        router.push(`/enquiry/edit/${params.data.id}`);
+
+    }
 
     return (
         <div className='flex items-center h-full'>
             <PermissionBasedComponent permissionName='can_edit' moduleUrl='/enquiry'>
-                <div>
+                <div className="cursor-pointer" onClick={handleClick}>
                     <MdEdit size={20}/>
                 </div>
             </PermissionBasedComponent>
@@ -73,7 +80,8 @@ const FollowUp = () => {
         followUpType: x.follow_up_type,
         phone: x.phone,
         mobile: x.mobile,
-        email: x.email
+        email: x.email,
+        id: x.id
 
     })), [followUpList]);
 

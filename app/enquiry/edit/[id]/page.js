@@ -452,12 +452,26 @@ const Edit = ({ params }) => {
 
                     <Tabs value={sectionTab} onValueChange={handleTabChange} className='w-full'>
                         
-                        <TabsList>
-                            <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
-                            <TabsTrigger value="document-management" >Document Management</TabsTrigger>
-                            <TabsTrigger value="product-details" >Product Details</TabsTrigger>
-                            <TabsTrigger value="follow-up">Follow Up</TabsTrigger>
-                        </TabsList>
+                    <div className='flex justify-between w-full'>
+
+                        <div>
+                            <TabsList>
+                                <TabsTrigger value="enquiry-details" >Enquiry Details</TabsTrigger>
+                                <TabsTrigger value="document-management" >Document Management</TabsTrigger>
+                                <TabsTrigger value="product-details" >Product Details</TabsTrigger>
+                                <TabsTrigger value="follow-up">Follow Up</TabsTrigger>
+                            </TabsList>
+                        </div>
+
+                        <div>
+                            {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
+                                <MdOutlineEmail ize={18} className="mr-2 h-4 w-4" />
+                                Email
+                            </Button>}
+                        </div>
+                                
+                    </div>
+
 
                         <TabsContent value="enquiry-details" className="w-full">
 
@@ -470,20 +484,9 @@ const Edit = ({ params }) => {
                                         <Card className="w-full">
 
                                             <CardHeader>
-
-                                                <div className='flex w-full justify-between'>
-                                                    <div>
-                                                        <CardTitle>Enquiry Details</CardTitle>
-                                                        <CardDescription>Fill out all necessary enquiry details</CardDescription>
-                                                    </div>
-
-                                                    <div>
-                                                        {sectionTab === 'enquiry-details' && <Button variant="secondary" type='button' onClick={handleOpenEmailBox}>
-                                                            <MdOutlineEmail ize={18} className="mr-2 h-4 w-4" />
-                                                            Email
-                                                        </Button>}
-                                                    </div>
-                                                </div>
+           
+                                                <CardTitle>Enquiry Details</CardTitle>
+                                                <CardDescription>Fill out all necessary enquiry details</CardDescription>
 
                                             </CardHeader>
 

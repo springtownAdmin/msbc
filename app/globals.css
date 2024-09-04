@@ -72,6 +72,22 @@
   }
 } */
 
+@font-face {
+  font-family: 'Avenir';
+  src: url('/font/AvenirNextLTProRegular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Avenir', sans-serif;
+}
+
+pre {
+  font-family: 'Avenir', sans-serif;
+}
+
+
 
 @layer base {
 

@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
 
   return (
       <html lang="en">
-        <body className={inter.className} style={{ overflow: 'hidden' }}>
+        <body style={{ overflow: 'hidden' }}>
             <ClientProvider>
               <Suspense fallback={<Loading />}>
                 <WebSocketProvider />

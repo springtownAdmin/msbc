@@ -14,7 +14,7 @@ const wrapPermissionCheck = (Component, permissionType) => {
     const [hasPermission, setHasPermission] = useState(null);
 
     useEffect(() => {
-      
+
       let currentPath = pathname === '/custom-fields' ? '/user-management' : pathname === '/follow-up' ? '/enquiry' : pathname;
 
       // if(pathname == '/custom-fields'){
@@ -24,7 +24,7 @@ const wrapPermissionCheck = (Component, permissionType) => {
       //   currentpath = '/enquiry';
       // }
 
-      const permission = permissions.find(p => {
+      const permission = permissions?.find(p => {
         return p.module_url === currentPath || currentPath.startsWith(`${p.module_url}/`);
       });
       const isAuthorized = permission ? permission[permissionType] : false;
@@ -41,12 +41,12 @@ const wrapPermissionCheck = (Component, permissionType) => {
     }
 
     // Render the component if the user has permission
-    if(!hasPermission) return null;
+    if (!hasPermission) return null;
     return hasPermission ? <Component {...props} /> : null;
   };
 
   return WrappedComponent;
-  
+
 };
 
 export default wrapPermissionCheck;

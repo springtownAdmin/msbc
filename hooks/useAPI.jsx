@@ -17,10 +17,34 @@ const useAPI = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
+    const getCompanyName = () => {
+
+        return getItem('company_name')
+
+    }
+
+    const isFirstLogin = async () => {
+
+        try {
+
+            const company_name = getCompanyName();
+            const response = await BACKEND_API.get(`is_first_login?company_name=${company_name}`);
+
+            return response.data;
+
+        } catch (e) {
+
+            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
+            console.log(e.message);
+
+        }
+
+    }
+
     const authenticateUser = async (reqBody, company_name) => {
 
         try {
-            
+
             const resp = await BACKEND_API.post(`/login?company_name=${company_name}`, reqBody);
             const result = resp.data;
 
@@ -28,17 +52,6 @@ const useAPI = () => {
                 showToast(result.status_code, result.message);
                 return;
             }
-
-            const menusPermissions = result.permissions.map((x) => (
-                { 
-                    menuId: x.module_id,
-                    menuName: x.module,
-                    moduleUrl: MenuData[x.module].link,
-                    can_view: x.can_view,
-                    can_edit: x.can_edit,
-                    can_add: x.can_add
-                }
-            ));
 
             let setAllMenus = [];
 
@@ -48,7 +61,7 @@ const useAPI = () => {
                 Icon: MdDashboard,
                 link: '/dashboard'
             });
-              
+
             result.permissions.forEach((y) => {
 
                 const item = {
@@ -57,18 +70,18 @@ const useAPI = () => {
                     Icon: MenuData[y.module].Icon,
                     link: MenuData[y.module].link
                 }
-          
+
                 setAllMenus.push(item);
-        
+
                 if (item.name === 'Enquiry Management') {
-        
-                setAllMenus.push({
-                    id: setAllMenus.length + 1,
-                    name: 'Follow Up',
-                    Icon: BsPersonFillExclamation,
-                    link: '/follow-up'
-                })
-        
+
+                    setAllMenus.push({
+                        id: setAllMenus.length + 1,
+                        name: 'Follow Up',
+                        Icon: BsPersonFillExclamation,
+                        link: '/follow-up'
+                    })
+
                 }
 
             })
@@ -79,13 +92,12 @@ const useAPI = () => {
             })
 
             setItems(result);
-            // setItem("Menus", setAllMenus);
-            // setItem("Routes", routes);
             dispatch(setPermissions(result.permissions));
-            setItem("company_name", company_name);  
-            // dispatch(addItems({ key: "Menus", data: result.permissions }));
-            // dispatch(setPermissions(menusPermissions));
-            router.push('/dashboard');          
+            setItem("company_name", company_name);
+
+            const result2 = await isFirstLogin();
+            result2?.is_first_login === true && router.push('/on-boarding');
+            result2?.is_first_login === false && router.push('/dashboard');
 
         } catch (e) {
 
@@ -97,24 +109,18 @@ const useAPI = () => {
 
     }
 
-    const getCompanyName = () => {
-
-        return getItem('company_name')
-
-    }
-
     const setSideBarMenuPermissions = async () => {
         // We're using this Hook in our container module which loads latest state. 
         // We update state in our localstorage to make sure we're fetching latest state updated. 
         try {
-        
-          const company_name = getItem('company_name');
-          const userId = getItem('user_id');
-          const result = await BACKEND_API.get(`/user/${userId}/permissions?company_name=${company_name}`);
-          dispatch(setPermissions(result.data.permissions));
-          return result.data.permissions;
+
+            const company_name = getItem('company_name');
+            const userId = getItem('user_id');
+            const result = await BACKEND_API.get(`/user/${userId}/permissions?company_name=${company_name}`);
+            dispatch(setPermissions(result.data.permissions));
+            return result.data.permissions;
         } catch (error) {
-          console.error('Failed to fetch permissions:', error);
+            console.error('Failed to fetch permissions:', error);
         }
     };
 
@@ -142,7 +148,7 @@ const useAPI = () => {
 
             const company_name = getCompanyName();
             const resp = await BACKEND_API.get(`/users?company_name=${company_name}`);
-    
+
             return resp.data;
 
         } catch (e) {
@@ -162,7 +168,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/users/${id}?company_name=${company_name}`, { ...reqBody, company_name });
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -180,7 +186,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/users?company_name=${company_name}`, { ...reqBody, company_name });
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -198,7 +204,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/branches`, { ...reqBody, company_name });
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -216,7 +222,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.get(`/branches?company_name=${company_name}`);
 
             return resp.data;
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -236,7 +242,7 @@ const useAPI = () => {
             if (resp.data.message ?? false) showToast(resp.data.status_code, resp.data.message);
 
             return resp.data;
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -255,7 +261,7 @@ const useAPI = () => {
 
             showToast(resp.data.status_code, resp.data.message);
 
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -273,7 +279,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.get(`/organization/?company_name=${company_name}`);
 
             return resp.data;
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -291,7 +297,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/organization?company_name=${company_name}`, reqBody);
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -309,7 +315,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.get(`/organization/${id}?company_name=${company_name}`);
 
             return resp.data;
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -327,7 +333,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/organization/${id}?company_name=${company_name}`, reqBody);
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -345,7 +351,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/add_enquiry?company_name=${company_name}`, reqBody);
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -363,7 +369,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.get(`/get_enquiry/${id}?company_name=${company_name}`);
 
             return resp.data;
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -381,7 +387,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/update_enquiry/${id}?company_name=${company_name}`, reqBody);
 
             showToast(resp.data.status_code, resp.data.message);
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -400,7 +406,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.get(`/get_enquiry_by_users/${userId}?company_name=${company_name}`);
 
             return resp.data;
-    
+
         } catch (e) {
 
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
@@ -420,7 +426,7 @@ const useAPI = () => {
             return resp.data;
 
         } catch (e) {
-            
+
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
@@ -495,7 +501,7 @@ const useAPI = () => {
 
             if (resp.data.status_code > 300 && resp.data.status_code <= 500) {
 
-                return 
+                return
 
             }
             return resp.data;
@@ -775,7 +781,7 @@ const useAPI = () => {
             return resp.data;
 
         } catch (e) {
-            
+
             showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
             console.log(e.message);
 
@@ -861,24 +867,6 @@ const useAPI = () => {
             console.log(e.message);
 
         }
-        
-    }
-
-    const isFirstLogin = async () => {
-
-        try {
-
-            const company_name = getCompanyName();
-            const response = await BACKEND_API.get(`is_first_login?company_name=${company_name}`);
-
-            return response.data;
-
-        } catch (e) {
-
-            showToast(400, e.response.data.detail ?? 'Opps! Something went wrong.');
-            console.log(e.message);
-
-        }
 
     }
 
@@ -888,13 +876,13 @@ const useAPI = () => {
 
             const company_name = getCompanyName();
             const userId = getItem('user_id');
-            const resp = await BACKEND_API.post(`/reset_password/${userId}?company_name=${company_name}`,reqBody);
+            const resp = await BACKEND_API.post(`/reset_password/${userId}?company_name=${company_name}`, reqBody);
 
             showToast(200, 'Password Changed Successfully!');
             return resp.data;
 
         } catch (e) {
-            
+
             showToast(400, e.response.data.detail ?? 'Something Went Wrong!');
 
         }
@@ -902,7 +890,8 @@ const useAPI = () => {
     }
 
 
-    return { getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch, 
+    return {
+        getUser, getUsers, updateUser, createUser, createBranch, getBranches, getBranch, updateBranch,
         authenticateUser, getOrganizations, createOrganization, getOrganization, updateOrganization,
         createEnquiry, getEnquiries, getEnquiry, updateEnquiry, updateEnquiry, getStatuses, getGroups,
         addFollowUp, getEnquiryFollowUps, getAllFollowUps, createGroup, getModules, getGroup, updateGroup,

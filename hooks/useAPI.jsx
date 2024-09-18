@@ -276,7 +276,7 @@ const useAPI = () => {
         try {
 
             const company_name = getCompanyName();
-            const resp = await BACKEND_API.get(`/organization/?company_name=${company_name}`);
+            const resp = await BACKEND_API.get(`/organization?company_name=${company_name}`);
 
             return resp.data;
 

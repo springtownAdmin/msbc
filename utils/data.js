@@ -452,7 +452,7 @@ export const companyData = [
         name: 'Is HeadOffice',
         type: 'checkbox',
         value: false,
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -463,7 +463,7 @@ export const companyData = [
         name: 'Address',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     }
@@ -545,7 +545,7 @@ export const userData = [
         label: 'Address',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -627,7 +627,7 @@ export const onBoardingUserData = [
         label: 'Address',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -770,7 +770,7 @@ export const organizationData = [
         label: 'Mobile No.',
         type: 'number',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -782,7 +782,7 @@ export const organizationData = [
         type: 'number',
         validation: { min: 6, max: 6 },
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -793,7 +793,7 @@ export const organizationData = [
         label: 'Notes',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -804,7 +804,7 @@ export const organizationData = [
         label: 'Address',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -815,7 +815,7 @@ export const organizationData = [
         label: 'Delivery Address',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -826,7 +826,7 @@ export const organizationData = [
         label: 'Billing Address',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },
@@ -889,7 +889,7 @@ export const productData = [
         label: 'Product Description',
         type: 'textarea',
         value: '',
-        required: true,
+        required: false,
         is_visible: true,
         read_only: false
     },

@@ -204,6 +204,7 @@ const useAPI = () => {
             const resp = await BACKEND_API.post(`/branches`, { ...reqBody, company_name });
 
             showToast(resp.data.status_code, resp.data.message);
+            router.push('/branch');
 
         } catch (e) {
 

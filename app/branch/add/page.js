@@ -34,7 +34,7 @@ const Add = () => {
   const onSubmit = async (values) => {
 
       createBranch(values);
-      router.push('/branch');
+      // router.push('/branch');
 
   }
 

@@ -12,7 +12,7 @@ export const enquiryData = [
         is_visible: true,
         read_only: true
     },
-  
+
     {
         id: 2,
         label: 'Enquiry Date',
@@ -23,19 +23,19 @@ export const enquiryData = [
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 3,
         label: 'Type',
         name: 'Type',
         type: 'select',
-        list: [ 'Trade', 'Contract', 'Phone Marketing', 'Retail', 'Villas', 'Projects' ],
+        list: ['Trade', 'Contract', 'Phone Marketing', 'Retail', 'Villas', 'Projects'],
         value: '',
         required: true,
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 4,
         label: 'Branch',
@@ -48,7 +48,7 @@ export const enquiryData = [
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 5,
         label: 'Status',
@@ -61,7 +61,7 @@ export const enquiryData = [
         is_visible: true,
         read_only: false
     },
-  
+
     // {
     //     id: 6,
     //     label: 'By',
@@ -73,19 +73,19 @@ export const enquiryData = [
     //     is_visible: true,
     //     read_only: false
     // },
-  
+
     {
         id: 6,
         label: 'Estimator',
         name: 'Estimator',
         type: 'select',
         value: '',
-        list: [ 'Admin', 'User', 'Sales' ],
+        list: ['Admin', 'User', 'Sales'],
         required: false,
         is_visible: true,
         read_only: true
     },
-  
+
     {
         id: 7,
         label: 'Sales Representative',
@@ -97,13 +97,13 @@ export const enquiryData = [
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 8,
         label: 'Enquiry By',
         name: 'Enquiry By',
         type: 'select',
-        list: [ 
+        list: [
             { id: '1', value: '1', label: 'PHONE' },
             { id: '2', value: '2', label: 'E-MAIL' },
             { id: '3', value: '3', label: 'MARKETING' },
@@ -282,7 +282,7 @@ export const enquiryData = [
         is_visible: true,
         read_only: false
     },
-  
+
 ];
 
 export const branchData = [
@@ -297,7 +297,7 @@ export const branchData = [
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 2,
         label: 'Branch Code',
@@ -308,7 +308,7 @@ export const branchData = [
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 3,
         label: 'Branch Name',
@@ -318,7 +318,7 @@ export const branchData = [
         required: true,
         is_visible: true,
         read_only: false
-        
+
     },
 
     {
@@ -337,11 +337,11 @@ export const branchData = [
         label: 'Country',
         name: 'Country',
         type: 'select',
-        list: [ 'Mumbai - India', 'Paris - France', 'Stockholm - Sweden', 'Ireland',
-                'Osaka - Japan', 'Seoul - South Korea', 'Tokyo - Japan', 'Singapore',
-                'Sydney - Australia', 'Central - Canada', 'São Paulo - Brazil',
-                'Northern Virginia - USA', 'Ohio - USA', 'Northern California - USA',
-                'Oregon - USA', 'Bahrain' ],
+        list: ['Mumbai - India', 'Paris - France', 'Stockholm - Sweden', 'Ireland',
+            'Osaka - Japan', 'Seoul - South Korea', 'Tokyo - Japan', 'Singapore',
+            'Sydney - Australia', 'Central - Canada', 'São Paulo - Brazil',
+            'Northern Virginia - USA', 'Ohio - USA', 'Northern California - USA',
+            'Oregon - USA', 'Bahrain'],
         value: '',
         required: true,
         is_visible: true,
@@ -384,7 +384,7 @@ export const branchData = [
 ]
 
 export const companyData = [
-  
+
     {
         id: 1,
         label: 'Branch Code',
@@ -395,7 +395,7 @@ export const companyData = [
         is_visible: true,
         read_only: false
     },
-  
+
     {
         id: 2,
         label: 'Branch Name',
@@ -405,7 +405,7 @@ export const companyData = [
         required: true,
         is_visible: true,
         read_only: false
-        
+
     },
 
     {
@@ -424,11 +424,11 @@ export const companyData = [
         label: 'Country',
         name: 'Country',
         type: 'select',
-        list: [ 'Mumbai - India', 'Paris - France', 'Stockholm - Sweden', 'Ireland',
-                'Osaka - Japan', 'Seoul - South Korea', 'Tokyo - Japan', 'Singapore',
-                'Sydney - Australia', 'Central - Canada', 'São Paulo - Brazil',
-                'Northern Virginia - USA', 'Ohio - USA', 'Northern California - USA',
-                'Oregon - USA', 'Bahrain' ],
+        list: ['Mumbai - India', 'Paris - France', 'Stockholm - Sweden', 'Ireland',
+            'Osaka - Japan', 'Seoul - South Korea', 'Tokyo - Japan', 'Singapore',
+            'Sydney - Australia', 'Central - Canada', 'São Paulo - Brazil',
+            'Northern Virginia - USA', 'Ohio - USA', 'Northern California - USA',
+            'Oregon - USA', 'Bahrain'],
         value: '',
         required: true,
         is_visible: true,
@@ -452,7 +452,7 @@ export const companyData = [
         name: 'Is HeadOffice',
         type: 'checkbox',
         value: false,
-        required: false,
+        required: true,
         is_visible: true,
         read_only: false
     },
@@ -614,7 +614,7 @@ export const onBoardingUserData = [
         name: 'User Role',
         label: 'User Role',
         type: 'select',
-        list: [ 'Admin' ],
+        list: ['Admin'],
         value: 'Admin',
         required: false,
         is_visible: true,
@@ -675,7 +675,7 @@ export const followUpData = [
         name: 'Type',
         label: 'Type',
         type: 'select',
-        list: [ 'Phone', 'Email', 'Marketing' ],
+        list: ['Phone', 'Email', 'Marketing'],
         value: '',
         required: true,
         is_visible: true,
@@ -862,7 +862,7 @@ export const fieldData = [
         name: 'Field Type',
         label: 'Field Type',
         type: 'select',
-        list: [ 'Date', 'String', 'Number', 'Checkbox', 'Select', 'Multi-Select', 'Textarea' ],
+        list: ['Date', 'String', 'Number', 'Checkbox', 'Select', 'Multi-Select', 'Textarea'],
         value: '',
         required: true,
         is_visible: true,

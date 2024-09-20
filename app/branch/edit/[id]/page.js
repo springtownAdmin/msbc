@@ -20,10 +20,15 @@ import wrapPermissionCheck from '@/components/common/wrapPermissionCheck';
 const Edit = ({ params }) => {
 
   const router = useRouter();
-  const [ branch, setBranch ] = useState(null);
+  const [branch, setBranch] = useState(null);
   const { getBranch, updateBranch } = useAPI();
   const { show, showLoader, hideLoader } = useLoader();
   const id = params.id;
+
+  const form = useForm({
+    resolver: zodResolver(createZodValidation(branchData)),
+    defaultValues: branch
+  });
 
   useEffect(() => {
 
@@ -32,6 +37,10 @@ const Edit = ({ params }) => {
       showLoader();
       const result = await getBranch(id);
       setBranch(result[0]);
+
+      form.setValue('country', result[0].country);
+
+      console.log(result[0]);
       hideLoader();
 
     }
@@ -39,11 +48,6 @@ const Edit = ({ params }) => {
     setData();
 
   }, [params]);
-
-  const form = useForm({
-    resolver: zodResolver(createZodValidation(branchData)),
-    defaultValues: branch
-  });
 
   useEffect(() => {
     if (branch) {
@@ -57,7 +61,7 @@ const Edit = ({ params }) => {
 
     updateBranch(values);
     router.push('/branch');
-    
+
   }
 
   const handleCancel = () => {
@@ -75,7 +79,7 @@ const Edit = ({ params }) => {
         <Loader show={show}>
 
           <Tabs defaultValue="branch-details" className='w-full'>
-            
+
             <TabsList>
               <TabsTrigger value="branch-details">Branch Details</TabsTrigger>
               <TabsTrigger value="images" disabled>Images</TabsTrigger>
@@ -84,7 +88,7 @@ const Edit = ({ params }) => {
             </TabsList>
 
             <TabsContent value="branch-details" className="w-full">
-              
+
               <div className='w-full'>
 
                 <Form {...form}>
@@ -93,26 +97,26 @@ const Edit = ({ params }) => {
 
                     <Card className="w-full mb-3">
 
-                        <CardHeader>
+                      <CardHeader>
 
-                              <CardTitle>Branch Details</CardTitle>
-                              <CardDescription>Fill out all the necessary branch details</CardDescription>
+                        <CardTitle>Branch Details</CardTitle>
+                        <CardDescription>Fill out all the necessary branch details</CardDescription>
 
-                        </CardHeader>
+                      </CardHeader>
 
-                        <CardContent>
+                      <CardContent>
 
-                          <div className='w-full'>
+                        <div className='w-full'>
 
-                            <CustomGrid row={3} className='w-full'>
-                                
-                                <DynamicFields form={form} module_name='branch-details' data={branchData.filter((_,i) => i !== 0).map(((x, j) => { if(j === 0) return { ...x, read_only: true }; return x; }))} />    
+                          <CustomGrid row={3} className='w-full'>
 
-                            </CustomGrid>
+                            <DynamicFields form={form} module_name='branch-details' data={branchData.filter((_, i) => i !== 0).map(((x, j) => { if (j === 0) return { ...x, read_only: true }; return x; }))} />
 
-                          </div>
+                          </CustomGrid>
 
-                        </CardContent>
+                        </div>
+
+                      </CardContent>
 
                     </Card>
 
@@ -173,8 +177,8 @@ const Edit = ({ params }) => {
                     </Card> */}
 
                     <div className='flex gap-3 justify-end'>
-                        <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
-                        <Button>Save</Button>
+                      <Button type='button' variant='secondary' onClick={handleCancel}>Cancel</Button>
+                      <Button>Save</Button>
                     </div>
 
                   </form>
@@ -184,16 +188,16 @@ const Edit = ({ params }) => {
               </div>
 
             </TabsContent>
-          
+
           </Tabs>
 
         </Loader>
 
       </Container>
-      
+
     </>
   );
 
 }
 
-export default wrapPermissionCheck(Edit,'can_edit');
+export default wrapPermissionCheck(Edit, 'can_edit');

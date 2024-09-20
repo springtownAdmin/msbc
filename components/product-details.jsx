@@ -17,13 +17,13 @@ import { Textarea } from './ui/textarea';
 
 export const ProductDetails = ({ productData, setProductData }) => {
 
-    const [ open, setOpen ] = useState(false);
-    const [ edit, setEdit ] = useState(false);
-    const [ addProduct, setAddProduct ] = useState({ product_id: 0, product_name: '', description: '', quantity: 0 });
+    const [open, setOpen] = useState(false);
+    const [edit, setEdit] = useState(false);
+    const [addProduct, setAddProduct] = useState({ product_id: 0, product_name: '', description: '', quantity: 0 });
 
-    const rowData = useMemo(() => productData.map((v) => 
+    const rowData = useMemo(() => productData.map((v) =>
         ({ productNo: v.product_id, productName: v.product_name, productDescription: v.description, quantity: v.quantity }))
-    , [productData]);
+        , [productData]);
 
     const ActionsRenderer = (params) => {
 
@@ -32,11 +32,11 @@ export const ProductDetails = ({ productData, setProductData }) => {
             setOpen(true);
             setEdit(true);
 
-            const product = { 
-                product_id: params.data.productNo, 
-                product_name: params.data.productName, 
-                description: params.data.productDescription, 
-                quantity: params.data.quantity 
+            const product = {
+                product_id: params.data.productNo,
+                product_name: params.data.productName,
+                description: params.data.productDescription,
+                quantity: params.data.quantity
             };
 
             setAddProduct(product);
@@ -48,15 +48,15 @@ export const ProductDetails = ({ productData, setProductData }) => {
             setProductData(productData.filter((x) => x.no !== params.data.productNo))
 
         }
-    
+
         return (
             <div className='flex items-center h-full'>
                 <div className='cursor-pointer' onClick={handleEdit}>
-                    <MdEdit size={20}  />
+                    <MdEdit size={20} />
                 </div>
             </div>
         );
-      
+
     };
 
     const columnDefs = useMemo(() => [
@@ -66,7 +66,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
         { field: 'quantity', headerName: 'Quantity', filter: 'agNumberColumnFilter', flex: 1 },
         { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer, flex: 1 }
     ], []);
-    
+
     const defaultColDef = useMemo(() => {
         return {
             floatingFilter: true,
@@ -81,6 +81,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
 
     const handleOpen = () => {
         setOpen(true);
+        setEdit(false);
     }
 
     const handleChange = (e) => {
@@ -93,12 +94,12 @@ export const ProductDetails = ({ productData, setProductData }) => {
 
         const newProduct = {
             product_id: productData.length + 1,
-            product_name: addProduct.product_name, 
+            product_name: addProduct.product_name,
             description: addProduct.description,
             quantity: addProduct.quantity
         }
 
-        setProductData([ ...productData, newProduct ]);
+        setProductData([...productData, newProduct]);
         setAddProduct({ product_id: 0, product_name: '', description: '', quantity: 0 });
         handleClose();
 
@@ -119,6 +120,8 @@ export const ProductDetails = ({ productData, setProductData }) => {
         })
 
         setProductData(updatedProduct);
+        setAddProduct({ product_id: 0, product_name: '', description: '', quantity: 0 });
+        handleClose();
 
     }
 
@@ -137,7 +140,7 @@ export const ProductDetails = ({ productData, setProductData }) => {
                     </DialogHeader>
 
                     <div className="flex flex-col items-center gap-3 py-4 w-full overflow-auto">
-                        
+
                         <div className='w-[98%]'>
                             <Label>Product Name</Label>
                             <Input type='text' className='w-[97%] mt-1' name='product_name' value={addProduct.product_name} onChange={handleChange} />

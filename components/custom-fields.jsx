@@ -37,11 +37,11 @@ export const CustomFields = (props) => {
     const handleUpload = () => {
         uploadRef.current.click();
     }
-  
+
     const handleFiles = (e) => {
 
         const newFiles = Array.from(e.target.files);
-        const updatedFiles = [ ...files, ...newFiles ];
+        const updatedFiles = [...files, ...newFiles];
         const updatedPreview = updatedFiles.map((x) => x.type.startsWith('image/') ? URL.createObjectURL(x) : x.type === 'application/pdf' ? 'pdf' : x.type === 'text/csv' ? 'csv' : 'file');
         setPreviews(updatedPreview);
         setFiles(updatedFiles);
@@ -49,9 +49,9 @@ export const CustomFields = (props) => {
 
     const handleRemoveFile = (id) => {
 
-        const allFiles = [ ...files ];
-        const newFiles = allFiles.filter((_,idx) => idx !== id);
-        const newPreviews = previews.filter((_,idx) => idx !== id);
+        const allFiles = [...files];
+        const newFiles = allFiles.filter((_, idx) => idx !== id);
+        const newPreviews = previews.filter((_, idx) => idx !== id);
         setFiles(newFiles);
         setPreviews(newPreviews);
 
@@ -72,7 +72,7 @@ export const CustomFields = (props) => {
 
     const handleClickShowPassword = () => {
         setShowPassword((show) => !show);
-      };
+    };
 
     if (type === 'text') {
 
@@ -144,7 +144,7 @@ export const CustomFields = (props) => {
                         <FormLabel>{label}</FormLabel>
                         <FormControl>
                             <Popover>
-                                
+
                                 <PopoverTrigger asChild>
                                     <Button variant={"outline"} disabled={disabled} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
                                         {field.value ? (format(field.value, "PPP")) : (<span>{placeholder}</span>)}
@@ -182,7 +182,7 @@ export const CustomFields = (props) => {
                         <FormLabel>{label}</FormLabel>
                         <FormControl>
                             <Popover>
-                                
+
                                 <PopoverTrigger asChild>
                                     <Button variant={"outline"} disabled={disabled} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
                                         {field.value ? (format(field.value, "PPP HH:mm:ss")) : (<span>{placeholder}</span>)}
@@ -215,7 +215,7 @@ export const CustomFields = (props) => {
     if (type === 'select') {
 
         const { list } = props;
-        const newList = list.length ? typeof list[0] === 'string' ?  list.map((item, i) => ({ id: `item-${i}`, label: item, value: item })) : list : [];
+        const newList = list.length ? typeof list[0] === 'string' ? list.map((item, i) => ({ id: `item-${i}`, label: item, value: item })) : list : [];
 
         return (
             <FormField
@@ -225,21 +225,21 @@ export const CustomFields = (props) => {
                     <FormItem className={className}>
                         <FormLabel>{label}</FormLabel>
                         <FormControl>
-                        <Select onValueChange={onSelect === null ? field.onChange : onSelect} defaultValue={field.value} value={field.value} disabled={disabled}>
+                            <Select onValueChange={onSelect === null ? field.onChange : onSelect} defaultValue={field.value} value={field.value} disabled={disabled}>
 
-                            <FormControl>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder={placeholder} disabled={disabled} />
-                                </SelectTrigger>
-                            </FormControl>
+                                <FormControl>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={placeholder} disabled={disabled} />
+                                    </SelectTrigger>
+                                </FormControl>
 
-                            <SelectContent position='bottom'>
-                                {newList.map((x) => (
-                                    <SelectItem key={x.id} value={x.value}>{x.label}</SelectItem>
-                                ))}
-                            </SelectContent>
+                                <SelectContent position='bottom'>
+                                    {newList.map((x) => (
+                                        <SelectItem key={x.id} value={x.value}>{x.label}</SelectItem>
+                                    ))}
+                                </SelectContent>
 
-                        </Select>
+                            </Select>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -284,36 +284,36 @@ export const CustomFields = (props) => {
 
                         <FormLabel>{label}</FormLabel>
 
-                            <FormControl>
+                        <FormControl>
 
-                                <Popover>
+                            <Popover>
 
-                                    <PopoverTrigger asChild>
-                                        <Input type="text" value={values} placeholder="Choose Type" readOnly disabled={disabled} />
-                                    </PopoverTrigger>
+                                <PopoverTrigger asChild>
+                                    <Input type="text" value={values} placeholder="Choose Type" readOnly disabled={disabled} />
+                                </PopoverTrigger>
 
-                                    <PopoverContent className="w-[350px] p-1">
-                                        
-                                        <label className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100"><input type='checkbox' onClick={handleClick} /> <span className='text-sm'>Select All</span></label>
-                                        <hr className='my-1' />
-                                        {list.map((item, i) => (
-                                            <label key={`item-${i}`} className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100">
-                                                <input
-                                                    type="checkbox"
-                                                    value={item}
-                                                    checked={selectedValues.includes(item)}
-                                                    onChange={() => handleChange(item)}
-                                                    disabled={disabled}
-                                                    className="form-checkbox"
-                                                />
-                                                <span className='text-sm'>{item}</span>
-                                            </label>
-                                        ))}
-                                    </PopoverContent>
-                                
-                                </Popover>
-                                
-                            </FormControl>
+                                <PopoverContent className="w-[350px] p-1">
+
+                                    <label className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100"><input type='checkbox' onClick={handleClick} /> <span className='text-sm'>Select All</span></label>
+                                    <hr className='my-1' />
+                                    {list.map((item, i) => (
+                                        <label key={`item-${i}`} className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100">
+                                            <input
+                                                type="checkbox"
+                                                value={item}
+                                                checked={selectedValues.includes(item)}
+                                                onChange={() => handleChange(item)}
+                                                disabled={disabled}
+                                                className="form-checkbox"
+                                            />
+                                            <span className='text-sm'>{item}</span>
+                                        </label>
+                                    ))}
+                                </PopoverContent>
+
+                            </Popover>
+
+                        </FormControl>
 
                         <FormMessage />
 
@@ -327,7 +327,7 @@ export const CustomFields = (props) => {
     if (type === 'multi-checkbox') {
 
         const { list, alignment = 'horizontal' } = props;
-        const newList = list.length ? typeof list[0] === 'string' ?  list.map((item, i) => ({ id: toSnakeCase(item), label: item })) : list : [];
+        const newList = list.length ? typeof list[0] === 'string' ? list.map((item, i) => ({ id: toSnakeCase(item), label: item })) : list : [];
         // list.map((item, i) => ({ id: toSnakeCase(item), label: item }));
 
 
@@ -337,8 +337,8 @@ export const CustomFields = (props) => {
             // console.log(field.value)
 
             return checked
-                    ? field.onChange(field.value !== undefined ? [ ...field.value, item?.id] : ['', item?.id])
-                    : field.onChange(field.value?.filter((value) => value !== item?.id))
+                ? field.onChange(field.value !== undefined ? [...field.value, item?.id] : ['', item?.id])
+                : field.onChange(field.value?.filter((value) => value !== item?.id))
         }
 
 
@@ -400,7 +400,7 @@ export const CustomFields = (props) => {
                     <FormItem className={className}>
                         <FormLabel>{label}</FormLabel>
                         <FormControl>
-                            <Input type='text' placeholder={placeholder} disabled={disabled} {...field} />
+                            <Input type='number' placeholder={placeholder} disabled={disabled} {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -458,7 +458,7 @@ export const CustomFields = (props) => {
 
                 <input ref={uploadRef} type='file' onChange={handleFiles} className='hidden' multiple />
 
-                {files.length ? 
+                {files.length ?
 
                     <div className='m-2 h-full'>
                         <div className='flex w-full justify-end mb-2'><Button variant='secondary' type='button' onClick={handleUpload}>Upload more</Button></div>
@@ -467,48 +467,48 @@ export const CustomFields = (props) => {
 
                             <div className='flex gap-3 flex-wrap'>
 
-                            {files.map((x, i) => (
-                            
-                                // <div key={i} className='p-2 border border-slate-100 flex justify-between items-center rounded-sm mb-2'>
-                                // <div className='flex gap-3 items-center'>
-                                //     <File size={18} />
-                                //     <div>{x.name}</div>
-                                // </div>
-                                // <Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} />
-                                // </div>
+                                {files.map((x, i) => (
 
-                                <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
-                                    <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
-                                        {previews[i] === 'pdf' ?
-                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                                <Image src={pdfIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+                                    // <div key={i} className='p-2 border border-slate-100 flex justify-between items-center rounded-sm mb-2'>
+                                    // <div className='flex gap-3 items-center'>
+                                    //     <File size={18} />
+                                    //     <div>{x.name}</div>
+                                    // </div>
+                                    // <Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} />
+                                    // </div>
+
+                                    <div className='w-[200px] border border-gray-300 rounded-sm' key={i}>
+                                        <div className='rounded-sm hover:brightness-50 h-[150px] w-[200px] transition-all duration-150'>
+                                            {previews[i] === 'pdf' ?
+                                                <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                                    <Image src={pdfIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+                                                </div>
+                                                : previews[i] === 'csv' ?
+                                                    <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                                        <Image src={csvIcon} alt={`${x.name}-${i}`} width={50} height={80} />
+                                                    </div>
+                                                    : previews[i] === 'file' ?
+                                                        <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
+                                                            <LuFile size={30} />
+                                                        </div>
+                                                        : <img src={previews[i]} alt={`${x.name}-${i}`} className='h-full w-full' />}
+                                        </div>
+                                        <div className='flex justify-between items-center p-2 bg-white w-full'>
+                                            <div className='text-sm w-full truncate font-medium'>{x.name}</div>
+                                            <div className='flex gap-2 items-center'>
+                                                <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(i)} /></div>
+                                                <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} /></div>
                                             </div>
-                                        : previews[i] === 'csv' ?
-                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                                <Image src={csvIcon} alt={`${x.name}-${i}`} width={50} height={80} />
-                                            </div>
-                                        : previews[i] === 'file' ?
-                                            <div className='h-full w-full flex justify-center items-center hover:bg-gray-200 transition-all duration-150'>
-                                                <LuFile size={30} />
-                                            </div>
-                                        : <img src={previews[i]} alt={`${x.name}-${i}`} className='h-full w-full' />}
-                                    </div>
-                                    <div className='flex justify-between items-center p-2 bg-white w-full'>
-                                        <div className='text-sm w-full truncate font-medium'>{x.name}</div>
-                                        <div className='flex gap-2 items-center'>
-                                            <div><MdDownload className='hover:text-blue-700 cursor-pointer' size={18} onClick={() => handleDownload(i)} /></div>
-                                            <div><Trash2 className='hover:text-red-500 cursor-pointer' size={18} onClick={() => handleRemoveFile(i)} /></div>
                                         </div>
                                     </div>
-                                </div>
 
-                            ))}
+                                ))}
                             </div>
 
                         </div>
                     </div>
 
-                : 
+                    :
                     <div className='flex justify-center items-center h-full w-full text-gray-400' onClick={handleUpload}>
                         Upload documents here...
                     </div>

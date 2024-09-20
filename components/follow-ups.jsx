@@ -30,7 +30,7 @@ const md = new MarkdownIt();
 const MarkdownComponent = ({ markdown }) => {
 
     const htmlContent = md.render(markdown);
-  
+
     return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
 
 };
@@ -44,11 +44,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
     const { getUsers, addFollowUp, getEnquiryFollowUps, getOneFollowUp, updateOneFollowUp, getFollowUpSummary } = useAPI();
     const followValues = putValues(followUps);
-    const [ followUpSummary, setFollowUpSummary ] = useState('');
-    const [ summaryLoader, setSummaryLoader ] = useState(false);
+    const [followUpSummary, setFollowUpSummary] = useState('');
+    const [summaryLoader, setSummaryLoader] = useState(false);
 
-    const [ formType, setFormType ] = useState('Add');
-    const [ followUpId, setFollowUpId ] = useState(0); 
+    const [formType, setFormType] = useState('Add');
+    const [followUpId, setFollowUpId] = useState(0);
     const newFollowUps = { ...followValues, enquiry_no: enquiryNo };
 
     const form = useForm({
@@ -73,7 +73,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
             mobile: x.mobile
         }))));
 
-        const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}`}))
+        const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}` }))
 
         const newFollowUps = followUps.map((x) => (x.name === 'Reminder to' || x.name === 'Chased By' ? { ...x, list: reminderToList } : x));
 
@@ -146,7 +146,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         }
 
     ]
-    
+
     const defaultColDef = useMemo(() => {
         return {
             floatingFilter: true,
@@ -160,8 +160,9 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
     }
 
     const handleOpen = () => {
-        
+
         setOpen(true);
+        setFormType('Add');
 
         form.setValue('chased_by', '');
         form.setValue('chase_on', new Date());
@@ -177,6 +178,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         const values = form.getValues();
 
         console.log(new Date(values.chase_on))
+        console.log(values.chase_on)
 
         const updatedData = {
             enq_no: values.enquiry_no,
@@ -206,7 +208,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         const result = params.data;
         const singleFollowUp = await getOneFollowUp(result.id);
         const data = await getUsers();
-        const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}`}))
+        const reminderToList = data.map((x) => ({ id: x.user_id, value: `${x.user_id}`, label: `${x.first_name} ${x.last_name}` }))
 
         const getChasedById = reminderToList.filter((x) => x.label === singleFollowUp.chased_by);
         form.setValue('chased_by', getChasedById[0].value);
@@ -237,6 +239,8 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
             reminder_to: values.reminder_to
         }
 
+        console.log(reqBody);
+
         await updateOneFollowUp(reqBody, followUpId);
         await fillData();
         form.setValue('chased_by', '');
@@ -260,11 +264,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
                 </div>
             </div>
         );
-      
+
     };
 
     const rowData = useMemo(() => getRowData(getAllFollowUps), [getAllFollowUps]);
-  
+
     const columnDefs = useMemo(() => [
         { field: 'chaseOn', headerCheckboxSelection: true, checkboxSelection: true, filter: 'agDateColumnFilter' },
         // { field: 'chaseOn', headerName: 'Chased On', filter: 'agDateColumnFilter' },
@@ -274,10 +278,10 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
         { field: 'phone', headerName: 'Phone', filter: 'agTextColumnFilter' },
         { field: 'email', headerName: 'Email', filter: 'agTextColumnFilter' },
         { field: 'mobile', headerName: 'Mobile', filter: 'agTextColumnFilter' },
-        { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer }
+        { field: 'actions', headerName: 'Actions', cellRenderer: ActionsRenderer, pinned: 'right', width: 100 }
     ], []);
 
-    const [ openSummary, setOpenSummary ] = useState(false);
+    const [openSummary, setOpenSummary] = useState(false);
 
     const handleOpenSummary = async () => {
         setOpenSummary(true);
@@ -322,7 +326,11 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
 
                             <DialogFooter>
                                 <Button type="button" variant='secondary' onClick={handleClose}>Cancel</Button>
-                                <Button type='button' onClick={formType === 'Add' ? onSubmit : onEdit}>Save</Button>
+                                {formType === 'Add' ?
+                                    <Button type='button' onClick={onSubmit}>Save</Button> :
+                                    <Button type='button' onClick={onEdit}>Save</Button>
+                                }
+                                {/* <Button type='button' onClick={formType === 'Add' ? onSubmit : onEdit}>Save</Button> */}
                             </DialogFooter>
 
                         </DialogContent>
@@ -345,7 +353,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
                     <div className="flex flex-col items-center gap-2 w-full h-[400px] border rounded-sm overflow-auto">
 
                         {summaryLoader ? <div className='image-placeholder placeholder rounded-sm h-full w-full'></div> :
-                        
+
                             <pre className='font-sans text-sm p-2' style={{ overflow: 'auto', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
                                 <MarkdownComponent markdown={followUpSummary} />
                             </pre>

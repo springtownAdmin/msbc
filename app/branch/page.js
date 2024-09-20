@@ -29,7 +29,7 @@ const ActionsRenderer = (params) => {
     <div className='flex items-center justify-center h-full'>
       <PermissionBasedComponent permissionName='can_edit' moduleUrl='/branch'>
 
-        <div className='cursor-pointer text-red-500'>
+        <div className='cursor-pointer hover:text-red-500'>
           <CustomTooltip content='Edit'>
             <Link href={editPath}>
               <MdEdit size={20} />
@@ -75,11 +75,13 @@ const Branch = () => {
   const columnDefs = useMemo(() => getColumnHeader(branchData.filter((_, i) => i !== 0), ActionsRenderer), []);
 
   const defaultColDef = useMemo(() => {
+
     return {
       floatingFilter: true,
       sortable: true,
       resizable: true,
     };
+
   }, []);
 
   const onGridReady = (params) => {

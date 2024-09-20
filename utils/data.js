@@ -108,7 +108,7 @@ export const enquiryData = [
             { id: '2', value: '2', label: 'E-MAIL' },
             { id: '3', value: '3', label: 'MARKETING' },
         ],
-        value: [],
+        value: '',
         required: true,
         is_visible: true,
         read_only: false
@@ -170,20 +170,20 @@ export const enquiryData = [
         read_only: true
     },
 
-    {
-        id: 14,
-        label: 'Country',
-        name: 'Country',
-        type: 'select',
-        list: ['India', 'US', 'UK'],
-        value: '',
-        required: false,
-        is_visible: true,
-        read_only: false
-    },
+    // {
+    //     id: 14,
+    //     label: 'Country',
+    //     name: 'Country',
+    //     type: 'select',
+    //     list: ['India', 'US', 'UK'],
+    //     value: '',
+    //     required: false,
+    //     is_visible: true,
+    //     read_only: false
+    // },
 
     {
-        id: 15,
+        id: 14,
         label: 'Post Code',
         name: 'Pin Code',
         type: 'number',
@@ -195,7 +195,7 @@ export const enquiryData = [
     },
 
     {
-        id: 16,
+        id: 15,
         label: 'Address',
         name: 'Address',
         type: 'textarea',
@@ -206,7 +206,7 @@ export const enquiryData = [
     },
 
     {
-        id: 17,
+        id: 16,
         label: 'Delivery Address',
         name: 'Shipping Address',
         type: 'textarea',
@@ -217,7 +217,7 @@ export const enquiryData = [
     },
 
     {
-        id: 18,
+        id: 17,
         label: 'Billing Address',
         name: 'Billing Address',
         type: 'textarea',
@@ -228,7 +228,7 @@ export const enquiryData = [
     },
 
     {
-        id: 19,
+        id: 18,
         label: 'Project Name',
         name: 'Project Name',
         type: 'text',
@@ -239,7 +239,7 @@ export const enquiryData = [
     },
 
     {
-        id: 20,
+        id: 19,
         label: 'Architect Name',
         name: 'Architect Name',
         type: 'text',
@@ -250,7 +250,7 @@ export const enquiryData = [
     },
 
     {
-        id: 21,
+        id: 20,
         label: 'Site Reference',
         name: 'Site Reference',
         type: 'text',
@@ -261,7 +261,7 @@ export const enquiryData = [
     },
 
     {
-        id: 22,
+        id: 21,
         label: 'Tentative Project Value',
         name: 'Tentative Project Value',
         type: 'number',
@@ -273,7 +273,7 @@ export const enquiryData = [
     },
 
     {
-        id: 23,
+        id: 22,
         label: 'Notes',
         name: 'Notes',
         type: 'textarea',

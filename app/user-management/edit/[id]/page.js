@@ -57,6 +57,7 @@ const Edit = ({ params }) => {
       setUsersData(updatedUsersData);
 
       setUser({ ...result, user_role: `${result.user_role}` });
+      form.setValue('user_role', `${result.user_role}`);
       hideLoader();
 
     }

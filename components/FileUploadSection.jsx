@@ -12,6 +12,8 @@ import useStorage from '@/hooks/useStorage';
 import useAPI from '@/hooks/useAPI';
 import useLoader, { Loader } from '@/hooks/useLoader';
 import dwerpLogo from '@/public/images/dwerp-full-logo.png';
+import { IoMdSave } from 'react-icons/io';
+import { IoMdCloudUpload } from "react-icons/io";
 
 function FileUploadSection({ enquiry_no = '' }) {
 
@@ -27,8 +29,6 @@ function FileUploadSection({ enquiry_no = '' }) {
 
     showLoader()
     const result = await getFilesFromS3({ enquiry_no });
-
-    console.log(result.files);
 
     if (result?.files && result?.files?.length !== 0) {
 
@@ -48,11 +48,22 @@ function FileUploadSection({ enquiry_no = '' }) {
       return;
     }
 
+    // console.log(selectedFileForUpload);
+    // setFiles([...files, selectedFileForUpload]);
+
     setShowUploadLoader(true);
     await addFilesToS3({ selectedFileForUpload: selectedFileForUpload, enquiry_no, callback: fetchFilesFromS3 });
     setShowUploadLoader(false);
 
   };
+
+  const handleSaveFiles = async () => {
+
+    setShowUploadLoader(true);
+    await addFilesToS3({ selectedFileForUpload: selectedFileForUpload, enquiry_no, callback: fetchFilesFromS3 });
+    setShowUploadLoader(false);
+
+  }
 
   useEffect(() => {
 
@@ -74,7 +85,7 @@ function FileUploadSection({ enquiry_no = '' }) {
 
   return (
     <div
-      className={`${files.length ? "border" : "border-2 border-dashed cursor-pointer"
+      className={`${files.length ? "border" : "border-2 border-dashed"
         } rounded-sm h-[300px] w-full`}
     >
       <input
@@ -96,9 +107,19 @@ function FileUploadSection({ enquiry_no = '' }) {
             </Button>
             :
             <Button variant="secondary" type="button" onClick={() => uploadRef.current.click()} >
-              Upload
+              <div className='flex gap-2 items-center'>
+                <div><IoMdCloudUpload size={18} /></div>
+                <div>Upload</div>
+              </div>
             </Button>
           }
+
+          {/* <Button variant='secondary' className='ml-2' onClick={handleSaveFiles}>
+            <div className='flex gap-2 items-center'>
+              <div><IoMdSave size={18} /></div>
+              <div>Save Files</div>
+            </div>
+          </Button> */}
 
         </div>
         <div className="overflow-auto h-[80%] w-full">

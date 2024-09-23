@@ -94,15 +94,19 @@ const UserManagement = () => {
 
     return (
       <div className='flex gap-5 h-full'>
-        <CustomTooltip content='Edit'>
-          <Link href={editPath}>
-            <MdEdit size={20} />
-          </Link>
-        </CustomTooltip>
+        <PermissionBasedComponent permissionName='can_edit' moduleUrl='/user-management'>
 
-        <CustomTooltip content='Remove'>
-          <MdDelete size={20} onClick={() => handleDelete(item.id)} />
-        </CustomTooltip>
+          <CustomTooltip content='Edit'>
+            <Link href={editPath}>
+              <MdEdit size={20} />
+            </Link>
+          </CustomTooltip>
+
+          <CustomTooltip content='Remove'>
+            <MdDelete size={20} onClick={() => handleDelete(item.id)} />
+          </CustomTooltip>
+
+        </PermissionBasedComponent>
       </div>
     );
 

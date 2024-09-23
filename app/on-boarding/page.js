@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { CustomGrid } from "@/components/grid";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { BACKEND_API, createZodValidation, putValues } from "@/utils/constants";
 import { companyData, onBoardingUserData, userData } from "@/utils/data";
@@ -19,6 +19,7 @@ import useCustomToast from "@/hooks/useCustomToast";
 import useStorage from "@/hooks/useStorage";
 import useLoader, { Loader } from "@/hooks/useLoader";
 import { useToast } from "@/components/ui/use-toast";
+import useAPI from "@/hooks/useAPI";
 
 export default function OnBoarding() {
 
@@ -26,42 +27,59 @@ export default function OnBoarding() {
   const router = useRouter();
   const { showToast } = useCustomToast();
   const { show, showLoader, hideLoader } = useLoader();
-  
+  const { getItem, setItem } = useStorage();
+  const { isFirstLogin } = useAPI();
+  const [onBoarded, setOnBoarded] = useState(false);
+  // const [isFirstLogin, setFirstLogin] = useState(false);
+
+  useEffect(() => {
+
+    const isFirstTime = async () => {
+
+      showLoader();
+      const result = await isFirstLogin();
+      setOnBoarded(result?.is_first_login);
+      result?.is_first_login === false && router.push('/not-found');
+      hideLoader();
+
+    }
+
+    isFirstTime();
+
+  }, []);
+
   const defaultValues1 = putValues(companyData);
   let defaultValues2 = putValues(onBoardingUserData, 'no-default');
-  const { setItem } = useStorage();
-  const { toast } = useToast();
 
   const form1 = useForm({
     defaultValues: defaultValues1,
-    resolver: zodResolver(createZodValidation(companyData)) 
+    resolver: zodResolver(createZodValidation(companyData))
   });
 
   const form2 = useForm({
     defaultValues: defaultValues2,
-    resolver: zodResolver(createZodValidation(onBoardingUserData)) 
+    resolver: zodResolver(createZodValidation(onBoardingUserData))
   });
 
-  const form = [ form1, form2 ];
-  const dispatch = useDispatch();
-  // const [showLoader, setShowLoader] = useState(false); 
-  const { getItem } = useStorage();
+  const form = [form1, form2];
 
-  const [formData, setFormData] = useState([ defaultValues1, defaultValues2 ]);
+  const [formData, setFormData] = useState([defaultValues1, defaultValues2]);
+
+  if (!onBoarded) return null;
 
   const onSubmit = async (values) => {
 
     if (step < 1) {
 
       setStep(step + 1);
-      const newArr = [ ...formData ];
+      const newArr = [...formData];
       newArr[step] = values;
       setFormData(newArr);
 
     } else {
-      
+
       try {
-        
+
         showLoader();
         const company_name = getItem('company_name');
         const reqBody = { ...formData[0], company_name: company_name };
@@ -71,7 +89,7 @@ export default function OnBoarding() {
 
         reqBody2['user_role'] = 2;
 
-        console.log({reqBody, reqBody2})
+        console.log({ reqBody, reqBody2 })
 
         const resp = await BACKEND_API.post('/branches', { ...reqBody, company_name: company_name });
         const resp2 = await BACKEND_API.post('/users', reqBody2);
@@ -79,24 +97,23 @@ export default function OnBoarding() {
 
         console.log(result)
         console.log(resp2.data);
-        
+
         showToast(result.status_code, result.message)
 
 
       } catch (e) {
 
         toast({ title: 'Something went wrong!', variant: 'destructive' });
+        hideLoader();
+        return;
 
       } finally {
 
         hideLoader();
-        // dispatch(addItem({ key: 'branch', data: formData[0] }));
-        // dispatch(addItem({ key: 'users', data: values }));
         router.push('/dashboard');
-        toast({ title: 'Branch has been created successfully!' })
+        showToast(201, 'Branch has been created successfully!');
 
       }
-
 
     }
 
@@ -104,7 +121,7 @@ export default function OnBoarding() {
 
   const slider = {
     initial: { translateX: '-50px', opacity: 0 },
-    transition: { duration: 0.8, ease: 'linear'},
+    transition: { duration: 0.8, ease: 'linear' },
     animate: { translateX: 0, opacity: 1 }
   }
 
@@ -130,9 +147,11 @@ export default function OnBoarding() {
   return (
 
     <>
-      <Loader show={show}>
 
-        <div className="h-screen flex justify-center items-center w-full bg-orange-500">
+      <div className="h-screen flex justify-center items-center w-full">
+        <Loader show={show}>
+
+          <div className="flex justify-center items-center bg-orange-500 w-full h-full">
 
             <Form {...form[step]}>
 
@@ -204,11 +223,13 @@ export default function OnBoarding() {
 
             </Form>
 
-        </div>
+          </div>
 
-      </Loader>
+        </Loader>
+      </div>
+
     </>
-    
+
   );
 
 }

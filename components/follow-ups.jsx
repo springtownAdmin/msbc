@@ -398,6 +398,7 @@ export const FollowUpDetails = ({ enquiryNo = '', enquiry_id = 0 }) => {
             </div>
 
         </Loader>
+
     );
 
 }

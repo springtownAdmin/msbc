@@ -69,7 +69,7 @@ const Enquiry = () => {
                 return {
                     ...x,
                     enquiry_date: formatDateToYYYYMMDD(x.enquiry_date),
-                    enquiry_by: x.enquiry_by === 1 ? "Phone" : x.enquiry_by === 2 ? "E-Mail" : x.enquiry_by === 3 ? "Marketing" : null
+                    enquiry_by: x.enquiry_by === "1" ? "Phone" : x.enquiry_by === "2" ? "E-Mail" : x.enquiry_by === "3" ? "Marketing" : null
                 }
 
             });

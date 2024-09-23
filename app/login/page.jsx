@@ -66,8 +66,13 @@ const Login = () => {
 
     }
 
-    setData((prevData) => ({ ...prevData, [name]: value }));
-    setFilled(data.email !== "" && data.password !== "");
+    setData((prevData) => {
+
+      const updatedData = { ...prevData, [name]: value };
+      setFilled(updatedData.email !== "" && updatedData.password !== "");
+      return updatedData;
+
+    });
 
   };
 
@@ -75,13 +80,29 @@ const Login = () => {
 
     setShowLoaderSignIn(true);
 
-    const currentUrl = window.location.href;;
+    const currentUrl = window.location.href;
     let companyName = currentUrl.split('//')[1].split('.')[0].toLowerCase();
 
     await authenticateUser({ username: data.email, password: data.password }, companyName);
     setShowLoaderSignIn(false);
 
   };
+
+  const handleKeyEnter = (e) => {
+
+    if (e.key === 'Enter') {
+
+      e.preventDefault();
+
+      if (data.email !== '' && data.password !== '') {
+
+        handleSignIn();
+
+      }
+
+    }
+
+  }
 
   return (
 
@@ -109,13 +130,13 @@ const Login = () => {
 
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" name="email" placeholder={"johndoe@gmail.com"} value={data.email} onChange={handleChange} required />
+              <Input id="email" type="email" name="email" placeholder={"johndoe@gmail.com"} value={data.email} onKeyDown={handleKeyEnter} onChange={handleChange} required />
             </div>
 
             <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
-                <Input id="password" name="password" onChange={handleChange} placeholder={"John@123"} type={showPassword ? "text" : "password"} value={data.password} className="" />
+                <Input id="password" name="password" onChange={handleChange} placeholder={"John@123"} onKeyDown={handleKeyEnter} type={showPassword ? "text" : "password"} value={data.password} className="" />
                 <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onClick={handleClickShowPassword}>
                   {showPassword ? <FaEyeSlash /> : <FaRegEye />}
                 </span>

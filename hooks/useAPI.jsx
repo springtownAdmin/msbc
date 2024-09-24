@@ -349,7 +349,8 @@ const useAPI = () => {
         try {
 
             const company_name = getCompanyName();
-            const resp = await BACKEND_API.post(`/add_enquiry?company_name=${company_name}`, reqBody);
+            const userId = getItem('user_id');
+            const resp = await BACKEND_API.post(`/add_enquiry/${userId}?company_name=${company_name}`, reqBody);
 
             showToast(resp.data.status_code, resp.data.message);
 
